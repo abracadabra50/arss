@@ -1,0 +1,26 @@
+{
+  "type": "https://arss.dev/subscription/v0.2",
+  "feed_url": "https://blog.cloudflare.com/rss/",
+  "agent": {
+    "id": "did:web:local.agent",
+    "name": "Local Agent"
+  },
+  "permissions": {
+    "summarise": true,
+    "quote": "limited",
+    "embed": true,
+    "store_user_memory": true,
+    "train_model": false
+  },
+  "budget": {
+    "max_per_item_usdc": "0.005",
+    "max_per_day_usdc": "0.10",
+    "max_per_month_usdc": "2.00"
+  },
+  "sync": {
+    "poll": "PT1H",
+    "push": "none"
+  },
+  "created_at": "2026-05-19T14:07:16.547Z",
+  "updated_at": "2026-05-19T14:07:16.547Z"
+}

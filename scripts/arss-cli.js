@@ -265,6 +265,38 @@ program.command("diet-list")
         console.log(JSON.stringify((diet.sources || []).map(source => ({ id: source.id, title: source.title, url: source.url, kind: source.kind, topics: source.topics || [] })), null, 2));
     });
 
+program.command("feed-registry-list")
+    .argument("<registry>", "feed registry JSON URL or file")
+    .action(async registrySource => {
+        const registry = await readJsonSource(registrySource);
+        console.log(JSON.stringify((registry.feeds || []).map(feed => ({ id: feed.id, title: feed.title, url: feed.url, kind: feed.kind, topics: feed.topics || [], subscription_url: feed.subscription_url })), null, 2));
+    });
+
+program.command("feed-registry-import")
+    .argument("<registry>", "feed registry JSON URL or file")
+    .requiredOption("--feed <id-or-url>", "feed id, title, or URL from registry")
+    .option("--diet <file>", "context diet JSON file", "docs/arss/context-diets/agent-web.json")
+    .option("--update", "update existing source with same id/url instead of failing")
+    .option("--sync-now", "run arss:heartbeat once after importing")
+    .action(async (registrySource, opts) => {
+        const registry = await readJsonSource(registrySource);
+        const wanted = String(opts.feed).toLowerCase();
+        const feed = (registry.feeds || []).find(f => [f.id, f.title, f.url].some(value => String(value || "").toLowerCase() === wanted));
+        if (!feed) throw new Error(`Feed not found in registry: ${opts.feed}`);
+        const dietPath = resolve(opts.diet);
+        const diet = JSON.parse(readFileSync(dietPath, "utf8"));
+        const source = { id: feed.id || slugify(feed.title || feed.url), title: feed.title || feed.url, url: feed.url, kind: feed.kind || "feed", topics: feed.topics || [] };
+        const existingIndex = (diet.sources || []).findIndex(s => s.id === source.id || normaliseUrl(s.url) === normaliseUrl(source.url));
+        if (existingIndex >= 0 && !opts.update) throw new Error(`Source already exists: ${diet.sources[existingIndex].id} (${diet.sources[existingIndex].url}). Use --update.`);
+        diet.sources = diet.sources || [];
+        if (existingIndex >= 0) diet.sources[existingIndex] = { ...diet.sources[existingIndex], ...source };
+        else diet.sources.push(source);
+        writeJson(dietPath, diet);
+        const result = { imported: source, registry: registrySource, diet: dietPath, updated: existingIndex >= 0 };
+        if (opts.syncNow) result.sync = runHeartbeatNow(opts.diet);
+        console.log(JSON.stringify(result, null, 2));
+    });
+
 program.command("claim-template")
     .argument("<feed-file>", "ARSS feed JSON file to claim")
     .requiredOption("--out <file>", "output claim JSON file")
@@ -389,6 +421,10 @@ async function readSource(source) {
         return await res.text();
     }
     return readFileSync(resolve(source), "utf8");
+}
+
+async function readJsonSource(source) {
+    return JSON.parse(await readSource(source));
 }
 
 async function discover(url) {

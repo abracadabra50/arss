@@ -209,12 +209,27 @@ npm run registry:build
 It writes:
 
 ```text
-registry/index.html   human browsable feed directory
-registry/feeds.json   machine-readable feed registry
-registry/README.md    simple table export
+registry/index.html                         human browsable feed directory
+registry/feeds.json                         machine-readable feed registry
+registry/README.md                          simple table export
+registry/subscriptions/*.subscription.json  per-feed subscription manifests
+```
+
+List a registry:
+
+```bash
+npm run arss -- feed-registry-list registry/feeds.json
+```
+
+Import a feed from the registry into your context diet:
+
+```bash
+npm run arss -- feed-registry-import registry/feeds.json --feed simon-willison --sync-now
 ```
 
 The registry is intentionally boring: static HTML plus JSON. That means it can be hosted anywhere — GitHub Pages, Cloudflare Pages, S3, a normal web server — and agents can consume it without ceremony.
+
+Each card now includes a copyable subscribe command and a per-feed subscription manifest. This matters because discovery should end in an action, not a vibes-based appreciation of a directory page.
 
 The machine-readable shape:
 
@@ -227,7 +242,9 @@ The machine-readable shape:
       "title": "Simon Willison — everything feed",
       "url": "https://simonwillison.net/atom/everything/",
       "kind": "atom",
-      "topics": ["AI agents", "llms.txt", "web"]
+      "topics": ["AI agents", "llms.txt", "web"],
+      "subscription_url": "subscriptions/simon-willison.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed simon-willison --sync-now"
     }
   ]
 }

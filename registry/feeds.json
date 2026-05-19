@@ -2,7 +2,12 @@
   "type": "https://arss.dev/feed-registry/v0.1",
   "title": "ARSS Feed Registry",
   "description": "A starter directory of agent-readable feeds and feed-like sources.",
-  "generated_at": "2026-05-19T13:55:25.030Z",
+  "generated_at": "2026-05-19T14:07:16.543Z",
+  "default_budget": {
+    "max_per_item_usdc": "0.005",
+    "max_per_day_usdc": "0.10",
+    "max_per_month_usdc": "2.00"
+  },
   "feeds": [
     {
       "id": "simon-willison",
@@ -16,6 +21,9 @@
         "developer tooling"
       ],
       "arss_url": null,
+      "subscription_url": "subscriptions/simon-willison.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed simon-willison --sync-now",
+      "direct_command": "npx arss diet-add https://simonwillison.net/atom/everything/ --id simon-willison --topics \"AI agents,llms.txt,web,developer tooling\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -29,6 +37,9 @@
         "agent workflows"
       ],
       "arss_url": null,
+      "subscription_url": "subscriptions/github-changelog.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed github-changelog --sync-now",
+      "direct_command": "npx arss diet-add https://github.blog/changelog/feed/ --id github-changelog --topics \"developer tooling,AI agents,agent workflows\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -41,6 +52,9 @@
         "agent protocols"
       ],
       "arss_url": null,
+      "subscription_url": "subscriptions/mcp-spec-commits.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed mcp-spec-commits --sync-now",
+      "direct_command": "npx arss diet-add https://github.com/modelcontextprotocol/modelcontextprotocol/commits/main.atom --id mcp-spec-commits --topics \"MCP,agent protocols\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -54,6 +68,9 @@
         "agent payments"
       ],
       "arss_url": null,
+      "subscription_url": "subscriptions/x402-commits.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed x402-commits --sync-now",
+      "direct_command": "npx arss diet-add https://github.com/coinbase/x402/commits/main.atom --id x402-commits --topics \"x402,HTTP 402,agent payments\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -67,6 +84,9 @@
         "agent reputation"
       ],
       "arss_url": null,
+      "subscription_url": "subscriptions/erc8004-contracts.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed erc8004-contracts --sync-now",
+      "direct_command": "npx arss diet-add https://github.com/erc-8004/erc-8004-contracts/commits/master.atom --id erc8004-contracts --topics \"ERC-8004,agent identity,agent reputation\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -80,6 +100,9 @@
         "syndication"
       ],
       "arss_url": null,
+      "subscription_url": "subscriptions/json-feed.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed json-feed --sync-now",
+      "direct_command": "npx arss diet-add https://github.com/brentsimmons/JSONFeed/commits/master.atom --id json-feed --topics \"feeds,JSON Feed,syndication\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -93,6 +116,9 @@
         "syndication"
       ],
       "arss_url": null,
+      "subscription_url": "subscriptions/w3c-websub.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed w3c-websub --sync-now",
+      "direct_command": "npx arss diet-add https://github.com/w3c/websub/commits/master.atom --id w3c-websub --topics \"push subscription,WebSub,syndication\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -107,6 +133,9 @@
         "internet payments"
       ],
       "arss_url": null,
+      "subscription_url": "subscriptions/cloudflare-blog.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed cloudflare-blog --sync-now",
+      "direct_command": "npx arss diet-add https://blog.cloudflare.com/rss/ --id cloudflare-blog --topics \"AI agents,publisher infrastructure,web,internet payments\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -122,6 +151,9 @@
         "tech-policy"
       ],
       "arss_url": null,
+      "subscription_url": "subscriptions/platformer.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed platformer --sync-now",
+      "direct_command": "npx arss diet-add https://www.platformer.news/rss/ --id platformer --topics \"substack,newsletter,platforms,ai,tech-policy\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -136,6 +168,9 @@
         "software"
       ],
       "arss_url": null,
+      "subscription_url": "subscriptions/fireship.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed fireship --sync-now",
+      "direct_command": "npx arss diet-add https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA --id fireship --topics \"youtube,developer-tools,ai,software\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -150,6 +185,9 @@
         "founders"
       ],
       "arss_url": null,
+      "subscription_url": "subscriptions/lex-fridman-podcast.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed lex-fridman-podcast --sync-now",
+      "direct_command": "npx arss diet-add https://lexfridman.com/feed/podcast/ --id lex-fridman-podcast --topics \"podcast,ai,research,founders\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -164,6 +202,9 @@
         "technology"
       ],
       "arss_url": null,
+      "subscription_url": "subscriptions/daring-fireball.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed daring-fireball --sync-now",
+      "direct_command": "npx arss diet-add https://daringfireball.net/feeds/json --id daring-fireball --topics \"json-feed,apple,web,technology\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -179,6 +220,9 @@
         "heartbeat"
       ],
       "arss_url": null,
+      "subscription_url": "subscriptions/openclaw.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed openclaw --sync-now",
+      "direct_command": "npx arss diet-add https://docs.openclaw.ai/llms.txt --id openclaw --topics \"llms.txt,docs,openclaw,agents,heartbeat\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -194,6 +238,9 @@
         "agents"
       ],
       "arss_url": null,
+      "subscription_url": "subscriptions/release-notes-from-servers.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed release-notes-from-servers --sync-now",
+      "direct_command": "npx arss diet-add https://github.com/modelcontextprotocol/servers/releases.atom --id release-notes-from-servers --topics \"github,releases,mcp,servers,agents\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -209,6 +256,9 @@
         "software"
       ],
       "arss_url": null,
+      "subscription_url": "subscriptions/hacker-news-front-page.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed hacker-news-front-page --sync-now",
+      "direct_command": "npx arss diet-add https://hnrss.org/frontpage --id hacker-news-front-page --topics \"hacker-news,community,startups,ai,software\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -224,6 +274,9 @@
         "agents"
       ],
       "arss_url": null,
+      "subscription_url": "subscriptions/cs-ai-updates-on-arxiv-org.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed cs-ai-updates-on-arxiv-org --sync-now",
+      "direct_command": "npx arss diet-add https://export.arxiv.org/rss/cs.AI --id cs-ai-updates-on-arxiv-org --topics \"arxiv,papers,ai,research,agents\" --sync-now",
       "added_via": "context-diet"
     }
   ]

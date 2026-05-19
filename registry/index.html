@@ -26,15 +26,19 @@ h2 { margin:14px 0 10px; font-size:21px; letter-spacing:-.02em; }
 .card p { min-height:34px; }
 .card span { display:inline-flex; margin:0 6px 6px 0; padding:5px 8px; border-radius:999px; background:#f3f4f6; color:#4b5563; font-size:12px; }
 .card a { display:block; word-break:break-all; color:var(--hot); text-decoration:none; margin:14px 0; }
+pre { white-space:pre-wrap; word-break:break-word; background:#0b1020; color:#e5e7eb; border-radius:16px; padding:12px; font-size:12px; line-height:1.45; min-height:72px; }
 .card button { width:100%; border-radius:14px; }
+.button-row { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:center; }
+.button-row .mini { display:flex; align-items:center; justify-content:center; margin:0; border:1px solid var(--line); padding:10px 12px; border-radius:14px; color:var(--accent); background:white; font-weight:700; }
 footer { max-width:960px; margin:24px auto 64px; padding:0 24px; color:var(--muted); text-align:center; }
 code { background:#eef2ff; padding:2px 5px; border-radius:6px; }
+pre code { background:transparent; padding:0; border-radius:0; }
 </style>
 </head>
 <body>
 <header>
   <h1>ARSS Feed Registry</h1>
-  <p class="lede">A small directory of feeds agents can subscribe to: RSS, Atom, JSON Feed, GitHub, YouTube, podcasts, docs and native ARSS. Humans browse it. Agents read <code>feeds.json</code>.</p>
+  <p class="lede">A small directory of feeds agents can subscribe to: RSS, Atom, JSON Feed, GitHub, YouTube, podcasts, docs and native ARSS. Humans copy commands. Agents read <code>feeds.json</code> and subscription manifests.</p>
   <div class="actions"><a href="feeds.json">Machine JSON</a><a href="README.md">Registry README</a></div>
 </header>
 <main>
@@ -44,112 +48,128 @@ code { background:#eef2ff; padding:2px 5px; border-radius:6px; }
   <h2>Simon Willison — everything feed</h2>
   <p><span>AI agents</span> <span>llms.txt</span> <span>web</span> <span>developer tooling</span></p>
   <a href="https://simonwillison.net/atom/everything/">https://simonwillison.net/atom/everything/</a>
-  <button data-copy="https://simonwillison.net/atom/everything/">Copy feed URL</button>
+  <pre><code>npx arss feed-registry-import registry/feeds.json --feed simon-willison --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx arss feed-registry-import registry/feeds.json --feed simon-willison --sync-now">Copy subscribe command</button><a class="mini" href="subscriptions/simon-willison.subscription.json">Manifest</a></div>
 </article>
 <article class="card" data-kind="rss" data-topics="developer tooling AI agents agent workflows">
   <div class="kind">rss</div>
   <h2>GitHub Changelog</h2>
   <p><span>developer tooling</span> <span>AI agents</span> <span>agent workflows</span></p>
   <a href="https://github.blog/changelog/feed/">https://github.blog/changelog/feed/</a>
-  <button data-copy="https://github.blog/changelog/feed/">Copy feed URL</button>
+  <pre><code>npx arss feed-registry-import registry/feeds.json --feed github-changelog --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx arss feed-registry-import registry/feeds.json --feed github-changelog --sync-now">Copy subscribe command</button><a class="mini" href="subscriptions/github-changelog.subscription.json">Manifest</a></div>
 </article>
 <article class="card" data-kind="atom" data-topics="MCP agent protocols">
   <div class="kind">atom</div>
   <h2>Model Context Protocol specification commits</h2>
   <p><span>MCP</span> <span>agent protocols</span></p>
   <a href="https://github.com/modelcontextprotocol/modelcontextprotocol/commits/main.atom">https://github.com/modelcontextprotocol/modelcontextprotocol/commits/main.atom</a>
-  <button data-copy="https://github.com/modelcontextprotocol/modelcontextprotocol/commits/main.atom">Copy feed URL</button>
+  <pre><code>npx arss feed-registry-import registry/feeds.json --feed mcp-spec-commits --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx arss feed-registry-import registry/feeds.json --feed mcp-spec-commits --sync-now">Copy subscribe command</button><a class="mini" href="subscriptions/mcp-spec-commits.subscription.json">Manifest</a></div>
 </article>
 <article class="card" data-kind="atom" data-topics="x402 HTTP 402 agent payments">
   <div class="kind">atom</div>
   <h2>x402 repository commits</h2>
   <p><span>x402</span> <span>HTTP 402</span> <span>agent payments</span></p>
   <a href="https://github.com/coinbase/x402/commits/main.atom">https://github.com/coinbase/x402/commits/main.atom</a>
-  <button data-copy="https://github.com/coinbase/x402/commits/main.atom">Copy feed URL</button>
+  <pre><code>npx arss feed-registry-import registry/feeds.json --feed x402-commits --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx arss feed-registry-import registry/feeds.json --feed x402-commits --sync-now">Copy subscribe command</button><a class="mini" href="subscriptions/x402-commits.subscription.json">Manifest</a></div>
 </article>
 <article class="card" data-kind="atom" data-topics="ERC-8004 agent identity agent reputation">
   <div class="kind">atom</div>
   <h2>ERC-8004 contracts commits</h2>
   <p><span>ERC-8004</span> <span>agent identity</span> <span>agent reputation</span></p>
   <a href="https://github.com/erc-8004/erc-8004-contracts/commits/master.atom">https://github.com/erc-8004/erc-8004-contracts/commits/master.atom</a>
-  <button data-copy="https://github.com/erc-8004/erc-8004-contracts/commits/master.atom">Copy feed URL</button>
+  <pre><code>npx arss feed-registry-import registry/feeds.json --feed erc8004-contracts --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx arss feed-registry-import registry/feeds.json --feed erc8004-contracts --sync-now">Copy subscribe command</button><a class="mini" href="subscriptions/erc8004-contracts.subscription.json">Manifest</a></div>
 </article>
 <article class="card" data-kind="atom" data-topics="feeds JSON Feed syndication">
   <div class="kind">atom</div>
   <h2>JSON Feed spec updates</h2>
   <p><span>feeds</span> <span>JSON Feed</span> <span>syndication</span></p>
   <a href="https://github.com/brentsimmons/JSONFeed/commits/master.atom">https://github.com/brentsimmons/JSONFeed/commits/master.atom</a>
-  <button data-copy="https://github.com/brentsimmons/JSONFeed/commits/master.atom">Copy feed URL</button>
+  <pre><code>npx arss feed-registry-import registry/feeds.json --feed json-feed --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx arss feed-registry-import registry/feeds.json --feed json-feed --sync-now">Copy subscribe command</button><a class="mini" href="subscriptions/json-feed.subscription.json">Manifest</a></div>
 </article>
 <article class="card" data-kind="atom" data-topics="push subscription WebSub syndication">
   <div class="kind">atom</div>
   <h2>W3C WebSub commits</h2>
   <p><span>push subscription</span> <span>WebSub</span> <span>syndication</span></p>
   <a href="https://github.com/w3c/websub/commits/master.atom">https://github.com/w3c/websub/commits/master.atom</a>
-  <button data-copy="https://github.com/w3c/websub/commits/master.atom">Copy feed URL</button>
+  <pre><code>npx arss feed-registry-import registry/feeds.json --feed w3c-websub --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx arss feed-registry-import registry/feeds.json --feed w3c-websub --sync-now">Copy subscribe command</button><a class="mini" href="subscriptions/w3c-websub.subscription.json">Manifest</a></div>
 </article>
 <article class="card" data-kind="rss" data-topics="AI agents publisher infrastructure web internet payments">
   <div class="kind">rss</div>
   <h2>Cloudflare Blog</h2>
   <p><span>AI agents</span> <span>publisher infrastructure</span> <span>web</span> <span>internet payments</span></p>
   <a href="https://blog.cloudflare.com/rss/">https://blog.cloudflare.com/rss/</a>
-  <button data-copy="https://blog.cloudflare.com/rss/">Copy feed URL</button>
+  <pre><code>npx arss feed-registry-import registry/feeds.json --feed cloudflare-blog --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx arss feed-registry-import registry/feeds.json --feed cloudflare-blog --sync-now">Copy subscribe command</button><a class="mini" href="subscriptions/cloudflare-blog.subscription.json">Manifest</a></div>
 </article>
 <article class="card" data-kind="substack" data-topics="substack newsletter platforms ai tech-policy">
   <div class="kind">substack</div>
   <h2>Platformer</h2>
   <p><span>substack</span> <span>newsletter</span> <span>platforms</span> <span>ai</span> <span>tech-policy</span></p>
   <a href="https://www.platformer.news/rss/">https://www.platformer.news/rss/</a>
-  <button data-copy="https://www.platformer.news/rss/">Copy feed URL</button>
+  <pre><code>npx arss feed-registry-import registry/feeds.json --feed platformer --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx arss feed-registry-import registry/feeds.json --feed platformer --sync-now">Copy subscribe command</button><a class="mini" href="subscriptions/platformer.subscription.json">Manifest</a></div>
 </article>
 <article class="card" data-kind="youtube" data-topics="youtube developer-tools ai software">
   <div class="kind">youtube</div>
   <h2>Fireship</h2>
   <p><span>youtube</span> <span>developer-tools</span> <span>ai</span> <span>software</span></p>
   <a href="https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA">https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA</a>
-  <button data-copy="https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA">Copy feed URL</button>
+  <pre><code>npx arss feed-registry-import registry/feeds.json --feed fireship --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx arss feed-registry-import registry/feeds.json --feed fireship --sync-now">Copy subscribe command</button><a class="mini" href="subscriptions/fireship.subscription.json">Manifest</a></div>
 </article>
 <article class="card" data-kind="rss" data-topics="podcast ai research founders">
   <div class="kind">rss</div>
   <h2>Lex Fridman Podcast</h2>
   <p><span>podcast</span> <span>ai</span> <span>research</span> <span>founders</span></p>
   <a href="https://lexfridman.com/feed/podcast/">https://lexfridman.com/feed/podcast/</a>
-  <button data-copy="https://lexfridman.com/feed/podcast/">Copy feed URL</button>
+  <pre><code>npx arss feed-registry-import registry/feeds.json --feed lex-fridman-podcast --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx arss feed-registry-import registry/feeds.json --feed lex-fridman-podcast --sync-now">Copy subscribe command</button><a class="mini" href="subscriptions/lex-fridman-podcast.subscription.json">Manifest</a></div>
 </article>
 <article class="card" data-kind="json-feed" data-topics="json-feed apple web technology">
   <div class="kind">json-feed</div>
   <h2>Daring Fireball</h2>
   <p><span>json-feed</span> <span>apple</span> <span>web</span> <span>technology</span></p>
   <a href="https://daringfireball.net/feeds/json">https://daringfireball.net/feeds/json</a>
-  <button data-copy="https://daringfireball.net/feeds/json">Copy feed URL</button>
+  <pre><code>npx arss feed-registry-import registry/feeds.json --feed daring-fireball --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx arss feed-registry-import registry/feeds.json --feed daring-fireball --sync-now">Copy subscribe command</button><a class="mini" href="subscriptions/daring-fireball.subscription.json">Manifest</a></div>
 </article>
 <article class="card" data-kind="llms.txt" data-topics="llms.txt docs openclaw agents heartbeat">
   <div class="kind">llms.txt</div>
   <h2>OpenClaw</h2>
   <p><span>llms.txt</span> <span>docs</span> <span>openclaw</span> <span>agents</span> <span>heartbeat</span></p>
   <a href="https://docs.openclaw.ai/llms.txt">https://docs.openclaw.ai/llms.txt</a>
-  <button data-copy="https://docs.openclaw.ai/llms.txt">Copy feed URL</button>
+  <pre><code>npx arss feed-registry-import registry/feeds.json --feed openclaw --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx arss feed-registry-import registry/feeds.json --feed openclaw --sync-now">Copy subscribe command</button><a class="mini" href="subscriptions/openclaw.subscription.json">Manifest</a></div>
 </article>
 <article class="card" data-kind="atom" data-topics="github releases mcp servers agents">
   <div class="kind">atom</div>
   <h2>Release notes from servers</h2>
   <p><span>github</span> <span>releases</span> <span>mcp</span> <span>servers</span> <span>agents</span></p>
   <a href="https://github.com/modelcontextprotocol/servers/releases.atom">https://github.com/modelcontextprotocol/servers/releases.atom</a>
-  <button data-copy="https://github.com/modelcontextprotocol/servers/releases.atom">Copy feed URL</button>
+  <pre><code>npx arss feed-registry-import registry/feeds.json --feed release-notes-from-servers --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx arss feed-registry-import registry/feeds.json --feed release-notes-from-servers --sync-now">Copy subscribe command</button><a class="mini" href="subscriptions/release-notes-from-servers.subscription.json">Manifest</a></div>
 </article>
 <article class="card" data-kind="rss" data-topics="hacker-news community startups ai software">
   <div class="kind">rss</div>
   <h2>Hacker News: Front Page</h2>
   <p><span>hacker-news</span> <span>community</span> <span>startups</span> <span>ai</span> <span>software</span></p>
   <a href="https://hnrss.org/frontpage">https://hnrss.org/frontpage</a>
-  <button data-copy="https://hnrss.org/frontpage">Copy feed URL</button>
+  <pre><code>npx arss feed-registry-import registry/feeds.json --feed hacker-news-front-page --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx arss feed-registry-import registry/feeds.json --feed hacker-news-front-page --sync-now">Copy subscribe command</button><a class="mini" href="subscriptions/hacker-news-front-page.subscription.json">Manifest</a></div>
 </article>
 <article class="card" data-kind="rss" data-topics="arxiv papers ai research agents">
   <div class="kind">rss</div>
   <h2>cs.AI updates on arXiv.org</h2>
   <p><span>arxiv</span> <span>papers</span> <span>ai</span> <span>research</span> <span>agents</span></p>
   <a href="https://export.arxiv.org/rss/cs.AI">https://export.arxiv.org/rss/cs.AI</a>
-  <button data-copy="https://export.arxiv.org/rss/cs.AI">Copy feed URL</button>
+  <pre><code>npx arss feed-registry-import registry/feeds.json --feed cs-ai-updates-on-arxiv-org --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx arss feed-registry-import registry/feeds.json --feed cs-ai-updates-on-arxiv-org --sync-now">Copy subscribe command</button><a class="mini" href="subscriptions/cs-ai-updates-on-arxiv-org.subscription.json">Manifest</a></div>
 </article></section>
 </main>
 <footer>ARSS is the subscription layer for agent context. Search discovers; ARSS subscribes.</footer>
@@ -157,7 +177,7 @@ code { background:#eef2ff; padding:2px 5px; border-radius:6px; }
 const q=document.querySelector('#q'), kind=document.querySelector('#kind'), cards=[...document.querySelectorAll('.card')];
 function apply(){const needle=q.value.toLowerCase(), k=kind.value; for(const c of cards){const text=c.innerText.toLowerCase(); c.style.display=(!k||c.dataset.kind===k)&&(!needle||text.includes(needle))?'':'none';}}
 q.addEventListener('input',apply); kind.addEventListener('change',apply);
-document.addEventListener('click', async e=>{const b=e.target.closest('button[data-copy]'); if(!b) return; await navigator.clipboard.writeText(b.dataset.copy); b.textContent='Copied'; setTimeout(()=>b.textContent='Copy feed URL',1200);});
+document.addEventListener('click', async e=>{const b=e.target.closest('button[data-copy]'); if(!b) return; const old=b.textContent; await navigator.clipboard.writeText(b.dataset.copy); b.textContent='Copied'; setTimeout(()=>b.textContent=old,1200);});
 </script>
 </body>
 </html>

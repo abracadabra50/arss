@@ -1,0 +1,230 @@
+{
+  "type": "https://arss.dev/feed-registry/v0.1",
+  "title": "ARSS Feed Registry",
+  "description": "A starter directory of agent-readable feeds and feed-like sources.",
+  "generated_at": "2026-05-19T13:55:25.030Z",
+  "feeds": [
+    {
+      "id": "simon-willison",
+      "title": "Simon Willison — everything feed",
+      "url": "https://simonwillison.net/atom/everything/",
+      "kind": "atom",
+      "topics": [
+        "AI agents",
+        "llms.txt",
+        "web",
+        "developer tooling"
+      ],
+      "arss_url": null,
+      "added_via": "context-diet"
+    },
+    {
+      "id": "github-changelog",
+      "title": "GitHub Changelog",
+      "url": "https://github.blog/changelog/feed/",
+      "kind": "rss",
+      "topics": [
+        "developer tooling",
+        "AI agents",
+        "agent workflows"
+      ],
+      "arss_url": null,
+      "added_via": "context-diet"
+    },
+    {
+      "id": "mcp-spec-commits",
+      "title": "Model Context Protocol specification commits",
+      "url": "https://github.com/modelcontextprotocol/modelcontextprotocol/commits/main.atom",
+      "kind": "atom",
+      "topics": [
+        "MCP",
+        "agent protocols"
+      ],
+      "arss_url": null,
+      "added_via": "context-diet"
+    },
+    {
+      "id": "x402-commits",
+      "title": "x402 repository commits",
+      "url": "https://github.com/coinbase/x402/commits/main.atom",
+      "kind": "atom",
+      "topics": [
+        "x402",
+        "HTTP 402",
+        "agent payments"
+      ],
+      "arss_url": null,
+      "added_via": "context-diet"
+    },
+    {
+      "id": "erc8004-contracts",
+      "title": "ERC-8004 contracts commits",
+      "url": "https://github.com/erc-8004/erc-8004-contracts/commits/master.atom",
+      "kind": "atom",
+      "topics": [
+        "ERC-8004",
+        "agent identity",
+        "agent reputation"
+      ],
+      "arss_url": null,
+      "added_via": "context-diet"
+    },
+    {
+      "id": "json-feed",
+      "title": "JSON Feed spec updates",
+      "url": "https://github.com/brentsimmons/JSONFeed/commits/master.atom",
+      "kind": "atom",
+      "topics": [
+        "feeds",
+        "JSON Feed",
+        "syndication"
+      ],
+      "arss_url": null,
+      "added_via": "context-diet"
+    },
+    {
+      "id": "w3c-websub",
+      "title": "W3C WebSub commits",
+      "url": "https://github.com/w3c/websub/commits/master.atom",
+      "kind": "atom",
+      "topics": [
+        "push subscription",
+        "WebSub",
+        "syndication"
+      ],
+      "arss_url": null,
+      "added_via": "context-diet"
+    },
+    {
+      "id": "cloudflare-blog",
+      "title": "Cloudflare Blog",
+      "url": "https://blog.cloudflare.com/rss/",
+      "kind": "rss",
+      "topics": [
+        "AI agents",
+        "publisher infrastructure",
+        "web",
+        "internet payments"
+      ],
+      "arss_url": null,
+      "added_via": "context-diet"
+    },
+    {
+      "id": "platformer",
+      "title": "Platformer",
+      "url": "https://www.platformer.news/rss/",
+      "kind": "substack",
+      "topics": [
+        "substack",
+        "newsletter",
+        "platforms",
+        "ai",
+        "tech-policy"
+      ],
+      "arss_url": null,
+      "added_via": "context-diet"
+    },
+    {
+      "id": "fireship",
+      "title": "Fireship",
+      "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA",
+      "kind": "youtube",
+      "topics": [
+        "youtube",
+        "developer-tools",
+        "ai",
+        "software"
+      ],
+      "arss_url": null,
+      "added_via": "context-diet"
+    },
+    {
+      "id": "lex-fridman-podcast",
+      "title": "Lex Fridman Podcast",
+      "url": "https://lexfridman.com/feed/podcast/",
+      "kind": "rss",
+      "topics": [
+        "podcast",
+        "ai",
+        "research",
+        "founders"
+      ],
+      "arss_url": null,
+      "added_via": "context-diet"
+    },
+    {
+      "id": "daring-fireball",
+      "title": "Daring Fireball",
+      "url": "https://daringfireball.net/feeds/json",
+      "kind": "json-feed",
+      "topics": [
+        "json-feed",
+        "apple",
+        "web",
+        "technology"
+      ],
+      "arss_url": null,
+      "added_via": "context-diet"
+    },
+    {
+      "id": "openclaw",
+      "title": "OpenClaw",
+      "url": "https://docs.openclaw.ai/llms.txt",
+      "kind": "llms.txt",
+      "topics": [
+        "llms.txt",
+        "docs",
+        "openclaw",
+        "agents",
+        "heartbeat"
+      ],
+      "arss_url": null,
+      "added_via": "context-diet"
+    },
+    {
+      "id": "release-notes-from-servers",
+      "title": "Release notes from servers",
+      "url": "https://github.com/modelcontextprotocol/servers/releases.atom",
+      "kind": "atom",
+      "topics": [
+        "github",
+        "releases",
+        "mcp",
+        "servers",
+        "agents"
+      ],
+      "arss_url": null,
+      "added_via": "context-diet"
+    },
+    {
+      "id": "hacker-news-front-page",
+      "title": "Hacker News: Front Page",
+      "url": "https://hnrss.org/frontpage",
+      "kind": "rss",
+      "topics": [
+        "hacker-news",
+        "community",
+        "startups",
+        "ai",
+        "software"
+      ],
+      "arss_url": null,
+      "added_via": "context-diet"
+    },
+    {
+      "id": "cs-ai-updates-on-arxiv-org",
+      "title": "cs.AI updates on arXiv.org",
+      "url": "https://export.arxiv.org/rss/cs.AI",
+      "kind": "rss",
+      "topics": [
+        "arxiv",
+        "papers",
+        "ai",
+        "research",
+        "agents"
+      ],
+      "arss_url": null,
+      "added_via": "context-diet"
+    }
+  ]
+}

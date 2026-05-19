@@ -177,6 +177,68 @@ Example readout from the built-in fixture:
 
 That is the intended shape: search discovers, ARSS subscribes, RAG remembers, MCP acts, x402 pays.
 
+There is also a live eval. This one is less flattering and therefore more useful: it fetches the real sources in the context diet, runs the actual heartbeat, then checks what is present in local memory and the current inbox.
+
+```bash
+npm run eval:live
+```
+
+Typical readout shape:
+
+| Method | What it proves |
+| --- | --- |
+| Live feed polling | Freshest and highest recall, but expensive because every source is fetched now |
+| ARSS local memory | Cheap and fast, but only includes what subscription policy admitted |
+| ARSS current inbox | Tiny token footprint, intentionally lossy and editorial |
+| ARSS memory + live fallback | Production shape: memory first, fetch subscribed source only on miss |
+
+The live eval is the honest one. It shows the trade-off directly: pushing everything into memory is not the goal. The goal is to keep enough warm context to answer cheaply, then fall back to subscribed-source fetches when the user asks for something outside the current working set.
+
+## Feed registry
+
+Yes, agents need a registry.
+
+Discovery cannot just be “try random `/feed` URLs forever”. Humans and agents both need somewhere to browse known feeds, inspect rights/payment posture, copy subscription URLs, and bootstrap a context diet.
+
+This repo includes a static registry generator:
+
+```bash
+npm run registry:build
+```
+
+It writes:
+
+```text
+registry/index.html   human browsable feed directory
+registry/feeds.json   machine-readable feed registry
+registry/README.md    simple table export
+```
+
+The registry is intentionally boring: static HTML plus JSON. That means it can be hosted anywhere — GitHub Pages, Cloudflare Pages, S3, a normal web server — and agents can consume it without ceremony.
+
+The machine-readable shape:
+
+```json
+{
+  "type": "https://arss.dev/feed-registry/v0.1",
+  "feeds": [
+    {
+      "id": "simon-willison",
+      "title": "Simon Willison — everything feed",
+      "url": "https://simonwillison.net/atom/everything/",
+      "kind": "atom",
+      "topics": ["AI agents", "llms.txt", "web"]
+    }
+  ]
+}
+```
+
+This becomes the missing “where do agents find feeds?” layer:
+
+```text
+registry → subscribe → heartbeat → memory/inbox → answer with citations
+```
+
 ## What is in this repo
 
 ```text
@@ -187,6 +249,9 @@ scripts/arss-daemon.js            standalone background poller
 scripts/arss-mcp-server.js        MCP tools for explicit search/fetch/pay/cite
 scripts/arss-demo-server.js       demo publisher with optional x402 resources
 scripts/arss-eval.js              reference eval harness for freshness/tokens/recall/noise
+scripts/arss-live-eval.js         live eval against real subscribed sources and memory/inbox
+scripts/arss-registry-site.js     static feed registry generator
+registry/                         generated human + machine feed registry
 docs/arss/                        protocol notes, schemas, examples and integration guides
 examples/arss-integrations/       Hermes/OpenClaw templates
 skills/arss-context-subscriptions Pal/agentskills workflow for managing subscribed context

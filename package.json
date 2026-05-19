@@ -19,7 +19,9 @@
     "arss:sync-diet": "node scripts/arss-sync-diet.js",
     "arss:heartbeat": "node scripts/arss-heartbeat.js",
     "test": "node test/arss.test.js && node test/arss-store.test.js && node test/arss-registry.test.js && node test/arss-daemon.test.js",
-    "eval": "node scripts/arss-eval.js"
+    "eval": "node scripts/arss-eval.js",
+    "eval:live": "node scripts/arss-live-eval.js",
+    "registry:build": "node scripts/arss-registry-site.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",

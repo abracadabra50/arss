@@ -15,12 +15,13 @@ Free public feeds first.
 Paid resources only when a publisher declares them and the local agent/user grants budget.
 ```
 
-## Papers
+## Paper
 
-- `arss-v0.3-subscribed-context-paper.md` — current paper: subscribed context, registry, evals, free-first payment posture.
-- `arss-v0.2-payments-paper.md` — earlier payments-first ARSS-Pay draft.
-- `arss-v0.1-paper.md` — earlier protocol draft.
-- `ARSS-v0-paper.md` — short original concept note.
+- `arss-subscribed-context-paper.md` — current paper: subscribed context, registry, evals, free-first payment posture.
+
+## Archive
+
+Older notes remain in this directory for continuity, but the subscribed-context paper is the canonical version.
 
 ## Specs and design docs
 

@@ -525,7 +525,7 @@ SECURITY.md
 Start here:
 
 ```text
-docs/arss/arss-v0.3-subscribed-context-paper.md
+docs/arss/arss-subscribed-context-paper.md
 docs/arss/spec-v0.2.md
 docs/arss/PROTOCOL.md
 docs/arss/SUBSCRIPTIONS.md

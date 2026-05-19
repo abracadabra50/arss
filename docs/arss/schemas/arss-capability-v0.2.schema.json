@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arss.dev/schemas/arss-capability-v0.2.schema.json",
+  "title": "ARSS-Pay Capability v0.2",
+  "type": "object",
+  "required": ["type", "issuer", "agent", "feed_url", "scope", "expires"],
+  "properties": {
+    "type": { "const": "https://arss.dev/capability/v0.2" },
+    "issuer": { "type": "string" },
+    "subscriber": { "type": "string" },
+    "agent": { "type": "string" },
+    "feed_url": { "type": "string", "format": "uri" },
+    "scope": { "type": "array", "items": { "type": "string" } },
+    "commercial_use": { "type": "boolean" },
+    "expires": { "type": "string" },
+    "rate_limit": { "type": "object", "additionalProperties": true },
+    "attribution_required": { "type": "boolean" },
+    "signature": { "type": "string" }
+  },
+  "additionalProperties": true
+}

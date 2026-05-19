@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arss.dev/schemas/arss-feed-v0.2.schema.json",
+  "title": "ARSS-Pay Feed v0.2",
+  "type": "object",
+  "required": ["version", "title", "items", "_agent"],
+  "properties": {
+    "version": { "const": "https://jsonfeed.org/version/1.1" },
+    "title": { "type": "string", "minLength": 1 },
+    "home_page_url": { "type": "string", "format": "uri" },
+    "feed_url": { "type": "string", "format": "uri" },
+    "description": { "type": "string" },
+    "_agent": { "$ref": "#/$defs/feedAgent" },
+    "items": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/item" }
+    }
+  },
+  "$defs": {
+    "feedAgent": {
+      "type": "object",
+      "required": ["profile"],
+      "properties": {
+        "profile": { "const": "https://arss.dev/profile/0.2" },
+        "publisher": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "string" },
+            "name": { "type": "string" },
+            "url": { "type": "string", "format": "uri" }
+          },
+          "additionalProperties": true
+        },
+        "license": {
+          "type": "object",
+          "properties": { "default": { "type": "string" } },
+          "additionalProperties": true
+        },
+        "attribution": {
+          "type": "object",
+          "properties": {
+            "required": { "type": "boolean" },
+            "format": { "type": "string" }
+          },
+          "additionalProperties": true
+        },
+        "context": {
+          "type": "object",
+          "properties": {
+            "ttl": { "type": "string" },
+            "memory": { "enum": ["allowed", "denied", "transient", "user_policy"] }
+          },
+          "additionalProperties": true
+        },
+        "payment": { "$ref": "#/$defs/feedPayment" }
+      },
+      "additionalProperties": true
+    },
+    "feedPayment": {
+      "type": "object",
+      "properties": {
+        "preferred_protocol": { "type": "string" },
+        "accepted": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/payment" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "item": {
+      "type": "object",
+      "required": ["id"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "url": { "type": "string" },
+        "title": { "type": "string" },
+        "summary": { "type": "string" },
+        "content_text": { "type": "string" },
+        "content_html": { "type": "string" },
+        "date_published": { "type": "string" },
+        "date_modified": { "type": "string" },
+        "_agent": { "$ref": "#/$defs/itemAgent" }
+      },
+      "additionalProperties": true
+    },
+    "itemAgent": {
+      "type": "object",
+      "properties": {
+        "summary": { "type": "string" },
+        "license": { "type": "string" },
+        "allowed": { "type": "array", "items": { "type": "string" } },
+        "denied": { "type": "array", "items": { "type": "string" } },
+        "attribution": { "type": "object", "additionalProperties": true },
+        "resources": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/resource" }
+        }
+      },
+      "additionalProperties": true
+    },
+    "resource": {
+      "type": "object",
+      "required": ["kind", "url", "access"],
+      "properties": {
+        "kind": {
+          "enum": ["summary", "canonical_text", "chunks", "embedding_pack", "archive", "commercial_licence", "high_frequency_update", "other"]
+        },
+        "url": { "type": "string" },
+        "format": { "type": "string" },
+        "hash": { "type": "string" },
+        "access": { "enum": ["free", "paid", "capability", "account", "unavailable"] },
+        "price": { "$ref": "#/$defs/payment" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "access": { "const": "paid" } } },
+          "then": { "required": ["price"] }
+        }
+      ],
+      "additionalProperties": true
+    },
+    "payment": {
+      "type": "object",
+      "required": ["protocol", "network", "asset"],
+      "properties": {
+        "protocol": { "const": "x402" },
+        "network": { "type": "string" },
+        "asset": { "type": "string" },
+        "amount": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?$" },
+        "recipient": { "type": "string" },
+        "facilitator": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

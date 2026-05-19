@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arss.dev/schemas/arss-chunk-v0.2.schema.json",
+  "title": "ARSS-Pay Chunk v0.2",
+  "description": "One JSONL line in an ARSS retrieval-optimised chunk file.",
+  "type": "object",
+  "required": ["id", "item_id", "text", "ordinal", "source"],
+  "properties": {
+    "id": { "type": "string" },
+    "item_id": { "type": "string" },
+    "ordinal": { "type": "integer", "minimum": 0 },
+    "text": { "type": "string" },
+    "summary": { "type": "string" },
+    "source": {
+      "type": "object",
+      "required": ["url"],
+      "properties": {
+        "url": { "type": "string" },
+        "title": { "type": "string" },
+        "publisher": { "type": "string" },
+        "published_at": { "type": "string" },
+        "hash": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "rights": {
+      "type": "object",
+      "properties": {
+        "license": { "type": "string" },
+        "allowed": { "type": "array", "items": { "type": "string" } },
+        "denied": { "type": "array", "items": { "type": "string" } },
+        "attribution_required": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "embedding_hint": {
+      "type": "object",
+      "properties": {
+        "model": { "type": "string" },
+        "dimensions": { "type": "integer" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

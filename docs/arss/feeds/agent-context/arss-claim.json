@@ -1,0 +1,46 @@
+{
+  "type": "https://arss.dev/feed-claim/v0.2",
+  "feed_url": "https://arss.dev/feeds/agent-context/arss.json",
+  "origin": "https://arss.dev",
+  "publisher": {
+    "id": "did:web:arss.dev",
+    "name": "ARSS Project",
+    "url": "https://arss.dev"
+  },
+  "proofs": [
+    {
+      "method": "well-known",
+      "url": "https://arss.dev/.well-known/arss-claim.json"
+    },
+    {
+      "method": "same-origin-feed",
+      "url": "https://arss.dev/feeds/agent-context/arss.json"
+    }
+  ],
+  "payment": {
+    "preferred_protocol": "x402",
+    "accepted": [
+      {
+        "protocol": "x402",
+        "network": "eip155:8453",
+        "asset": "USDC",
+        "recipient": "0x0000000000000000000000000000000000000000",
+        "facilitator": "https://facilitator.x402.org"
+      }
+    ],
+    "default_prices": {
+      "canonical_text": "0.001",
+      "chunks": "0.003",
+      "archive": "0.01"
+    }
+  },
+  "stake": {
+    "mode": "none",
+    "asset": "ARSS",
+    "amount": "0",
+    "purpose": "publisher_claim_anti_spam"
+  },
+  "created_at": "2026-05-19T08:52:27.441Z",
+  "feed_hash": "sha256:3ce03b808a8cfc0913d4d7781b372bc8cdf50c589782059799095eaaa2f3fe11",
+  "claim_hash": "sha256:87a1484bb72c60c79e8853dde072791113c9be6d898175f94bbdc6b3e367999d"
+}

@@ -1,0 +1,38 @@
+{
+  "name": "arss",
+  "version": "0.2.0",
+  "description": "Agent-readable RSS: subscribed context, rights metadata, delivery hooks and x402 payment rails for autonomous agents.",
+  "type": "module",
+  "private": true,
+  "license": "UNLICENSED",
+  "author": "It's Not Magic Ltd",
+  "bin": {
+    "arss": "./scripts/arss-cli.js",
+    "arss-daemon": "./scripts/arss-daemon.js",
+    "arss-mcp": "./scripts/arss-mcp-server.js"
+  },
+  "scripts": {
+    "arss": "node scripts/arss-cli.js",
+    "arss:mcp": "node scripts/arss-mcp-server.js",
+    "arss:daemon": "node scripts/arss-daemon.js",
+    "arss:demo-server": "node scripts/arss-demo-server.js",
+    "arss:sync-diet": "node scripts/arss-sync-diet.js",
+    "arss:heartbeat": "node scripts/arss-heartbeat.js",
+    "test": "node test/arss.test.js && node test/arss-store.test.js && node test/arss-registry.test.js && node test/arss-daemon.test.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@x402/core": "^2.12.0",
+    "@x402/evm": "^2.12.0",
+    "@x402/express": "^2.12.0",
+    "@x402/fetch": "^2.12.0",
+    "commander": "^12.0.0",
+    "dotenv": "^16.4.0",
+    "express": "^5.2.1",
+    "viem": "^2.49.3",
+    "zod": "^3.25.76"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

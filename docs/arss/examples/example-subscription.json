@@ -1,0 +1,26 @@
+{
+  "type": "https://arss.dev/subscription/v0.2",
+  "feed_url": "https://example.com/.well-known/arss.json",
+  "subscriber": "did:pkh:eip155:8453:0x0000000000000000000000000000000000000000",
+  "agent": {
+    "id": "did:web:pal.local",
+    "name": "Pal"
+  },
+  "permissions": {
+    "summarise": true,
+    "quote": "limited",
+    "embed": true,
+    "store_user_memory": true,
+    "train_model": false
+  },
+  "budget": {
+    "max_per_item_usdc": "0.005",
+    "max_per_day_usdc": "0.10",
+    "max_per_month_usdc": "2.00"
+  },
+  "sync": {
+    "poll": "PT15M",
+    "push": "none"
+  },
+  "created_at": "2026-05-18T15:00:00Z"
+}

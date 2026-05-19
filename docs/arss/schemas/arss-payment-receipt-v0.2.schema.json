@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arss.dev/schemas/arss-payment-receipt-v0.2.schema.json",
+  "title": "ARSS-Pay Payment Receipt v0.2",
+  "type": "object",
+  "required": ["type", "feed_url", "item_id", "resource_url", "protocol", "network", "asset", "amount", "paid_at"],
+  "properties": {
+    "type": { "const": "https://arss.dev/payment-receipt/v0.2" },
+    "feed_url": { "type": "string" },
+    "item_id": { "type": "string" },
+    "resource_url": { "type": "string" },
+    "protocol": { "const": "x402" },
+    "network": { "type": "string" },
+    "asset": { "type": "string" },
+    "amount": { "type": "string", "pattern": "^[0-9]+(\\.[0-9]+)?$" },
+    "payer": { "type": "string" },
+    "recipient": { "type": "string" },
+    "tx_hash": { "type": "string" },
+    "resource_hash": { "type": "string" },
+    "rights_snapshot_hash": { "type": "string" },
+    "paid_at": { "type": "string" }
+  },
+  "additionalProperties": true
+}

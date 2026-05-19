@@ -1,0 +1,298 @@
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "ARSS Agent Context Starter Feed",
+  "home_page_url": "https://arss.dev/feeds/agent-context/",
+  "feed_url": "https://arss.dev/feeds/agent-context/arss.json",
+  "_agent": {
+    "profile": "https://arss.dev/profile/0.2",
+    "publisher": {
+      "id": "did:web:arss.dev",
+      "name": "ARSS Project",
+      "url": "https://arss.dev"
+    },
+    "license": {
+      "default": "summarise_with_attribution"
+    },
+    "attribution": {
+      "required": true,
+      "format": "name_url"
+    },
+    "context": {
+      "ttl": "PT24H",
+      "memory": "allowed"
+    },
+    "payment": {
+      "preferred_protocol": "x402",
+      "accepted": [
+        {
+          "protocol": "x402",
+          "network": "eip155:8453",
+          "asset": "USDC",
+          "recipient": "0x0000000000000000000000000000000000000000",
+          "facilitator": "https://facilitator.x402.org"
+        }
+      ]
+    },
+    "claim": {
+      "type": "https://arss.dev/feed-claim/v0.2",
+      "claim_hash": "sha256:87a1484bb72c60c79e8853dde072791113c9be6d898175f94bbdc6b3e367999d",
+      "origin": "https://arss.dev",
+      "proofs": [
+        {
+          "method": "well-known",
+          "url": "https://arss.dev/.well-known/arss-claim.json"
+        },
+        {
+          "method": "same-origin-feed",
+          "url": "https://arss.dev/feeds/agent-context/arss.json"
+        }
+      ]
+    }
+  },
+  "items": [
+    {
+      "id": "https://arss.dev/feeds/agent-context/01-agent-context-layer.html",
+      "url": "https://arss.dev/feeds/agent-context/01-agent-context-layer.html",
+      "title": "The agent context layer",
+      "content_text": "# The agent context layer\n\nAgents do not browse the web like humans. They ingest context, retrieve it later, cite it when useful, and forget it when policy says it has expired. That means the web needs a context layer: feeds that are machine-readable, publisher-controlled, rights-aware and payable.\n\nARSS is the feed format for this layer. It keeps the RSS subscription shape but adds agent-facing terms: cache TTL, allowed uses, denied uses, attribution requirements, provenance hashes and x402 payment metadata.\n\nThe product wedge is simple: subscribe your agent to sources you trust. The protocol ambition is larger: make the web legible, payable and accountable to agents.\n",
+      "summary": "Agents do not browse the web like humans. They ingest context, retrieve it later, cite it when useful, and forget it when policy says it has expired. That means the web needs a context layer: feeds that are machine-readable, publisher-controlled, rights-aware and payable.",
+      "date_modified": "2026-05-18T22:32:29.036Z",
+      "_agent": {
+        "summary": "Agents do not browse the web like humans. They ingest context, retrieve it later, cite it when useful, and forget it when policy says it has expired. That means the web needs a context layer: feeds that are machine-readable, publisher-controlled, rights-aware and payable.",
+        "canonical_text": {
+          "url": "https://arss.dev/feeds/agent-context/01-agent-context-layer.md",
+          "hash": "sha256:0392255850f044b6dce745cfb254e1c9537e53595fe10a7b0919fe9d41e518f8"
+        },
+        "license": "summarise_with_attribution",
+        "allowed": [
+          "summarise",
+          "quote_limited",
+          "embed_for_retrieval",
+          "store_user_memory"
+        ],
+        "denied": [
+          "train_foundation_model",
+          "resell_fulltext"
+        ],
+        "resources": [
+          {
+            "kind": "summary",
+            "url": "https://arss.dev/feeds/agent-context/01-agent-context-layer.html.summary.md",
+            "access": "free"
+          },
+          {
+            "kind": "canonical_text",
+            "url": "https://arss.dev/feeds/agent-context/01-agent-context-layer.html.md",
+            "access": "paid",
+            "hash": "sha256:0392255850f044b6dce745cfb254e1c9537e53595fe10a7b0919fe9d41e518f8",
+            "price": {
+              "protocol": "x402",
+              "network": "eip155:8453",
+              "asset": "USDC",
+              "amount": "0.001",
+              "recipient": "0x0000000000000000000000000000000000000000",
+              "facilitator": "https://facilitator.x402.org"
+            }
+          },
+          {
+            "kind": "chunks",
+            "url": "https://arss.dev/feeds/agent-context/01-agent-context-layer.html.chunks.jsonl",
+            "format": "jsonl",
+            "access": "paid",
+            "price": {
+              "protocol": "x402",
+              "network": "eip155:8453",
+              "asset": "USDC",
+              "amount": "0.003",
+              "recipient": "0x0000000000000000000000000000000000000000",
+              "facilitator": "https://facilitator.x402.org"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "https://arss.dev/feeds/agent-context/02-publisher-risk.html",
+      "url": "https://arss.dev/feeds/agent-context/02-publisher-risk.html",
+      "title": "Publisher risk in the agent web",
+      "content_text": "# Publisher risk in the agent web\n\nPublishers are exposed by the agent layer because agents can consume the value of content without creating the old economic event: a page view, ad impression, session or subscription login.\n\nRobots.txt is too crude for this world. A publisher needs to express: this agent may summarise, this content may be cached for seven days, quotations are capped at 500 characters, model training is prohibited, full text costs one cent via x402, and attribution is required.\n\nARSS gives publishers a direct agent-subscription surface instead of forcing them to choose between blocking agents and being scraped.\n",
+      "summary": "Publishers are exposed by the agent layer because agents can consume the value of content without creating the old economic event: a page view, ad impression, session or subscription login.",
+      "date_modified": "2026-05-18T22:32:29.043Z",
+      "_agent": {
+        "summary": "Publishers are exposed by the agent layer because agents can consume the value of content without creating the old economic event: a page view, ad impression, session or subscription login.",
+        "canonical_text": {
+          "url": "https://arss.dev/feeds/agent-context/02-publisher-risk.md",
+          "hash": "sha256:4850bb480220ab7377d69342308a0169fc1b577851490d91a1196be97b1a1a32"
+        },
+        "license": "summarise_with_attribution",
+        "allowed": [
+          "summarise",
+          "quote_limited",
+          "embed_for_retrieval",
+          "store_user_memory"
+        ],
+        "denied": [
+          "train_foundation_model",
+          "resell_fulltext"
+        ],
+        "resources": [
+          {
+            "kind": "summary",
+            "url": "https://arss.dev/feeds/agent-context/02-publisher-risk.html.summary.md",
+            "access": "free"
+          },
+          {
+            "kind": "canonical_text",
+            "url": "https://arss.dev/feeds/agent-context/02-publisher-risk.html.md",
+            "access": "paid",
+            "hash": "sha256:4850bb480220ab7377d69342308a0169fc1b577851490d91a1196be97b1a1a32",
+            "price": {
+              "protocol": "x402",
+              "network": "eip155:8453",
+              "asset": "USDC",
+              "amount": "0.001",
+              "recipient": "0x0000000000000000000000000000000000000000",
+              "facilitator": "https://facilitator.x402.org"
+            }
+          },
+          {
+            "kind": "chunks",
+            "url": "https://arss.dev/feeds/agent-context/02-publisher-risk.html.chunks.jsonl",
+            "format": "jsonl",
+            "access": "paid",
+            "price": {
+              "protocol": "x402",
+              "network": "eip155:8453",
+              "asset": "USDC",
+              "amount": "0.003",
+              "recipient": "0x0000000000000000000000000000000000000000",
+              "facilitator": "https://facilitator.x402.org"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "https://arss.dev/feeds/agent-context/03-x402-payments.html",
+      "url": "https://arss.dev/feeds/agent-context/03-x402-payments.html",
+      "title": "x402 payments for agent feeds",
+      "content_text": "# x402 payments for agent feeds\n\nPayments are first-class in ARSS. A feed item can expose a free summary and paid resources such as canonical markdown, retrieval chunks, archives, high-frequency updates or commercial licences.\n\nThe payment flow is web-native. The agent requests a resource URL. The publisher returns HTTP 402 with x402 payment requirements. The agent's local ARSS daemon checks user budget policy, pays in USDC if allowed, retries the request with payment proof, and stores the returned content with the publisher's rights envelope.\n\nThe token, if one exists later, should not be the content currency. Stablecoin pays publishers. A network token can secure directories, indexers, curators and challenge markets.\n",
+      "summary": "Payments are first-class in ARSS. A feed item can expose a free summary and paid resources such as canonical markdown, retrieval chunks, archives, high-frequency updates or commercial licences.",
+      "date_modified": "2026-05-18T22:32:29.047Z",
+      "_agent": {
+        "summary": "Payments are first-class in ARSS. A feed item can expose a free summary and paid resources such as canonical markdown, retrieval chunks, archives, high-frequency updates or commercial licences.",
+        "canonical_text": {
+          "url": "https://arss.dev/feeds/agent-context/03-x402-payments.md",
+          "hash": "sha256:a7bb9be6995c9c16494922446d98beb748348becdaba59a9e46cc37742809c8f"
+        },
+        "license": "summarise_with_attribution",
+        "allowed": [
+          "summarise",
+          "quote_limited",
+          "embed_for_retrieval",
+          "store_user_memory"
+        ],
+        "denied": [
+          "train_foundation_model",
+          "resell_fulltext"
+        ],
+        "resources": [
+          {
+            "kind": "summary",
+            "url": "https://arss.dev/feeds/agent-context/03-x402-payments.html.summary.md",
+            "access": "free"
+          },
+          {
+            "kind": "canonical_text",
+            "url": "https://arss.dev/feeds/agent-context/03-x402-payments.html.md",
+            "access": "paid",
+            "hash": "sha256:a7bb9be6995c9c16494922446d98beb748348becdaba59a9e46cc37742809c8f",
+            "price": {
+              "protocol": "x402",
+              "network": "eip155:8453",
+              "asset": "USDC",
+              "amount": "0.001",
+              "recipient": "0x0000000000000000000000000000000000000000",
+              "facilitator": "https://facilitator.x402.org"
+            }
+          },
+          {
+            "kind": "chunks",
+            "url": "https://arss.dev/feeds/agent-context/03-x402-payments.html.chunks.jsonl",
+            "format": "jsonl",
+            "access": "paid",
+            "price": {
+              "protocol": "x402",
+              "network": "eip155:8453",
+              "asset": "USDC",
+              "amount": "0.003",
+              "recipient": "0x0000000000000000000000000000000000000000",
+              "facilitator": "https://facilitator.x402.org"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "https://arss.dev/feeds/agent-context/04-subscription-model.html",
+      "url": "https://arss.dev/feeds/agent-context/04-subscription-model.html",
+      "title": "Subscription model",
+      "content_text": "# Subscription model\n\nAn ARSS subscription is local state: feed URL, subscriber identity, agent identity, budget, permissions, sync policy and local index. The publisher does not need to host a new platform account for basic usage.\n\nThe daemon discovers the feed, validates it, pulls free summaries and chunks, plans paid fetches, records receipts and exposes searchable context to the agent over MCP.\n\nThe agent asks the MCP server for context. It receives chunks with source, citation, rights and expiry metadata. This keeps protocol mechanics out of the agent prompt and makes compliance testable.\n",
+      "summary": "An ARSS subscription is local state: feed URL, subscriber identity, agent identity, budget, permissions, sync policy and local index. The publisher does not need to host a new platform account for basic usage.",
+      "date_modified": "2026-05-18T22:32:29.051Z",
+      "_agent": {
+        "summary": "An ARSS subscription is local state: feed URL, subscriber identity, agent identity, budget, permissions, sync policy and local index. The publisher does not need to host a new platform account for basic usage.",
+        "canonical_text": {
+          "url": "https://arss.dev/feeds/agent-context/04-subscription-model.md",
+          "hash": "sha256:a134e3dd5639bc4ea0cfe1960b354f89c8332e972be34a61fc7721ef4fc80924"
+        },
+        "license": "summarise_with_attribution",
+        "allowed": [
+          "summarise",
+          "quote_limited",
+          "embed_for_retrieval",
+          "store_user_memory"
+        ],
+        "denied": [
+          "train_foundation_model",
+          "resell_fulltext"
+        ],
+        "resources": [
+          {
+            "kind": "summary",
+            "url": "https://arss.dev/feeds/agent-context/04-subscription-model.html.summary.md",
+            "access": "free"
+          },
+          {
+            "kind": "canonical_text",
+            "url": "https://arss.dev/feeds/agent-context/04-subscription-model.html.md",
+            "access": "paid",
+            "hash": "sha256:a134e3dd5639bc4ea0cfe1960b354f89c8332e972be34a61fc7721ef4fc80924",
+            "price": {
+              "protocol": "x402",
+              "network": "eip155:8453",
+              "asset": "USDC",
+              "amount": "0.001",
+              "recipient": "0x0000000000000000000000000000000000000000",
+              "facilitator": "https://facilitator.x402.org"
+            }
+          },
+          {
+            "kind": "chunks",
+            "url": "https://arss.dev/feeds/agent-context/04-subscription-model.html.chunks.jsonl",
+            "format": "jsonl",
+            "access": "paid",
+            "price": {
+              "protocol": "x402",
+              "network": "eip155:8453",
+              "asset": "USDC",
+              "amount": "0.003",
+              "recipient": "0x0000000000000000000000000000000000000000",
+              "facilitator": "https://facilitator.x402.org"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

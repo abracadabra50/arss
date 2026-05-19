@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://arss.dev/schemas/arss-feed-claim-v0.2.schema.json",
+  "title": "ARSS Feed Claim v0.2",
+  "description": "Publisher claim for an ARSS feed origin, with optional x402 payment defaults and future stake declaration.",
+  "type": "object",
+  "required": ["type", "feed_url", "origin", "publisher", "proofs", "payment", "created_at", "claim_hash"],
+  "properties": {
+    "type": { "const": "https://arss.dev/feed-claim/v0.2" },
+    "feed_url": { "type": "string", "format": "uri" },
+    "origin": { "type": "string", "format": "uri" },
+    "publisher": {
+      "type": "object",
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "url": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "proofs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["method", "url"],
+        "properties": {
+          "method": { "enum": ["well-known", "same-origin-feed", "dns-txt", "did", "other"] },
+          "url": { "type": "string" },
+          "value": { "type": "string" }
+        },
+        "additionalProperties": true
+      }
+    },
+    "payment": {
+      "type": "object",
+      "properties": {
+        "preferred_protocol": { "type": "string" },
+        "accepted": { "type": "array", "items": { "type": "object", "additionalProperties": true } },
+        "default_prices": {
+          "type": "object",
+          "properties": {
+            "canonical_text": { "type": "string" },
+            "chunks": { "type": "string" },
+            "archive": { "type": "string" }
+          },
+          "additionalProperties": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "stake": {
+      "type": "object",
+      "properties": {
+        "mode": { "enum": ["none", "declared", "escrowed"] },
+        "asset": { "type": "string" },
+        "amount": { "type": "string" },
+        "purpose": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "feed_hash": { "type": "string" },
+    "claim_hash": { "type": "string" },
+    "created_at": { "type": "string" },
+    "signature": {
+      "type": "object",
+      "properties": {
+        "scheme": { "enum": ["eip191"] },
+        "address": { "type": "string" },
+        "message_hash": { "type": "string" },
+        "signature": { "type": "string" }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

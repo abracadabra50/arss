@@ -1,0 +1,91 @@
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "Example Research Feed",
+  "home_page_url": "https://example.com/",
+  "feed_url": "https://example.com/.well-known/arss.json",
+  "description": "A sample ARSS-Pay feed for agents.",
+  "_agent": {
+    "profile": "https://arss.dev/profile/0.2",
+    "publisher": {
+      "id": "did:web:example.com",
+      "name": "Example Research"
+    },
+    "license": {
+      "default": "summarise_with_attribution"
+    },
+    "attribution": {
+      "required": true,
+      "format": "name_url"
+    },
+    "context": {
+      "ttl": "PT24H",
+      "memory": "allowed"
+    },
+    "payment": {
+      "preferred_protocol": "x402",
+      "accepted": [
+        {
+          "protocol": "x402",
+          "network": "eip155:8453",
+          "asset": "USDC",
+          "recipient": "0x0000000000000000000000000000000000000000",
+          "facilitator": "https://facilitator.x402.org"
+        }
+      ]
+    }
+  },
+  "items": [
+    {
+      "id": "https://example.com/research/agents-need-feeds",
+      "url": "https://example.com/research/agents-need-feeds",
+      "title": "Agents need feeds",
+      "summary": "Agents need publisher-controlled streams with rights, attribution and payment metadata.",
+      "date_published": "2026-05-18T15:00:00Z",
+      "_agent": {
+        "summary": "A short canonical summary intended for agent briefings.",
+        "license": "summarise_with_attribution",
+        "allowed": ["summarise", "quote_limited", "embed_for_retrieval", "store_user_memory"],
+        "denied": ["train_foundation_model", "resell_fulltext"],
+        "attribution": {
+          "required": true,
+          "text": "Example Research",
+          "url": "https://example.com/"
+        },
+        "resources": [
+          {
+            "kind": "summary",
+            "url": "https://example.com/arss/agents-need-feeds.summary.md",
+            "access": "free"
+          },
+          {
+            "kind": "canonical_text",
+            "url": "https://example.com/arss/agents-need-feeds.md",
+            "access": "paid",
+            "price": {
+              "protocol": "x402",
+              "network": "eip155:8453",
+              "asset": "USDC",
+              "amount": "0.001",
+              "recipient": "0x0000000000000000000000000000000000000000",
+              "facilitator": "https://facilitator.x402.org"
+            }
+          },
+          {
+            "kind": "chunks",
+            "url": "https://example.com/arss/agents-need-feeds.chunks.jsonl",
+            "format": "jsonl",
+            "access": "paid",
+            "price": {
+              "protocol": "x402",
+              "network": "eip155:8453",
+              "asset": "USDC",
+              "amount": "0.003",
+              "recipient": "0x0000000000000000000000000000000000000000",
+              "facilitator": "https://facilitator.x402.org"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

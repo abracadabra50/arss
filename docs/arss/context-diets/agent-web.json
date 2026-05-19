@@ -47,7 +47,7 @@
   "sources": [
     {
       "id": "simon-willison",
-      "title": "Simon Willison \u2014 everything feed",
+      "title": "Simon Willison — everything feed",
       "url": "https://simonwillison.net/atom/everything/",
       "kind": "atom",
       "topics": [
@@ -233,6 +233,272 @@
         "ai",
         "research",
         "agents"
+      ]
+    },
+    {
+      "id": "openai-news",
+      "title": "OpenAI News",
+      "url": "https://openai.com/news/rss.xml",
+      "kind": "rss",
+      "topics": [
+        "frontier-labs",
+        "ai",
+        "agents",
+        "models"
+      ]
+    },
+    {
+      "id": "google-deepmind-blog",
+      "title": "Google DeepMind Blog",
+      "url": "https://deepmind.google/blog/rss.xml",
+      "kind": "rss",
+      "topics": [
+        "frontier-labs",
+        "ai",
+        "research"
+      ]
+    },
+    {
+      "id": "hugging-face-blog",
+      "title": "Hugging Face Blog",
+      "url": "https://huggingface.co/blog/feed.xml",
+      "kind": "rss",
+      "topics": [
+        "open-source-ai",
+        "models",
+        "developer-tools"
+      ]
+    },
+    {
+      "id": "latent-space",
+      "title": "Latent Space",
+      "url": "https://www.latent.space/feed",
+      "kind": "substack",
+      "topics": [
+        "newsletter",
+        "ai-engineering",
+        "agents"
+      ]
+    },
+    {
+      "id": "interconnects",
+      "title": "Interconnects",
+      "url": "https://www.interconnects.ai/feed",
+      "kind": "substack",
+      "topics": [
+        "newsletter",
+        "ai-research",
+        "policy"
+      ]
+    },
+    {
+      "id": "the-gradient",
+      "title": "The Gradient",
+      "url": "https://thegradient.pub/rss/",
+      "kind": "rss",
+      "topics": [
+        "ai-research",
+        "essays",
+        "society"
+      ]
+    },
+    {
+      "id": "langchain-changelog",
+      "title": "LangChain Changelog",
+      "url": "https://changelog.langchain.com/feed.xml",
+      "kind": "rss",
+      "topics": [
+        "agents",
+        "developer-tools",
+        "changelog"
+      ]
+    },
+    {
+      "id": "github-copilot-changelog",
+      "title": "GitHub Copilot Changelog",
+      "url": "https://github.blog/changelog/label/copilot/feed/",
+      "kind": "rss",
+      "topics": [
+        "developer-tools",
+        "ai-coding",
+        "copilot"
+      ]
+    },
+    {
+      "id": "ethereum-magicians",
+      "title": "Ethereum Magicians",
+      "url": "https://ethereum-magicians.org/latest.rss",
+      "kind": "rss",
+      "topics": [
+        "ethereum",
+        "standards",
+        "agents"
+      ]
+    },
+    {
+      "id": "lilian-weng",
+      "title": "Lil'Log — Lilian Weng",
+      "url": "https://lilianweng.github.io/index.xml",
+      "kind": "rss",
+      "topics": [
+        "ai-research",
+        "agents",
+        "rag"
+      ]
+    },
+    {
+      "id": "techcrunch-ai",
+      "title": "TechCrunch AI",
+      "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+      "kind": "rss",
+      "topics": [
+        "ai-news",
+        "startups",
+        "industry"
+      ]
+    },
+    {
+      "id": "mit-tech-review-ai",
+      "title": "MIT Technology Review AI",
+      "url": "https://www.technologyreview.com/topic/artificial-intelligence/feed",
+      "kind": "rss",
+      "topics": [
+        "ai-news",
+        "research",
+        "society"
+      ]
+    },
+    {
+      "id": "google-research-blog",
+      "title": "Google Research Blog",
+      "url": "https://research.google/blog/rss/",
+      "kind": "rss",
+      "topics": [
+        "research",
+        "ai",
+        "frontier-labs"
+      ]
+    },
+    {
+      "id": "microsoft-research-blog",
+      "title": "Microsoft Research Blog",
+      "url": "https://www.microsoft.com/en-us/research/feed/",
+      "kind": "rss",
+      "topics": [
+        "research",
+        "ai",
+        "frontier-labs"
+      ]
+    },
+    {
+      "id": "aws-machine-learning-blog",
+      "title": "AWS Machine Learning Blog",
+      "url": "https://aws.amazon.com/blogs/machine-learning/feed/",
+      "kind": "rss",
+      "topics": [
+        "ai-infrastructure",
+        "cloud",
+        "ml"
+      ]
+    },
+    {
+      "id": "stripe-blog",
+      "title": "Stripe Blog",
+      "url": "https://stripe.com/blog/feed.rss",
+      "kind": "rss",
+      "topics": [
+        "payments",
+        "internet-business",
+        "x402-adjacent"
+      ]
+    },
+    {
+      "id": "openai-cookbook-commits",
+      "title": "OpenAI Cookbook commits",
+      "url": "https://github.com/openai/openai-cookbook/commits/main.atom",
+      "kind": "atom",
+      "topics": [
+        "openai",
+        "developer-tools",
+        "agents"
+      ]
+    },
+    {
+      "id": "anthropic-cookbook-commits",
+      "title": "Anthropic Cookbook commits",
+      "url": "https://github.com/anthropics/anthropic-cookbook/commits/main.atom",
+      "kind": "atom",
+      "topics": [
+        "anthropic",
+        "developer-tools",
+        "agents"
+      ]
+    },
+    {
+      "id": "vercel-ai-sdk-commits",
+      "title": "Vercel AI SDK commits",
+      "url": "https://github.com/vercel/ai/commits/main.atom",
+      "kind": "atom",
+      "topics": [
+        "ai-sdk",
+        "developer-tools",
+        "agents"
+      ]
+    },
+    {
+      "id": "openai-agents-python-commits",
+      "title": "OpenAI Agents Python commits",
+      "url": "https://github.com/openai/openai-agents-python/commits/main.atom",
+      "kind": "atom",
+      "topics": [
+        "agents",
+        "openai",
+        "developer-tools"
+      ]
+    },
+    {
+      "id": "langchain-releases",
+      "title": "LangChain releases",
+      "url": "https://github.com/langchain-ai/langchain/releases.atom",
+      "kind": "atom",
+      "topics": [
+        "agents",
+        "langchain",
+        "developer-tools"
+      ]
+    },
+    {
+      "id": "browser-use-commits",
+      "title": "browser-use commits",
+      "url": "https://github.com/browser-use/browser-use/commits/main.atom",
+      "kind": "atom",
+      "topics": [
+        "browser-agents",
+        "automation",
+        "agents"
+      ]
+    },
+    {
+      "id": "arxiv-cs-cl",
+      "title": "cs.CL updates on arXiv.org",
+      "url": "https://export.arxiv.org/rss/cs.CL",
+      "kind": "rss",
+      "topics": [
+        "arxiv",
+        "nlp",
+        "llms",
+        "research"
+      ]
+    },
+    {
+      "id": "arxiv-cs-lg",
+      "title": "cs.LG updates on arXiv.org",
+      "url": "https://export.arxiv.org/rss/cs.LG",
+      "kind": "rss",
+      "topics": [
+        "arxiv",
+        "machine-learning",
+        "research"
       ]
     }
   ]

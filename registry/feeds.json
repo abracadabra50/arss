@@ -2,7 +2,7 @@
   "type": "https://arss.dev/feed-registry/v0.1",
   "title": "ARSS Feed Registry",
   "description": "A starter directory of agent-readable feeds and feed-like sources.",
-  "generated_at": "2026-05-19T14:07:16.543Z",
+  "generated_at": "2026-05-19T14:48:17.184Z",
   "default_budget": {
     "max_per_item_usdc": "0.005",
     "max_per_day_usdc": "0.10",
@@ -14,6 +14,7 @@
       "title": "Simon Willison — everything feed",
       "url": "https://simonwillison.net/atom/everything/",
       "kind": "atom",
+      "category": "Agent protocols",
       "topics": [
         "AI agents",
         "llms.txt",
@@ -31,6 +32,7 @@
       "title": "GitHub Changelog",
       "url": "https://github.blog/changelog/feed/",
       "kind": "rss",
+      "category": "Developer tooling",
       "topics": [
         "developer tooling",
         "AI agents",
@@ -47,6 +49,7 @@
       "title": "Model Context Protocol specification commits",
       "url": "https://github.com/modelcontextprotocol/modelcontextprotocol/commits/main.atom",
       "kind": "atom",
+      "category": "Agent protocols",
       "topics": [
         "MCP",
         "agent protocols"
@@ -62,6 +65,7 @@
       "title": "x402 repository commits",
       "url": "https://github.com/coinbase/x402/commits/main.atom",
       "kind": "atom",
+      "category": "Payments",
       "topics": [
         "x402",
         "HTTP 402",
@@ -78,6 +82,7 @@
       "title": "ERC-8004 contracts commits",
       "url": "https://github.com/erc-8004/erc-8004-contracts/commits/master.atom",
       "kind": "atom",
+      "category": "Agent protocols",
       "topics": [
         "ERC-8004",
         "agent identity",
@@ -94,6 +99,7 @@
       "title": "JSON Feed spec updates",
       "url": "https://github.com/brentsimmons/JSONFeed/commits/master.atom",
       "kind": "atom",
+      "category": "Agent protocols",
       "topics": [
         "feeds",
         "JSON Feed",
@@ -110,6 +116,7 @@
       "title": "W3C WebSub commits",
       "url": "https://github.com/w3c/websub/commits/master.atom",
       "kind": "atom",
+      "category": "Agent protocols",
       "topics": [
         "push subscription",
         "WebSub",
@@ -126,6 +133,7 @@
       "title": "Cloudflare Blog",
       "url": "https://blog.cloudflare.com/rss/",
       "kind": "rss",
+      "category": "Infrastructure",
       "topics": [
         "AI agents",
         "publisher infrastructure",
@@ -143,6 +151,7 @@
       "title": "Platformer",
       "url": "https://www.platformer.news/rss/",
       "kind": "substack",
+      "category": "Media",
       "topics": [
         "substack",
         "newsletter",
@@ -161,6 +170,7 @@
       "title": "Fireship",
       "url": "https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA",
       "kind": "youtube",
+      "category": "Media",
       "topics": [
         "youtube",
         "developer-tools",
@@ -178,6 +188,7 @@
       "title": "Lex Fridman Podcast",
       "url": "https://lexfridman.com/feed/podcast/",
       "kind": "rss",
+      "category": "Research",
       "topics": [
         "podcast",
         "ai",
@@ -195,6 +206,7 @@
       "title": "Daring Fireball",
       "url": "https://daringfireball.net/feeds/json",
       "kind": "json-feed",
+      "category": "Industry",
       "topics": [
         "json-feed",
         "apple",
@@ -212,6 +224,7 @@
       "title": "OpenClaw",
       "url": "https://docs.openclaw.ai/llms.txt",
       "kind": "llms.txt",
+      "category": "Agent protocols",
       "topics": [
         "llms.txt",
         "docs",
@@ -230,6 +243,7 @@
       "title": "Release notes from servers",
       "url": "https://github.com/modelcontextprotocol/servers/releases.atom",
       "kind": "atom",
+      "category": "Agent protocols",
       "topics": [
         "github",
         "releases",
@@ -248,6 +262,7 @@
       "title": "Hacker News: Front Page",
       "url": "https://hnrss.org/frontpage",
       "kind": "rss",
+      "category": "Industry",
       "topics": [
         "hacker-news",
         "community",
@@ -266,6 +281,7 @@
       "title": "cs.AI updates on arXiv.org",
       "url": "https://export.arxiv.org/rss/cs.AI",
       "kind": "rss",
+      "category": "Research",
       "topics": [
         "arxiv",
         "papers",
@@ -277,6 +293,416 @@
       "subscription_url": "subscriptions/cs-ai-updates-on-arxiv-org.subscription.json",
       "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed cs-ai-updates-on-arxiv-org --sync-now",
       "direct_command": "npx arss diet-add https://export.arxiv.org/rss/cs.AI --id cs-ai-updates-on-arxiv-org --topics \"arxiv,papers,ai,research,agents\" --sync-now",
+      "added_via": "context-diet"
+    },
+    {
+      "id": "openai-news",
+      "title": "OpenAI News",
+      "url": "https://openai.com/news/rss.xml",
+      "kind": "rss",
+      "category": "Frontier labs",
+      "topics": [
+        "frontier-labs",
+        "ai",
+        "agents",
+        "models"
+      ],
+      "arss_url": null,
+      "subscription_url": "subscriptions/openai-news.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed openai-news --sync-now",
+      "direct_command": "npx arss diet-add https://openai.com/news/rss.xml --id openai-news --topics \"frontier-labs,ai,agents,models\" --sync-now",
+      "added_via": "context-diet"
+    },
+    {
+      "id": "google-deepmind-blog",
+      "title": "Google DeepMind Blog",
+      "url": "https://deepmind.google/blog/rss.xml",
+      "kind": "rss",
+      "category": "Frontier labs",
+      "topics": [
+        "frontier-labs",
+        "ai",
+        "research"
+      ],
+      "arss_url": null,
+      "subscription_url": "subscriptions/google-deepmind-blog.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed google-deepmind-blog --sync-now",
+      "direct_command": "npx arss diet-add https://deepmind.google/blog/rss.xml --id google-deepmind-blog --topics \"frontier-labs,ai,research\" --sync-now",
+      "added_via": "context-diet"
+    },
+    {
+      "id": "hugging-face-blog",
+      "title": "Hugging Face Blog",
+      "url": "https://huggingface.co/blog/feed.xml",
+      "kind": "rss",
+      "category": "Developer tooling",
+      "topics": [
+        "open-source-ai",
+        "models",
+        "developer-tools"
+      ],
+      "arss_url": null,
+      "subscription_url": "subscriptions/hugging-face-blog.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed hugging-face-blog --sync-now",
+      "direct_command": "npx arss diet-add https://huggingface.co/blog/feed.xml --id hugging-face-blog --topics \"open-source-ai,models,developer-tools\" --sync-now",
+      "added_via": "context-diet"
+    },
+    {
+      "id": "latent-space",
+      "title": "Latent Space",
+      "url": "https://www.latent.space/feed",
+      "kind": "substack",
+      "category": "Media",
+      "topics": [
+        "newsletter",
+        "ai-engineering",
+        "agents"
+      ],
+      "arss_url": null,
+      "subscription_url": "subscriptions/latent-space.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed latent-space --sync-now",
+      "direct_command": "npx arss diet-add https://www.latent.space/feed --id latent-space --topics \"newsletter,ai-engineering,agents\" --sync-now",
+      "added_via": "context-diet"
+    },
+    {
+      "id": "interconnects",
+      "title": "Interconnects",
+      "url": "https://www.interconnects.ai/feed",
+      "kind": "substack",
+      "category": "Research",
+      "topics": [
+        "newsletter",
+        "ai-research",
+        "policy"
+      ],
+      "arss_url": null,
+      "subscription_url": "subscriptions/interconnects.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed interconnects --sync-now",
+      "direct_command": "npx arss diet-add https://www.interconnects.ai/feed --id interconnects --topics \"newsletter,ai-research,policy\" --sync-now",
+      "added_via": "context-diet"
+    },
+    {
+      "id": "the-gradient",
+      "title": "The Gradient",
+      "url": "https://thegradient.pub/rss/",
+      "kind": "rss",
+      "category": "Research",
+      "topics": [
+        "ai-research",
+        "essays",
+        "society"
+      ],
+      "arss_url": null,
+      "subscription_url": "subscriptions/the-gradient.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed the-gradient --sync-now",
+      "direct_command": "npx arss diet-add https://thegradient.pub/rss/ --id the-gradient --topics \"ai-research,essays,society\" --sync-now",
+      "added_via": "context-diet"
+    },
+    {
+      "id": "langchain-changelog",
+      "title": "LangChain Changelog",
+      "url": "https://changelog.langchain.com/feed.xml",
+      "kind": "rss",
+      "category": "Developer tooling",
+      "topics": [
+        "agents",
+        "developer-tools",
+        "changelog"
+      ],
+      "arss_url": null,
+      "subscription_url": "subscriptions/langchain-changelog.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed langchain-changelog --sync-now",
+      "direct_command": "npx arss diet-add https://changelog.langchain.com/feed.xml --id langchain-changelog --topics \"agents,developer-tools,changelog\" --sync-now",
+      "added_via": "context-diet"
+    },
+    {
+      "id": "github-copilot-changelog",
+      "title": "GitHub Copilot Changelog",
+      "url": "https://github.blog/changelog/label/copilot/feed/",
+      "kind": "rss",
+      "category": "Developer tooling",
+      "topics": [
+        "developer-tools",
+        "ai-coding",
+        "copilot"
+      ],
+      "arss_url": null,
+      "subscription_url": "subscriptions/github-copilot-changelog.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed github-copilot-changelog --sync-now",
+      "direct_command": "npx arss diet-add https://github.blog/changelog/label/copilot/feed/ --id github-copilot-changelog --topics \"developer-tools,ai-coding,copilot\" --sync-now",
+      "added_via": "context-diet"
+    },
+    {
+      "id": "ethereum-magicians",
+      "title": "Ethereum Magicians",
+      "url": "https://ethereum-magicians.org/latest.rss",
+      "kind": "rss",
+      "category": "Agent protocols",
+      "topics": [
+        "ethereum",
+        "standards",
+        "agents"
+      ],
+      "arss_url": null,
+      "subscription_url": "subscriptions/ethereum-magicians.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed ethereum-magicians --sync-now",
+      "direct_command": "npx arss diet-add https://ethereum-magicians.org/latest.rss --id ethereum-magicians --topics \"ethereum,standards,agents\" --sync-now",
+      "added_via": "context-diet"
+    },
+    {
+      "id": "lilian-weng",
+      "title": "Lil'Log — Lilian Weng",
+      "url": "https://lilianweng.github.io/index.xml",
+      "kind": "rss",
+      "category": "Research",
+      "topics": [
+        "ai-research",
+        "agents",
+        "rag"
+      ],
+      "arss_url": null,
+      "subscription_url": "subscriptions/lilian-weng.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed lilian-weng --sync-now",
+      "direct_command": "npx arss diet-add https://lilianweng.github.io/index.xml --id lilian-weng --topics \"ai-research,agents,rag\" --sync-now",
+      "added_via": "context-diet"
+    },
+    {
+      "id": "techcrunch-ai",
+      "title": "TechCrunch AI",
+      "url": "https://techcrunch.com/category/artificial-intelligence/feed/",
+      "kind": "rss",
+      "category": "Industry",
+      "topics": [
+        "ai-news",
+        "startups",
+        "industry"
+      ],
+      "arss_url": null,
+      "subscription_url": "subscriptions/techcrunch-ai.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed techcrunch-ai --sync-now",
+      "direct_command": "npx arss diet-add https://techcrunch.com/category/artificial-intelligence/feed/ --id techcrunch-ai --topics \"ai-news,startups,industry\" --sync-now",
+      "added_via": "context-diet"
+    },
+    {
+      "id": "mit-tech-review-ai",
+      "title": "MIT Technology Review AI",
+      "url": "https://www.technologyreview.com/topic/artificial-intelligence/feed",
+      "kind": "rss",
+      "category": "Research",
+      "topics": [
+        "ai-news",
+        "research",
+        "society"
+      ],
+      "arss_url": null,
+      "subscription_url": "subscriptions/mit-tech-review-ai.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed mit-tech-review-ai --sync-now",
+      "direct_command": "npx arss diet-add https://www.technologyreview.com/topic/artificial-intelligence/feed --id mit-tech-review-ai --topics \"ai-news,research,society\" --sync-now",
+      "added_via": "context-diet"
+    },
+    {
+      "id": "google-research-blog",
+      "title": "Google Research Blog",
+      "url": "https://research.google/blog/rss/",
+      "kind": "rss",
+      "category": "Frontier labs",
+      "topics": [
+        "research",
+        "ai",
+        "frontier-labs"
+      ],
+      "arss_url": null,
+      "subscription_url": "subscriptions/google-research-blog.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed google-research-blog --sync-now",
+      "direct_command": "npx arss diet-add https://research.google/blog/rss/ --id google-research-blog --topics \"research,ai,frontier-labs\" --sync-now",
+      "added_via": "context-diet"
+    },
+    {
+      "id": "microsoft-research-blog",
+      "title": "Microsoft Research Blog",
+      "url": "https://www.microsoft.com/en-us/research/feed/",
+      "kind": "rss",
+      "category": "Frontier labs",
+      "topics": [
+        "research",
+        "ai",
+        "frontier-labs"
+      ],
+      "arss_url": null,
+      "subscription_url": "subscriptions/microsoft-research-blog.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed microsoft-research-blog --sync-now",
+      "direct_command": "npx arss diet-add https://www.microsoft.com/en-us/research/feed/ --id microsoft-research-blog --topics \"research,ai,frontier-labs\" --sync-now",
+      "added_via": "context-diet"
+    },
+    {
+      "id": "aws-machine-learning-blog",
+      "title": "AWS Machine Learning Blog",
+      "url": "https://aws.amazon.com/blogs/machine-learning/feed/",
+      "kind": "rss",
+      "category": "Infrastructure",
+      "topics": [
+        "ai-infrastructure",
+        "cloud",
+        "ml"
+      ],
+      "arss_url": null,
+      "subscription_url": "subscriptions/aws-machine-learning-blog.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed aws-machine-learning-blog --sync-now",
+      "direct_command": "npx arss diet-add https://aws.amazon.com/blogs/machine-learning/feed/ --id aws-machine-learning-blog --topics \"ai-infrastructure,cloud,ml\" --sync-now",
+      "added_via": "context-diet"
+    },
+    {
+      "id": "stripe-blog",
+      "title": "Stripe Blog",
+      "url": "https://stripe.com/blog/feed.rss",
+      "kind": "rss",
+      "category": "Payments",
+      "topics": [
+        "payments",
+        "internet-business",
+        "x402-adjacent"
+      ],
+      "arss_url": null,
+      "subscription_url": "subscriptions/stripe-blog.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed stripe-blog --sync-now",
+      "direct_command": "npx arss diet-add https://stripe.com/blog/feed.rss --id stripe-blog --topics \"payments,internet-business,x402-adjacent\" --sync-now",
+      "added_via": "context-diet"
+    },
+    {
+      "id": "openai-cookbook-commits",
+      "title": "OpenAI Cookbook commits",
+      "url": "https://github.com/openai/openai-cookbook/commits/main.atom",
+      "kind": "atom",
+      "category": "Frontier labs",
+      "topics": [
+        "openai",
+        "developer-tools",
+        "agents"
+      ],
+      "arss_url": null,
+      "subscription_url": "subscriptions/openai-cookbook-commits.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed openai-cookbook-commits --sync-now",
+      "direct_command": "npx arss diet-add https://github.com/openai/openai-cookbook/commits/main.atom --id openai-cookbook-commits --topics \"openai,developer-tools,agents\" --sync-now",
+      "added_via": "context-diet"
+    },
+    {
+      "id": "anthropic-cookbook-commits",
+      "title": "Anthropic Cookbook commits",
+      "url": "https://github.com/anthropics/anthropic-cookbook/commits/main.atom",
+      "kind": "atom",
+      "category": "Frontier labs",
+      "topics": [
+        "anthropic",
+        "developer-tools",
+        "agents"
+      ],
+      "arss_url": null,
+      "subscription_url": "subscriptions/anthropic-cookbook-commits.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed anthropic-cookbook-commits --sync-now",
+      "direct_command": "npx arss diet-add https://github.com/anthropics/anthropic-cookbook/commits/main.atom --id anthropic-cookbook-commits --topics \"anthropic,developer-tools,agents\" --sync-now",
+      "added_via": "context-diet"
+    },
+    {
+      "id": "vercel-ai-sdk-commits",
+      "title": "Vercel AI SDK commits",
+      "url": "https://github.com/vercel/ai/commits/main.atom",
+      "kind": "atom",
+      "category": "Developer tooling",
+      "topics": [
+        "ai-sdk",
+        "developer-tools",
+        "agents"
+      ],
+      "arss_url": null,
+      "subscription_url": "subscriptions/vercel-ai-sdk-commits.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed vercel-ai-sdk-commits --sync-now",
+      "direct_command": "npx arss diet-add https://github.com/vercel/ai/commits/main.atom --id vercel-ai-sdk-commits --topics \"ai-sdk,developer-tools,agents\" --sync-now",
+      "added_via": "context-diet"
+    },
+    {
+      "id": "openai-agents-python-commits",
+      "title": "OpenAI Agents Python commits",
+      "url": "https://github.com/openai/openai-agents-python/commits/main.atom",
+      "kind": "atom",
+      "category": "Frontier labs",
+      "topics": [
+        "agents",
+        "openai",
+        "developer-tools"
+      ],
+      "arss_url": null,
+      "subscription_url": "subscriptions/openai-agents-python-commits.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed openai-agents-python-commits --sync-now",
+      "direct_command": "npx arss diet-add https://github.com/openai/openai-agents-python/commits/main.atom --id openai-agents-python-commits --topics \"agents,openai,developer-tools\" --sync-now",
+      "added_via": "context-diet"
+    },
+    {
+      "id": "langchain-releases",
+      "title": "LangChain releases",
+      "url": "https://github.com/langchain-ai/langchain/releases.atom",
+      "kind": "atom",
+      "category": "Developer tooling",
+      "topics": [
+        "agents",
+        "langchain",
+        "developer-tools"
+      ],
+      "arss_url": null,
+      "subscription_url": "subscriptions/langchain-releases.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed langchain-releases --sync-now",
+      "direct_command": "npx arss diet-add https://github.com/langchain-ai/langchain/releases.atom --id langchain-releases --topics \"agents,langchain,developer-tools\" --sync-now",
+      "added_via": "context-diet"
+    },
+    {
+      "id": "browser-use-commits",
+      "title": "browser-use commits",
+      "url": "https://github.com/browser-use/browser-use/commits/main.atom",
+      "kind": "atom",
+      "category": "Developer tooling",
+      "topics": [
+        "browser-agents",
+        "automation",
+        "agents"
+      ],
+      "arss_url": null,
+      "subscription_url": "subscriptions/browser-use-commits.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed browser-use-commits --sync-now",
+      "direct_command": "npx arss diet-add https://github.com/browser-use/browser-use/commits/main.atom --id browser-use-commits --topics \"browser-agents,automation,agents\" --sync-now",
+      "added_via": "context-diet"
+    },
+    {
+      "id": "arxiv-cs-cl",
+      "title": "cs.CL updates on arXiv.org",
+      "url": "https://export.arxiv.org/rss/cs.CL",
+      "kind": "rss",
+      "category": "Research",
+      "topics": [
+        "arxiv",
+        "nlp",
+        "llms",
+        "research"
+      ],
+      "arss_url": null,
+      "subscription_url": "subscriptions/arxiv-cs-cl.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed arxiv-cs-cl --sync-now",
+      "direct_command": "npx arss diet-add https://export.arxiv.org/rss/cs.CL --id arxiv-cs-cl --topics \"arxiv,nlp,llms,research\" --sync-now",
+      "added_via": "context-diet"
+    },
+    {
+      "id": "arxiv-cs-lg",
+      "title": "cs.LG updates on arXiv.org",
+      "url": "https://export.arxiv.org/rss/cs.LG",
+      "kind": "rss",
+      "category": "Research",
+      "topics": [
+        "arxiv",
+        "machine-learning",
+        "research"
+      ],
+      "arss_url": null,
+      "subscription_url": "subscriptions/arxiv-cs-lg.subscription.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed arxiv-cs-lg --sync-now",
+      "direct_command": "npx arss diet-add https://export.arxiv.org/rss/cs.LG --id arxiv-cs-lg --topics \"arxiv,machine-learning,research\" --sync-now",
       "added_via": "context-diet"
     }
   ]

@@ -8,23 +8,28 @@ const dietPath = resolve(args.diet || "docs/arss/context-diets/agent-web.json");
 const outDir = resolve(args.outDir || "registry");
 const baseUrl = args.baseUrl || "";
 const diet = JSON.parse(readFileSync(dietPath, "utf8"));
+const registryUrl = baseUrl ? `${baseUrl.replace(/\/$/, "")}/feeds.json` : "registry/feeds.json";
+
 const feeds = (diet.sources || []).map(source => {
     const id = source.id;
-    const subscriptionPath = `subscriptions/${id}.subscription.json`;
     const topics = source.topics || [];
+    const category = source.category || categoryFor({ ...source, topics });
+    const subscriptionPath = `subscriptions/${id}.subscription.json`;
     return {
         id,
         title: source.title,
         url: source.url,
         kind: source.kind || "feed",
+        category,
         topics,
         arss_url: source.kind === "arss" ? source.url : null,
         subscription_url: subscriptionPath,
-        subscribe_command: `npx arss feed-registry-import ${baseUrl ? `${baseUrl.replace(/\/$/, "")}/feeds.json` : "registry/feeds.json"} --feed ${id} --sync-now`,
+        subscribe_command: `npx arss feed-registry-import ${registryUrl} --feed ${id} --sync-now`,
         direct_command: `npx arss diet-add ${source.url} --id ${id}${topics.length ? ` --topics "${topics.join(",")}"` : ""} --sync-now`,
         added_via: "context-diet",
     };
 });
+
 const registry = {
     type: "https://arss.dev/feed-registry/v0.1",
     title: args.title || "ARSS Feed Registry",
@@ -52,14 +57,11 @@ writeText(`${outDir}/README.md`, renderMarkdown(registry));
 console.log(JSON.stringify({ wrote: [`${outDir}/index.html`, `${outDir}/feeds.json`, `${outDir}/README.md`, `${outDir}/subscriptions/*.subscription.json`], feeds: feeds.length }, null, 2));
 
 function renderHtml(registry, baseUrl) {
-    const cards = registry.feeds.map(feed => `<article class="card" data-kind="${escapeHtml(feed.kind)}" data-topics="${escapeHtml(feed.topics.join(" "))}">
-  <div class="kind">${escapeHtml(feed.kind)}</div>
-  <h2>${escapeHtml(feed.title)}</h2>
-  <p>${feed.topics.map(t => `<span>${escapeHtml(t)}</span>`).join(" ")}</p>
-  <a href="${escapeHtml(feed.url)}">${escapeHtml(feed.url)}</a>
-  <pre><code>${escapeHtml(feed.subscribe_command)}</code></pre>
-  <div class="button-row"><button data-copy="${escapeHtml(feed.subscribe_command)}">Copy subscribe command</button><a class="mini" href="${escapeHtml(feed.subscription_url)}">Manifest</a></div>
-</article>`).join("\n");
+    const kinds = [...new Set(registry.feeds.map(f => f.kind))].sort();
+    const categories = [...new Set(registry.feeds.map(f => f.category))].sort();
+    const topicCount = new Set(registry.feeds.flatMap(f => f.topics)).size;
+    const featured = registry.feeds.filter(f => ["native ARSS", "Agent protocols", "Frontier labs", "Developer tooling"].includes(f.category)).slice(0, 6);
+    const cards = registry.feeds.map(feed => renderCard(feed)).join("\n");
     return `<!doctype html>
 <html lang="en">
 <head>
@@ -68,57 +70,135 @@ function renderHtml(registry, baseUrl) {
 <title>${escapeHtml(registry.title)}</title>
 <link rel="alternate" type="application/json" title="ARSS feed registry" href="${baseUrl}/feeds.json">
 <style>
-:root { color-scheme: light; --ink:#111827; --muted:#5b6472; --line:#e5e7eb; --bg:#f8fafc; --card:#ffffff; --accent:#253351; --hot:#f0523d; }
-* { box-sizing: border-box; }
-body { margin:0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color:var(--ink); background:linear-gradient(180deg,#fff,var(--bg)); }
-header { max-width:960px; margin:0 auto; padding:72px 24px 32px; text-align:center; }
-h1 { margin:0; font-size:clamp(42px,8vw,84px); letter-spacing:-0.06em; line-height:.9; }
-.lede { max-width:720px; margin:22px auto 0; color:var(--muted); font-size:20px; line-height:1.5; }
-.actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:28px; }
-.actions a, button { border:1px solid var(--line); background:var(--card); color:var(--accent); padding:10px 14px; border-radius:999px; text-decoration:none; cursor:pointer; font-weight:650; }
-.actions a:first-child { background:var(--accent); color:white; border-color:var(--accent); }
-main { max-width:1120px; margin:0 auto; padding:24px; }
-.toolbar { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px; }
-input, select { padding:12px 14px; border:1px solid var(--line); border-radius:14px; font:inherit; background:white; }
-input { flex:1; min-width:240px; }
-.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:16px; }
-.card { background:rgba(255,255,255,.88); border:1px solid var(--line); border-radius:24px; padding:20px; box-shadow:0 16px 40px rgba(15,23,42,.06); }
-.kind { display:inline-flex; padding:6px 10px; border-radius:999px; background:#eef2ff; color:var(--accent); font-size:12px; font-weight:800; text-transform:uppercase; letter-spacing:.08em; }
-h2 { margin:14px 0 10px; font-size:21px; letter-spacing:-.02em; }
-.card p { min-height:34px; }
-.card span { display:inline-flex; margin:0 6px 6px 0; padding:5px 8px; border-radius:999px; background:#f3f4f6; color:#4b5563; font-size:12px; }
-.card a { display:block; word-break:break-all; color:var(--hot); text-decoration:none; margin:14px 0; }
-pre { white-space:pre-wrap; word-break:break-word; background:#0b1020; color:#e5e7eb; border-radius:16px; padding:12px; font-size:12px; line-height:1.45; min-height:72px; }
-.card button { width:100%; border-radius:14px; }
-.button-row { display:grid; grid-template-columns:1fr auto; gap:10px; align-items:center; }
-.button-row .mini { display:flex; align-items:center; justify-content:center; margin:0; border:1px solid var(--line); padding:10px 12px; border-radius:14px; color:var(--accent); background:white; font-weight:700; }
-footer { max-width:960px; margin:24px auto 64px; padding:0 24px; color:var(--muted); text-align:center; }
-code { background:#eef2ff; padding:2px 5px; border-radius:6px; }
-pre code { background:transparent; padding:0; border-radius:0; }
+:root {
+  color-scheme: light;
+  --ink:#101525; --muted:#647084; --soft:#8d99aa; --line:#e6e8ee; --bg:#f7f4ef; --card:#fffaf4;
+  --navy:#17223d; --navy2:#253351; --orange:#f0523d; --yellow:#ffcf6d; --green:#1f6b5b; --blue:#4b67c8;
+  --shadow:0 24px 70px rgba(23,34,61,.12); --radius:28px;
+}
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { margin:0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color:var(--ink); background:radial-gradient(circle at 10% 0%, rgba(240,82,61,.16), transparent 28%), radial-gradient(circle at 90% 8%, rgba(37,51,81,.18), transparent 32%), linear-gradient(180deg,#fffdf8,var(--bg)); }
+a { color:inherit; }
+header { max-width:1180px; margin:0 auto; padding:44px 22px 24px; }
+.nav { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:48px; }
+.logo { display:flex; align-items:center; gap:10px; font-weight:900; letter-spacing:-.04em; }
+.mark { width:38px; height:38px; border-radius:14px; background:linear-gradient(135deg,var(--navy),var(--orange)); box-shadow:0 12px 30px rgba(240,82,61,.25); }
+.navlinks { display:flex; gap:10px; flex-wrap:wrap; }
+.navlinks a { text-decoration:none; color:var(--muted); font-size:14px; font-weight:750; padding:9px 12px; border:1px solid rgba(230,232,238,.7); border-radius:999px; background:rgba(255,255,255,.6); backdrop-filter: blur(12px); }
+.hero { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr); gap:28px; align-items:stretch; }
+.eyebrow { display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; color:var(--navy2); background:#fff; border:1px solid var(--line); font-weight:850; font-size:13px; box-shadow:0 8px 30px rgba(23,34,61,.06); }
+.dot { width:8px; height:8px; border-radius:50%; background:var(--green); box-shadow:0 0 0 5px rgba(31,107,91,.12); }
+h1 { margin:22px 0 0; max-width:820px; font-size:clamp(48px,9vw,112px); line-height:.86; letter-spacing:-.075em; color:var(--navy); }
+.lede { margin:26px 0 0; max-width:690px; font-size:21px; line-height:1.5; color:var(--muted); }
+.hero-actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:30px; }
+.btn, button, .mini { border:0; background:var(--navy); color:white; padding:12px 16px; border-radius:16px; text-decoration:none; cursor:pointer; font-weight:850; box-shadow:0 12px 28px rgba(23,34,61,.16); }
+.btn.secondary, .mini { background:white; color:var(--navy); border:1px solid var(--line); box-shadow:none; }
+.panel { background:rgba(255,250,244,.86); border:1px solid rgba(230,232,238,.78); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px; backdrop-filter: blur(18px); }
+.terminal { background:#09111f; color:#d6f3ff; border-radius:22px; padding:18px; min-height:100%; display:flex; flex-direction:column; gap:14px; }
+.terminal-top { display:flex; gap:7px; }
+.terminal-top i { width:11px; height:11px; border-radius:50%; background:#ff5f57; } .terminal-top i:nth-child(2){background:#ffbd2e;} .terminal-top i:nth-child(3){background:#28c840;}
+.terminal pre { margin:0; white-space:pre-wrap; font-size:13px; line-height:1.55; color:#dbeafe; }
+.stats { max-width:1180px; margin:18px auto 0; padding:0 22px; display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+.stat { background:rgba(255,255,255,.76); border:1px solid var(--line); border-radius:22px; padding:18px; }
+.stat strong { display:block; font-size:30px; letter-spacing:-.05em; color:var(--navy); } .stat span { color:var(--muted); font-weight:700; font-size:13px; }
+main { max-width:1180px; margin:0 auto; padding:24px 22px 76px; }
+.section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin:34px 0 16px; }
+.section-head h2 { margin:0; font-size:34px; letter-spacing:-.055em; color:var(--navy); }
+.section-head p { margin:0; color:var(--muted); max-width:560px; line-height:1.5; }
+.featured { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:22px; }
+.feature { border-radius:24px; padding:18px; background:linear-gradient(135deg,#17223d,#253351); color:white; min-height:150px; position:relative; overflow:hidden; }
+.feature:after { content:""; position:absolute; inset:auto -40px -60px auto; width:140px; height:140px; background:rgba(240,82,61,.35); border-radius:50%; }
+.feature b { display:block; font-size:12px; color:#ffcf6d; text-transform:uppercase; letter-spacing:.08em; } .feature h3 { margin:12px 0 8px; font-size:22px; letter-spacing:-.04em; } .feature p { margin:0; color:#cbd5e1; font-size:13px; }
+.toolbar { position:sticky; top:10px; z-index:5; display:grid; grid-template-columns:1fr 180px 180px; gap:10px; margin:18px 0; padding:10px; border:1px solid rgba(230,232,238,.8); background:rgba(255,255,255,.82); backdrop-filter: blur(18px); border-radius:24px; box-shadow:0 16px 42px rgba(23,34,61,.08); }
+input, select { width:100%; padding:14px 15px; border:1px solid var(--line); border-radius:16px; font:inherit; background:white; color:var(--ink); }
+.grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.card { background:rgba(255,255,255,.88); border:1px solid var(--line); border-radius:26px; padding:18px; box-shadow:0 16px 42px rgba(23,34,61,.07); display:flex; flex-direction:column; min-height:348px; transition:transform .18s ease, box-shadow .18s ease; }
+.card:hover { transform:translateY(-3px); box-shadow:0 22px 60px rgba(23,34,61,.12); }
+.card-top { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.kind { display:inline-flex; padding:7px 10px; border-radius:999px; background:#eef2ff; color:var(--navy2); font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.08em; }
+.category { color:var(--soft); font-size:12px; font-weight:850; }
+.card h3 { margin:15px 0 8px; font-size:22px; line-height:1.05; letter-spacing:-.045em; color:var(--navy); }
+.url { display:block; min-height:38px; word-break:break-all; color:var(--orange); text-decoration:none; font-size:13px; line-height:1.4; }
+.tags { margin:14px 0; min-height:58px; } .tags span { display:inline-flex; margin:0 6px 6px 0; padding:5px 8px; border-radius:999px; background:#f2f4f7; color:#536174; font-size:12px; font-weight:700; }
+.card pre { margin:auto 0 12px; white-space:pre-wrap; word-break:break-word; background:#0b1020; color:#e5e7eb; border-radius:16px; padding:12px; font-size:12px; line-height:1.45; }
+.card code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+.button-row { display:grid; grid-template-columns:1fr auto auto; gap:9px; align-items:center; }
+.button-row button { border-radius:14px; padding:11px 12px; }
+.button-row .mini { display:flex; align-items:center; justify-content:center; margin:0; padding:11px 12px; border-radius:14px; font-size:13px; }
+.how { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:18px; }
+.step { background:#fff; border:1px solid var(--line); border-radius:24px; padding:18px; } .step b { color:var(--orange); } .step h3 { margin:12px 0 6px; color:var(--navy); letter-spacing:-.035em; } .step p { margin:0; color:var(--muted); line-height:1.45; }
+footer { max-width:1180px; margin:0 auto 58px; padding:0 22px; color:var(--muted); text-align:center; }
+@media (max-width: 900px) { .hero,.featured,.grid,.how { grid-template-columns:1fr; } .stats { grid-template-columns:repeat(2,1fr); } .toolbar { grid-template-columns:1fr; position:static; } }
 </style>
 </head>
 <body>
 <header>
-  <h1>ARSS Feed Registry</h1>
-  <p class="lede">A small directory of feeds agents can subscribe to: RSS, Atom, JSON Feed, GitHub, YouTube, podcasts, docs and native ARSS. Humans copy commands. Agents read <code>feeds.json</code> and subscription manifests.</p>
-  <div class="actions"><a href="feeds.json">Machine JSON</a><a href="README.md">Registry README</a></div>
+  <nav class="nav"><div class="logo"><div class="mark"></div><span>ARSS Registry</span></div><div class="navlinks"><a href="feeds.json">feeds.json</a><a href="README.md">README</a><a href="#feeds">Browse feeds</a></div></nav>
+  <section class="hero">
+    <div>
+      <span class="eyebrow"><span class="dot"></span> Feed discovery for agents</span>
+      <h1>Feeds agents can subscribe to.</h1>
+      <p class="lede">A curated registry of agent-relevant feeds: frontier labs, protocol repos, changelogs, research, podcasts, newsletters and developer signals. Humans browse it. Agents ingest the JSON.</p>
+      <div class="hero-actions"><a class="btn" href="#feeds">Browse ${registry.feeds.length} feeds</a><a class="btn secondary" href="feeds.json">Open machine registry</a></div>
+    </div>
+    <aside class="panel"><div class="terminal"><div class="terminal-top"><i></i><i></i><i></i></div><pre>$ npx arss feed-registry-list ${escapeHtml(registryUrl)}
+${registry.feeds.length} feeds discovered
+
+$ npx arss feed-registry-import ${escapeHtml(registryUrl)} --feed simon-willison --sync-now
+subscribed → heartbeat → memory/inbox</pre></div></aside>
+  </section>
 </header>
+<section class="stats"><div class="stat"><strong>${registry.feeds.length}</strong><span>feeds</span></div><div class="stat"><strong>${categories.length}</strong><span>categories</span></div><div class="stat"><strong>${kinds.length}</strong><span>feed kinds</span></div><div class="stat"><strong>${topicCount}</strong><span>topics</span></div></section>
 <main>
-  <div class="toolbar"><input id="q" placeholder="Search feeds, topics, URLs…"><select id="kind"><option value="">All kinds</option>${[...new Set(registry.feeds.map(f=>f.kind))].sort().map(k=>`<option>${escapeHtml(k)}</option>`).join("")}</select></div>
+  <div class="section-head"><div><h2>Featured signals</h2><p>High-leverage feeds for agents that care about protocols, tools, AI systems and the publisher-agent web.</p></div></div>
+  <section class="featured">${featured.map(f => `<article class="feature"><b>${escapeHtml(f.category)}</b><h3>${escapeHtml(f.title)}</h3><p>${escapeHtml(f.topics.slice(0,4).join(" · "))}</p></article>`).join("")}</section>
+
+  <div class="section-head" id="feeds"><div><h2>Browse registry</h2><p>Copy a subscribe command, open the original feed, or hand an agent the machine-readable registry.</p></div></div>
+  <div class="toolbar"><input id="q" placeholder="Search feeds, topics, URLs…"><select id="category"><option value="">All categories</option>${categories.map(k=>`<option>${escapeHtml(k)}</option>`).join("")}</select><select id="kind"><option value="">All kinds</option>${kinds.map(k=>`<option>${escapeHtml(k)}</option>`).join("")}</select></div>
   <section class="grid" id="grid">${cards}</section>
+
+  <div class="section-head"><div><h2>How agents use it</h2><p>The registry is only useful if it ends in subscription. Discovery is the start, not the product.</p></div></div>
+  <section class="how"><article class="step"><b>01</b><h3>Discover</h3><p>Human or agent browses known feeds by topic, kind or category.</p></article><article class="step"><b>02</b><h3>Subscribe</h3><p>Copy the command or consume a subscription manifest.</p></article><article class="step"><b>03</b><h3>Heartbeat</h3><p>Background sync keeps memory and inbox warm without chat spam.</p></article><article class="step"><b>04</b><h3>Answer</h3><p>The agent cites source URLs, respects rights and fetches live only on miss.</p></article></section>
 </main>
-<footer>ARSS is the subscription layer for agent context. Search discovers; ARSS subscribes.</footer>
+<footer>Search discovers. ARSS subscribes. Memory remembers. MCP acts. x402 pays.</footer>
 <script>
-const q=document.querySelector('#q'), kind=document.querySelector('#kind'), cards=[...document.querySelectorAll('.card')];
-function apply(){const needle=q.value.toLowerCase(), k=kind.value; for(const c of cards){const text=c.innerText.toLowerCase(); c.style.display=(!k||c.dataset.kind===k)&&(!needle||text.includes(needle))?'':'none';}}
-q.addEventListener('input',apply); kind.addEventListener('change',apply);
+const q=document.querySelector('#q'), kind=document.querySelector('#kind'), category=document.querySelector('#category'), cards=[...document.querySelectorAll('.card')];
+function apply(){const needle=q.value.toLowerCase(), k=kind.value, cat=category.value; for(const c of cards){const text=c.innerText.toLowerCase(); c.style.display=(!k||c.dataset.kind===k)&&(!cat||c.dataset.category===cat)&&(!needle||text.includes(needle))?'':'none';}}
+q.addEventListener('input',apply); kind.addEventListener('change',apply); category.addEventListener('change',apply);
 document.addEventListener('click', async e=>{const b=e.target.closest('button[data-copy]'); if(!b) return; const old=b.textContent; await navigator.clipboard.writeText(b.dataset.copy); b.textContent='Copied'; setTimeout(()=>b.textContent=old,1200);});
 </script>
 </body>
 </html>`;
 }
+
+function renderCard(feed) {
+    return `<article class="card" data-kind="${escapeHtml(feed.kind)}" data-category="${escapeHtml(feed.category)}" data-topics="${escapeHtml(feed.topics.join(" "))}">
+  <div class="card-top"><span class="kind">${escapeHtml(feed.kind)}</span><span class="category">${escapeHtml(feed.category)}</span></div>
+  <h3>${escapeHtml(feed.title)}</h3>
+  <a class="url" href="${escapeHtml(feed.url)}">${escapeHtml(feed.url)}</a>
+  <div class="tags">${feed.topics.slice(0, 7).map(t => `<span>${escapeHtml(t)}</span>`).join(" ")}</div>
+  <pre><code>${escapeHtml(feed.subscribe_command)}</code></pre>
+  <div class="button-row"><button data-copy="${escapeHtml(feed.subscribe_command)}">Copy subscribe</button><a class="mini" href="${escapeHtml(feed.url)}">Feed</a><a class="mini" href="${escapeHtml(feed.subscription_url)}">Manifest</a></div>
+</article>`;
+}
+
 function renderMarkdown(registry) {
-    return `# ${registry.title}\n\n${registry.description}\n\nMachine-readable registry: \`feeds.json\`. Per-feed manifests live in \`subscriptions/*.subscription.json\`.\n\n| Feed | Kind | URL | Topics | Subscribe |\n| --- | --- | --- | --- | --- |\n${registry.feeds.map(f => `| ${f.title.replace(/\|/g, "\\|")} | ${f.kind} | ${f.url} | ${f.topics.join(", ")} | \`${f.subscribe_command.replace(/`/g, "")}\` |`).join("\n")}\n`;
+    return `# ${registry.title}\n\n${registry.description}\n\nMachine-readable registry: \`feeds.json\`. Per-feed manifests live in \`subscriptions/*.subscription.json\`.\n\n| Feed | Category | Kind | URL | Topics | Subscribe |\n| --- | --- | --- | --- | --- | --- |\n${registry.feeds.map(f => `| ${f.title.replace(/\|/g, "\\|")} | ${f.category} | ${f.kind} | ${f.url} | ${f.topics.join(", ")} | \`${f.subscribe_command.replace(/`/g, "")}\` |`).join("\n")}\n`;
+}
+
+function categoryFor(feed) {
+    const topics = (feed.topics || []).map(t => t.toLowerCase());
+    const hay = `${feed.kind || ""} ${topics.join(" ")} ${feed.title || ""}`.toLowerCase();
+    if (/arss|mcp|erc-8004|websub|syndication|json feed|standards|ethereum|llms\.txt|openclaw/.test(hay)) return "Agent protocols";
+    if (/infrastructure|cloud|compute|publisher infrastructure|aws|cloudflare/.test(hay)) return "Infrastructure";
+    if (/x402|payments|stripe|base|coinbase|internet-business/.test(hay)) return "Payments";
+    if (/frontier-labs|openai|anthropic|deepmind|google research|microsoft research/.test(hay)) return "Frontier labs";
+    if (/arxiv|research|papers|nlp|machine-learning|lilian|gradient/.test(hay)) return "Research";
+    if (/youtube|podcast|newsletter|substack|fireship|lex|platformer|interconnects/.test(hay)) return "Media";
+    if (/github|commits|releases|changelog|developer-tools|developer tooling|ai-sdk|copilot|browser-agents|langchain|hugging face/.test(hay)) return "Developer tooling";
+    if (/hacker-news|techcrunch|industry|startups|society|policy|daring fireball/.test(hay)) return "Industry";
+    return "Feeds";
 }
 function escapeHtml(value) { return String(value ?? "").replace(/[&<>"]/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;" }[c])); }
 function writeJson(file, value) { writeText(file, `${JSON.stringify(value, null, 2)}\n`); }

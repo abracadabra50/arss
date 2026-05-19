@@ -1,6 +1,6 @@
 {
   "type": "https://arss.dev/subscription/v0.2",
-  "feed_url": "https://simonwillison.net/atom/everything/",
+  "feed_url": "https://lilianweng.github.io/index.xml",
   "agent": {
     "id": "did:web:local.agent",
     "name": "Local Agent"
@@ -21,6 +21,6 @@
     "poll": "PT1H",
     "push": "none"
   },
-  "created_at": "2026-05-19T14:48:17.186Z",
-  "updated_at": "2026-05-19T14:48:17.186Z"
+  "created_at": "2026-05-19T14:48:17.195Z",
+  "updated_at": "2026-05-19T14:48:17.195Z"
 }

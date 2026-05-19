@@ -515,6 +515,7 @@ docs/arss/spec-v0.2.md
 docs/arss/PROTOCOL.md
 docs/arss/SUBSCRIPTIONS.md
 docs/arss/REGISTRY.md
+docs/arss/ROADMAP.md
 docs/arss/heartbeat-integration.md
 docs/arss/subscription-delivery.md
 ```

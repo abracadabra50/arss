@@ -15,6 +15,8 @@
 <p>
   <a href="#what-it-is">What it is</a> ·
   <a href="#why-it-has-to-exist">Why it matters</a> ·
+  <a href="#how-it-compares">How it compares</a> ·
+  <a href="#evals">Evals</a> ·
   <a href="#quick-start">Quick start</a> ·
   <a href="#agent-integrations">Agent integrations</a> ·
   <a href="#content-types">Content types</a>
@@ -78,6 +80,103 @@ Agents need to know what changed without being asked. Publishers need a way to e
 
 ARSS is the boring pipe in the middle. Boring pipes are how ecosystems actually get built.
 
+## How it compares
+
+ARSS is not trying to replace search, MCP, RAG or platform APIs. That would be the sort of grand unified protocol nonsense that makes engineers quietly leave the meeting.
+
+It fills the missing layer between them.
+
+```text
+MCP     = query plane
+RAG     = memory/search plane
+ARSS    = subscription + delivery plane
+x402    = payment plane
+```
+
+| Approach | Good at | Weakness |
+| --- | --- | --- |
+| Web search | Open-world discovery | Repeated token cost, unstable results, index lag, weak rights model |
+| MCP | Calling known tools on demand | Reactive; no background awareness or subscription semantics |
+| Crawling + vector DB | Bootstrapping known content | Heavy, stale between crawls, legally fuzzy without publisher metadata |
+| Platform APIs | Structured realtime data | Bespoke integration per platform/source |
+| Browser automation | Messy last-mile web tasks | Slow, brittle and expensive |
+| RSS readers | Human subscription | No rights, payments, chunking or agent delivery |
+| ARSS | Fresh context from known sources with rights, payments and delivery | Does not solve unknown-source discovery; use search for that |
+
+The narrow claim is the strong claim:
+
+```text
+For sources an agent cares about repeatedly, ARSS should be cheaper, fresher and more controllable than live search.
+```
+
+A human does not Google “did this source publish today?” every hour. They subscribe. Agents need the same primitive, with more machinery:
+
+```text
+Can I cache this?
+Can I quote it?
+Do I need attribution?
+Is full text paid?
+Can I afford it?
+Where should the update land?
+Should this wake the user?
+```
+
+RSS never answered those questions because humans handled judgement. Agents need the judgement encoded.
+
+## Evals
+
+The benchmark that matters is not just “can the model answer a question?” It is whether the whole context supply chain works.
+
+ARSS evals track:
+
+- **time-to-awareness** — how long after publication the agent knows;
+- **recall on subscribed domains** — did the relevant item land in memory;
+- **open-world discovery** — can the method find sources not already subscribed;
+- **token cost per answer** — how much context gets burned at answer time;
+- **latency** — cached context versus live fetch/search;
+- **noise rate** — how much feed vomit gets injected;
+- **citation accuracy** — whether answers point back to the right source;
+- **rights compliance** — whether cache/quote/train restrictions are visible;
+- **payment policy correctness** — whether paid resources are fetched only when budget/relevance allow.
+
+Run the reference eval:
+
+```bash
+npm run eval
+```
+
+Markdown output:
+
+```bash
+npm run eval -- --format markdown
+```
+
+The current deterministic reference eval compares:
+
+```text
+model only
+live web search
+MCP on demand
+crawler + vector RAG
+platform APIs
+ARSS heartbeat
+ARSS + transcripts
+```
+
+It is deliberately not a live search-engine bake-off. It is a reference harness for the subscription-delivery shape: what happens when the agent already knows the sources it cares about, and needs fresh, rights-aware context cheaply.
+
+Example readout from the built-in fixture:
+
+| Method | Recall on subscribed domains | Open-world discovery | Freshness lag | Tokens / answer | Noise |
+| --- | ---: | :---: | ---: | ---: | ---: |
+| Live web search | low/variable | yes | index-dependent | high | high |
+| MCP on demand | medium | no | fresh when asked | medium | low |
+| Crawler + vector RAG | medium/high | no | crawl-dependent | medium | medium |
+| Platform APIs | high where integrated | no | excellent | low | low |
+| ARSS + transcripts | high on subscribed sources | no | poll-dependent | low | low |
+
+That is the intended shape: search discovers, ARSS subscribes, RAG remembers, MCP acts, x402 pays.
+
 ## What is in this repo
 
 ```text
@@ -87,6 +186,7 @@ scripts/arss-heartbeat.js         heartbeat adapter for agent runtimes
 scripts/arss-daemon.js            standalone background poller
 scripts/arss-mcp-server.js        MCP tools for explicit search/fetch/pay/cite
 scripts/arss-demo-server.js       demo publisher with optional x402 resources
+scripts/arss-eval.js              reference eval harness for freshness/tokens/recall/noise
 docs/arss/                        protocol notes, schemas, examples and integration guides
 examples/arss-integrations/       Hermes/OpenClaw templates
 skills/arss-context-subscriptions Pal/agentskills workflow for managing subscribed context

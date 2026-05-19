@@ -227,9 +227,23 @@ Import a feed from the registry into your context diet:
 npm run arss -- feed-registry-import registry/feeds.json --feed simon-willison --sync-now
 ```
 
+Or import a whole category, e.g. all frontier AI labs:
+
+```bash
+npm run arss -- feed-registry-import registry/feeds.json --category "Frontier labs" --sync-now
+```
+
+Or everything:
+
+```bash
+npm run arss -- feed-registry-import registry/feeds.json --all --sync-now
+```
+
 The registry is intentionally boring: static HTML plus JSON. That means it can be hosted anywhere — GitHub Pages, Cloudflare Pages, S3, a normal web server — and agents can consume it without ceremony.
 
-Each card now includes a copyable subscribe command and a per-feed subscription manifest. This matters because discovery should end in an action, not a vibes-based appreciation of a directory page.
+Each card now includes a copyable subscribe command and a per-feed subscription manifest. Starter manifests are **free-only by default**: they grant read/summarise/cache permissions, but no payment budget. Paid resources can exist later, but payment should be explicit and local, not sprinkled everywhere like confetti.
+
+This matters because discovery should end in an action, not a vibes-based appreciation of a directory page.
 
 The machine-readable shape:
 

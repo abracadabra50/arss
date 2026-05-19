@@ -1,0 +1,18 @@
+{
+  "type": "https://arss.dev/feed-category/v0.1",
+  "id": "agent-protocols",
+  "title": "Agent protocols",
+  "description": "MCP, ARSS-adjacent standards, WebSub, JSON Feed, Ethereum agent identity and protocol signals.",
+  "feed_ids": [
+    "simon-willison",
+    "mcp-spec-commits",
+    "erc8004-contracts",
+    "json-feed",
+    "w3c-websub",
+    "openclaw",
+    "release-notes-from-servers",
+    "ethereum-magicians"
+  ],
+  "path": "categories/agent-protocols.json",
+  "subscribe_command": "npx arss feed-registry-import registry/feeds.json --category \"Agent protocols\" --sync-now"
+}

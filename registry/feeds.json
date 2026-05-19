@@ -2,12 +2,8 @@
   "type": "https://arss.dev/feed-registry/v0.1",
   "title": "ARSS Feed Registry",
   "description": "A starter directory of agent-readable feeds and feed-like sources.",
-  "generated_at": "2026-05-19T14:48:17.184Z",
-  "default_budget": {
-    "max_per_item_usdc": "0.005",
-    "max_per_day_usdc": "0.10",
-    "max_per_month_usdc": "2.00"
-  },
+  "generated_at": "2026-05-19T14:56:29.259Z",
+  "payment_posture": "free-first: listed feeds are free/public unless a publisher explicitly declares paid ARSS resources",
   "feeds": [
     {
       "id": "simon-willison",
@@ -704,6 +700,128 @@
       "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed arxiv-cs-lg --sync-now",
       "direct_command": "npx arss diet-add https://export.arxiv.org/rss/cs.LG --id arxiv-cs-lg --topics \"arxiv,machine-learning,research\" --sync-now",
       "added_via": "context-diet"
+    }
+  ],
+  "categories": [
+    {
+      "type": "https://arss.dev/feed-category/v0.1",
+      "id": "agent-protocols",
+      "title": "Agent protocols",
+      "description": "MCP, ARSS-adjacent standards, WebSub, JSON Feed, Ethereum agent identity and protocol signals.",
+      "feed_ids": [
+        "simon-willison",
+        "mcp-spec-commits",
+        "erc8004-contracts",
+        "json-feed",
+        "w3c-websub",
+        "openclaw",
+        "release-notes-from-servers",
+        "ethereum-magicians"
+      ],
+      "path": "categories/agent-protocols.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --category \"Agent protocols\" --sync-now"
+    },
+    {
+      "type": "https://arss.dev/feed-category/v0.1",
+      "id": "developer-tooling",
+      "title": "Developer tooling",
+      "description": "Changelogs and repositories that affect agent builders and AI engineers.",
+      "feed_ids": [
+        "github-changelog",
+        "hugging-face-blog",
+        "langchain-changelog",
+        "github-copilot-changelog",
+        "vercel-ai-sdk-commits",
+        "langchain-releases",
+        "browser-use-commits"
+      ],
+      "path": "categories/developer-tooling.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --category \"Developer tooling\" --sync-now"
+    },
+    {
+      "type": "https://arss.dev/feed-category/v0.1",
+      "id": "frontier-labs",
+      "title": "Frontier labs",
+      "description": "Official lab and cookbook feeds from OpenAI, Anthropic, Google DeepMind, Google Research and Microsoft Research.",
+      "feed_ids": [
+        "openai-news",
+        "google-deepmind-blog",
+        "google-research-blog",
+        "microsoft-research-blog",
+        "openai-cookbook-commits",
+        "anthropic-cookbook-commits",
+        "openai-agents-python-commits"
+      ],
+      "path": "categories/frontier-labs.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --category \"Frontier labs\" --sync-now"
+    },
+    {
+      "type": "https://arss.dev/feed-category/v0.1",
+      "id": "industry",
+      "title": "Industry",
+      "description": "Market, startup, policy and industry signals. Higher noise, useful for context.",
+      "feed_ids": [
+        "daring-fireball",
+        "hacker-news-front-page",
+        "techcrunch-ai"
+      ],
+      "path": "categories/industry.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --category Industry --sync-now"
+    },
+    {
+      "type": "https://arss.dev/feed-category/v0.1",
+      "id": "infrastructure",
+      "title": "Infrastructure",
+      "description": "Cloud, compute and publisher infrastructure feeds relevant to agent systems.",
+      "feed_ids": [
+        "cloudflare-blog",
+        "aws-machine-learning-blog"
+      ],
+      "path": "categories/infrastructure.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --category Infrastructure --sync-now"
+    },
+    {
+      "type": "https://arss.dev/feed-category/v0.1",
+      "id": "media",
+      "title": "Media",
+      "description": "Podcasts, newsletters and video feeds with useful agent/web context.",
+      "feed_ids": [
+        "platformer",
+        "fireship",
+        "latent-space"
+      ],
+      "path": "categories/media.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --category Media --sync-now"
+    },
+    {
+      "type": "https://arss.dev/feed-category/v0.1",
+      "id": "payments",
+      "title": "Payments",
+      "description": "Payment rails, x402-adjacent sources and internet money plumbing.",
+      "feed_ids": [
+        "x402-commits",
+        "stripe-blog"
+      ],
+      "path": "categories/payments.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --category Payments --sync-now"
+    },
+    {
+      "type": "https://arss.dev/feed-category/v0.1",
+      "id": "research",
+      "title": "Research",
+      "description": "arXiv, research blogs and long-form technical essays.",
+      "feed_ids": [
+        "lex-fridman-podcast",
+        "cs-ai-updates-on-arxiv-org",
+        "interconnects",
+        "the-gradient",
+        "lilian-weng",
+        "mit-tech-review-ai",
+        "arxiv-cs-cl",
+        "arxiv-cs-lg"
+      ],
+      "path": "categories/research.json",
+      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --category Research --sync-now"
     }
   ]
 }

@@ -1,0 +1,12 @@
+{
+  "type": "https://arss.dev/feed-category/v0.1",
+  "id": "payments",
+  "title": "Payments",
+  "description": "Payment rails, x402-adjacent sources and internet money plumbing.",
+  "feed_ids": [
+    "x402-commits",
+    "stripe-blog"
+  ],
+  "path": "categories/payments.json",
+  "subscribe_command": "npx arss feed-registry-import registry/feeds.json --category Payments --sync-now"
+}

@@ -2,7 +2,7 @@
 
 A starter directory of agent-readable feeds and feed-like sources.
 
-Machine-readable registry: `feeds.json`. Per-feed manifests live in `subscriptions/*.subscription.json`.
+Machine-readable registry: `feeds.json`. Per-feed manifests live in `subscriptions/*.subscription.json`. Category bundles live in `categories/*.json`. Starter manifests are free-only by default; they do not grant a payment budget.
 
 | Feed | Category | Kind | URL | Topics | Subscribe |
 | --- | --- | --- | --- | --- | --- |

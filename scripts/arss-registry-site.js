@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import { mkdirSync, readFileSync, writeFileSync } from "fs";
 import { dirname, resolve } from "path";
-import { createSubscriptionManifest } from "../src/arss/arss.js";
 
 const args = parseArgs(process.argv.slice(2));
 const dietPath = resolve(args.diet || "docs/arss/context-diets/agent-web.json");
@@ -30,35 +29,27 @@ const feeds = (diet.sources || []).map(source => {
     };
 });
 
+const categories = buildCategories(feeds, registryUrl);
 const registry = {
     type: "https://arss.dev/feed-registry/v0.1",
     title: args.title || "ARSS Feed Registry",
     description: args.description || "A starter directory of agent-readable feeds and feed-like sources.",
     generated_at: new Date().toISOString(),
-    default_budget: {
-        max_per_item_usdc: args.maxItem || "0.005",
-        max_per_day_usdc: args.maxDay || "0.10",
-        max_per_month_usdc: args.maxMonth || "2.00",
-    },
+    payment_posture: "free-first: listed feeds are free/public unless a publisher explicitly declares paid ARSS resources",
     feeds,
+    categories,
 };
 
 writeJson(`${outDir}/feeds.json`, registry);
-for (const feed of feeds) {
-    writeJson(`${outDir}/${feed.subscription_url}`, createSubscriptionManifest({
-        feed_url: feed.url,
-        agent: { id: "did:web:local.agent", name: "Local Agent" },
-        budget: registry.default_budget,
-        sync: { poll: "PT1H", push: "none" },
-    }));
-}
+for (const feed of feeds) writeJson(`${outDir}/${feed.subscription_url}`, createFreeSubscriptionManifest(feed));
+for (const category of categories) writeJson(`${outDir}/${category.path}`, category);
 writeText(`${outDir}/index.html`, renderHtml(registry, baseUrl));
 writeText(`${outDir}/README.md`, renderMarkdown(registry));
-console.log(JSON.stringify({ wrote: [`${outDir}/index.html`, `${outDir}/feeds.json`, `${outDir}/README.md`, `${outDir}/subscriptions/*.subscription.json`], feeds: feeds.length }, null, 2));
+console.log(JSON.stringify({ wrote: [`${outDir}/index.html`, `${outDir}/feeds.json`, `${outDir}/README.md`, `${outDir}/subscriptions/*.subscription.json`, `${outDir}/categories/*.json`], feeds: feeds.length, categories: categories.length }, null, 2));
 
 function renderHtml(registry, baseUrl) {
     const kinds = [...new Set(registry.feeds.map(f => f.kind))].sort();
-    const categories = [...new Set(registry.feeds.map(f => f.category))].sort();
+    const categoryNames = [...new Set(registry.feeds.map(f => f.category))].sort();
     const topicCount = new Set(registry.feeds.flatMap(f => f.topics)).size;
     const featured = registry.feeds.filter(f => ["native ARSS", "Agent protocols", "Frontier labs", "Developer tooling"].includes(f.category)).slice(0, 6);
     const cards = registry.feeds.map(feed => renderCard(feed)).join("\n");
@@ -107,6 +98,9 @@ main { max-width:1180px; margin:0 auto; padding:24px 22px 76px; }
 .section-head h2 { margin:0; font-size:34px; letter-spacing:-.055em; color:var(--navy); }
 .section-head p { margin:0; color:var(--muted); max-width:560px; line-height:1.5; }
 .featured { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:22px; }
+.bundles { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:0 0 24px; }
+.bundle { background:rgba(255,255,255,.9); border:1px solid var(--line); border-radius:24px; padding:18px; box-shadow:0 16px 42px rgba(23,34,61,.07); }
+.bundle b { color:var(--orange); font-size:12px; text-transform:uppercase; letter-spacing:.08em; } .bundle h3 { margin:10px 0 6px; color:var(--navy); letter-spacing:-.04em; } .bundle p { color:var(--muted); min-height:42px; line-height:1.45; } .bundle pre { white-space:pre-wrap; word-break:break-word; background:#0b1020; color:#e5e7eb; border-radius:16px; padding:12px; font-size:12px; line-height:1.45; }
 .feature { border-radius:24px; padding:18px; background:linear-gradient(135deg,#17223d,#253351); color:white; min-height:150px; position:relative; overflow:hidden; }
 .feature:after { content:""; position:absolute; inset:auto -40px -60px auto; width:140px; height:140px; background:rgba(240,82,61,.35); border-radius:50%; }
 .feature b { display:block; font-size:12px; color:#ffcf6d; text-transform:uppercase; letter-spacing:.08em; } .feature h3 { margin:12px 0 8px; font-size:22px; letter-spacing:-.04em; } .feature p { margin:0; color:#cbd5e1; font-size:13px; }
@@ -129,7 +123,7 @@ input, select { width:100%; padding:14px 15px; border:1px solid var(--line); bor
 .how { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:18px; }
 .step { background:#fff; border:1px solid var(--line); border-radius:24px; padding:18px; } .step b { color:var(--orange); } .step h3 { margin:12px 0 6px; color:var(--navy); letter-spacing:-.035em; } .step p { margin:0; color:var(--muted); line-height:1.45; }
 footer { max-width:1180px; margin:0 auto 58px; padding:0 22px; color:var(--muted); text-align:center; }
-@media (max-width: 900px) { .hero,.featured,.grid,.how { grid-template-columns:1fr; } .stats { grid-template-columns:repeat(2,1fr); } .toolbar { grid-template-columns:1fr; position:static; } }
+@media (max-width: 900px) { .hero,.featured,.bundles,.grid,.how { grid-template-columns:1fr; } .stats { grid-template-columns:repeat(2,1fr); } .toolbar { grid-template-columns:1fr; position:static; } }
 </style>
 </head>
 <body>
@@ -149,13 +143,16 @@ $ npx arss feed-registry-import ${escapeHtml(registryUrl)} --feed simon-willison
 subscribed → heartbeat → memory/inbox</pre></div></aside>
   </section>
 </header>
-<section class="stats"><div class="stat"><strong>${registry.feeds.length}</strong><span>feeds</span></div><div class="stat"><strong>${categories.length}</strong><span>categories</span></div><div class="stat"><strong>${kinds.length}</strong><span>feed kinds</span></div><div class="stat"><strong>${topicCount}</strong><span>topics</span></div></section>
+<section class="stats"><div class="stat"><strong>${registry.feeds.length}</strong><span>feeds</span></div><div class="stat"><strong>${categoryNames.length}</strong><span>categories</span></div><div class="stat"><strong>${kinds.length}</strong><span>feed kinds</span></div><div class="stat"><strong>${topicCount}</strong><span>topics</span></div></section>
 <main>
   <div class="section-head"><div><h2>Featured signals</h2><p>High-leverage feeds for agents that care about protocols, tools, AI systems and the publisher-agent web.</p></div></div>
   <section class="featured">${featured.map(f => `<article class="feature"><b>${escapeHtml(f.category)}</b><h3>${escapeHtml(f.title)}</h3><p>${escapeHtml(f.topics.slice(0,4).join(" · "))}</p></article>`).join("")}</section>
 
+  <div class="section-head" id="bundles"><div><h2>Starter bundles</h2><p>Subscribe an agent to a whole lane at once. This is the useful bit: “all frontier labs”, “all agent protocols”, “all research”.</p></div></div>
+  <section class="bundles">${registry.categories.map(c => `<article class="bundle"><b>${escapeHtml(c.feed_ids.length)} feeds</b><h3>${escapeHtml(c.title)}</h3><p>${escapeHtml(c.description)}</p><pre><code>${escapeHtml(c.subscribe_command)}</code></pre><div class="button-row"><button data-copy="${escapeHtml(c.subscribe_command)}">Copy bundle command</button><a class="mini" href="${escapeHtml(c.path)}">JSON</a></div></article>`).join("")}</section>
+
   <div class="section-head" id="feeds"><div><h2>Browse registry</h2><p>Copy a subscribe command, open the original feed, or hand an agent the machine-readable registry.</p></div></div>
-  <div class="toolbar"><input id="q" placeholder="Search feeds, topics, URLs…"><select id="category"><option value="">All categories</option>${categories.map(k=>`<option>${escapeHtml(k)}</option>`).join("")}</select><select id="kind"><option value="">All kinds</option>${kinds.map(k=>`<option>${escapeHtml(k)}</option>`).join("")}</select></div>
+  <div class="toolbar"><input id="q" placeholder="Search feeds, topics, URLs…"><select id="category"><option value="">All categories</option>${categoryNames.map(k=>`<option>${escapeHtml(k)}</option>`).join("")}</select><select id="kind"><option value="">All kinds</option>${kinds.map(k=>`<option>${escapeHtml(k)}</option>`).join("")}</select></div>
   <section class="grid" id="grid">${cards}</section>
 
   <div class="section-head"><div><h2>How agents use it</h2><p>The registry is only useful if it ends in subscription. Discovery is the start, not the product.</p></div></div>
@@ -184,7 +181,55 @@ function renderCard(feed) {
 }
 
 function renderMarkdown(registry) {
-    return `# ${registry.title}\n\n${registry.description}\n\nMachine-readable registry: \`feeds.json\`. Per-feed manifests live in \`subscriptions/*.subscription.json\`.\n\n| Feed | Category | Kind | URL | Topics | Subscribe |\n| --- | --- | --- | --- | --- | --- |\n${registry.feeds.map(f => `| ${f.title.replace(/\|/g, "\\|")} | ${f.category} | ${f.kind} | ${f.url} | ${f.topics.join(", ")} | \`${f.subscribe_command.replace(/`/g, "")}\` |`).join("\n")}\n`;
+    return `# ${registry.title}\n\n${registry.description}\n\nMachine-readable registry: \`feeds.json\`. Per-feed manifests live in \`subscriptions/*.subscription.json\`. Category bundles live in \`categories/*.json\`. Starter manifests are free-only by default; they do not grant a payment budget.\n\n| Feed | Category | Kind | URL | Topics | Subscribe |\n| --- | --- | --- | --- | --- | --- |\n${registry.feeds.map(f => `| ${f.title.replace(/\|/g, "\\|")} | ${f.category} | ${f.kind} | ${f.url} | ${f.topics.join(", ")} | \`${f.subscribe_command.replace(/`/g, "")}\` |`).join("\n")}\n`;
+}
+
+function createFreeSubscriptionManifest(feed) {
+    const now = new Date().toISOString();
+    return {
+        type: "https://arss.dev/subscription/v0.2",
+        feed_url: feed.url,
+        agent: { id: "did:web:local.agent", name: "Local Agent" },
+        permissions: { summarise: true, quote: "limited", embed: true, store_user_memory: true, train_model: false },
+        payment_policy: { mode: "free_only", note: "No payment budget is granted by this starter manifest. Paid resources require an explicit local budget." },
+        sync: { poll: "PT1H", push: "none" },
+        created_at: now,
+        updated_at: now,
+    };
+}
+
+function buildCategories(feeds, registryUrl) {
+    const descriptions = {
+        "Agent protocols": "MCP, ARSS-adjacent standards, WebSub, JSON Feed, Ethereum agent identity and protocol signals.",
+        "Frontier labs": "Official lab and cookbook feeds from OpenAI, Anthropic, Google DeepMind, Google Research and Microsoft Research.",
+        "Research": "arXiv, research blogs and long-form technical essays.",
+        "Developer tooling": "Changelogs and repositories that affect agent builders and AI engineers.",
+        "Infrastructure": "Cloud, compute and publisher infrastructure feeds relevant to agent systems.",
+        "Payments": "Payment rails, x402-adjacent sources and internet money plumbing.",
+        "Media": "Podcasts, newsletters and video feeds with useful agent/web context.",
+        "Industry": "Market, startup, policy and industry signals. Higher noise, useful for context."
+    };
+    return [...new Set(feeds.map(f => f.category))].sort().map(title => {
+        const id = slug(title);
+        const feed_ids = feeds.filter(f => f.category === title).map(f => f.id);
+        return {
+            type: "https://arss.dev/feed-category/v0.1",
+            id,
+            title,
+            description: descriptions[title] || `${title} feeds`,
+            feed_ids,
+            path: `categories/${id}.json`,
+            subscribe_command: `npx arss feed-registry-import ${registryUrl} --category ${quoteArg(title)} --sync-now`,
+        };
+    });
+}
+
+function quoteArg(value) {
+    return /\s/.test(value) ? `"${String(value).replace(/"/g, '\\"')}"` : String(value);
+}
+
+function slug(value) {
+    return String(value || "category").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "category";
 }
 
 function categoryFor(feed) {

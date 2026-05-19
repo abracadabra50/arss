@@ -1,0 +1,17 @@
+{
+  "type": "https://arss.dev/feed-category/v0.1",
+  "id": "frontier-labs",
+  "title": "Frontier labs",
+  "description": "Official lab and cookbook feeds from OpenAI, Anthropic, Google DeepMind, Google Research and Microsoft Research.",
+  "feed_ids": [
+    "openai-news",
+    "google-deepmind-blog",
+    "google-research-blog",
+    "microsoft-research-blog",
+    "openai-cookbook-commits",
+    "anthropic-cookbook-commits",
+    "openai-agents-python-commits"
+  ],
+  "path": "categories/frontier-labs.json",
+  "subscribe_command": "npx arss feed-registry-import registry/feeds.json --category \"Frontier labs\" --sync-now"
+}

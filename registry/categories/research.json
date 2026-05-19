@@ -1,0 +1,18 @@
+{
+  "type": "https://arss.dev/feed-category/v0.1",
+  "id": "research",
+  "title": "Research",
+  "description": "arXiv, research blogs and long-form technical essays.",
+  "feed_ids": [
+    "lex-fridman-podcast",
+    "cs-ai-updates-on-arxiv-org",
+    "interconnects",
+    "the-gradient",
+    "lilian-weng",
+    "mit-tech-review-ai",
+    "arxiv-cs-cl",
+    "arxiv-cs-lg"
+  ],
+  "path": "categories/research.json",
+  "subscribe_command": "npx arss feed-registry-import registry/feeds.json --category Research --sync-now"
+}

@@ -274,26 +274,32 @@ program.command("feed-registry-list")
 
 program.command("feed-registry-import")
     .argument("<registry>", "feed registry JSON URL or file")
-    .requiredOption("--feed <id-or-url>", "feed id, title, or URL from registry")
+    .option("--feed <id-or-url>", "single feed id, title, or URL from registry")
+    .option("--category <name-or-id>", "import every feed in a registry category")
+    .option("--all", "import every feed in the registry")
     .option("--diet <file>", "context diet JSON file", "docs/arss/context-diets/agent-web.json")
-    .option("--update", "update existing source with same id/url instead of failing")
+    .option("--update", "update existing sources with same id/url instead of failing")
     .option("--sync-now", "run arss:heartbeat once after importing")
     .action(async (registrySource, opts) => {
         const registry = await readJsonSource(registrySource);
-        const wanted = String(opts.feed).toLowerCase();
-        const feed = (registry.feeds || []).find(f => [f.id, f.title, f.url].some(value => String(value || "").toLowerCase() === wanted));
-        if (!feed) throw new Error(`Feed not found in registry: ${opts.feed}`);
+        const selected = selectRegistryFeeds(registry, opts);
+        if (!selected.length) throw new Error("No feeds selected. Use --feed <id>, --category <name>, or --all.");
         const dietPath = resolve(opts.diet);
         const diet = JSON.parse(readFileSync(dietPath, "utf8"));
-        const source = { id: feed.id || slugify(feed.title || feed.url), title: feed.title || feed.url, url: feed.url, kind: feed.kind || "feed", topics: feed.topics || [] };
-        const existingIndex = (diet.sources || []).findIndex(s => s.id === source.id || normaliseUrl(s.url) === normaliseUrl(source.url));
-        if (existingIndex >= 0 && !opts.update) throw new Error(`Source already exists: ${diet.sources[existingIndex].id} (${diet.sources[existingIndex].url}). Use --update.`);
         diet.sources = diet.sources || [];
-        if (existingIndex >= 0) diet.sources[existingIndex] = { ...diet.sources[existingIndex], ...source };
-        else diet.sources.push(source);
+        const imported = [];
+        const skipped = [];
+        for (const feed of selected) {
+            const source = { id: feed.id || slugify(feed.title || feed.url), title: feed.title || feed.url, url: feed.url, kind: feed.kind || "feed", topics: feed.topics || [] };
+            const existingIndex = diet.sources.findIndex(s => s.id === source.id || normaliseUrl(s.url) === normaliseUrl(source.url));
+            if (existingIndex >= 0 && !opts.update) { skipped.push({ id: source.id, reason: "already_exists" }); continue; }
+            if (existingIndex >= 0) diet.sources[existingIndex] = { ...diet.sources[existingIndex], ...source };
+            else diet.sources.push(source);
+            imported.push(source);
+        }
         writeJson(dietPath, diet);
-        const result = { imported: source, registry: registrySource, diet: dietPath, updated: existingIndex >= 0 };
-        if (opts.syncNow) result.sync = runHeartbeatNow(opts.diet);
+        const result = { imported, skipped, count: imported.length, registry: registrySource, diet: dietPath, mode: opts.all ? "all" : opts.category ? "category" : "feed" };
+        if (opts.syncNow && imported.length) result.sync = runHeartbeatNow(opts.diet);
         console.log(JSON.stringify(result, null, 2));
     });
 
@@ -521,6 +527,22 @@ function csv(value) {
 
 function normaliseUrl(value) {
     try { return new URL(value).toString(); } catch { return value; }
+}
+
+function selectRegistryFeeds(registry, opts) {
+    const feeds = registry.feeds || [];
+    if (opts.all) return feeds;
+    if (opts.category) {
+        const wanted = String(opts.category).toLowerCase();
+        const category = (registry.categories || []).find(c => [c.id, c.title].some(value => String(value || "").toLowerCase() === wanted));
+        if (category?.feed_ids?.length) return feeds.filter(f => category.feed_ids.includes(f.id));
+        return feeds.filter(f => String(f.category || "").toLowerCase() === wanted);
+    }
+    if (opts.feed) {
+        const wanted = String(opts.feed).toLowerCase();
+        return feeds.filter(f => [f.id, f.title, f.url].some(value => String(value || "").toLowerCase() === wanted));
+    }
+    return [];
 }
 
 function runHeartbeatNow(dietPath) {

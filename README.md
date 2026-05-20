@@ -200,7 +200,14 @@ Yes, agents need a registry.
 
 Discovery cannot just be “try random `/feed` URLs forever”. Humans and agents both need somewhere to browse known feeds, inspect rights/payment posture, copy subscription URLs, and bootstrap a context diet.
 
-This repo includes a static registry generator:
+Hosted registry:
+
+```text
+https://abracadabra50.github.io/arss/
+https://abracadabra50.github.io/arss/feeds.json
+```
+
+This repo also includes the static registry generator:
 
 ```bash
 npm run registry:build

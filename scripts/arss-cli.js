@@ -16,7 +16,7 @@ import { DEFAULT_ARSS_REGISTRY, addClaimToRegistry, applyFeedClaim, createFeedCl
 const require = createRequire(import.meta.url);
 const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
 const REPO_ROOT = resolve(SCRIPT_DIR, "..");
-const DEFAULT_PUBLIC_REGISTRY = "https://raw.githubusercontent.com/abracadabra50/arss/main/registry/feeds.json";
+const DEFAULT_PUBLIC_REGISTRY = "https://abracadabra50.github.io/arss/feeds.json";
 const DEFAULT_AGENT_DIR = ".arss";
 const DEFAULT_AGENT_DIET = `${DEFAULT_AGENT_DIR}/context-diet.json`;
 const DEFAULT_AGENT_INBOX = `${DEFAULT_AGENT_DIR}/agent-inbox.json`;

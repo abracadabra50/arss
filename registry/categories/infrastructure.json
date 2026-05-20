@@ -8,5 +8,5 @@
     "aws-machine-learning-blog"
   ],
   "path": "categories/infrastructure.json",
-  "subscribe_command": "npx arss feed-registry-import registry/feeds.json --category Infrastructure --sync-now"
+  "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --category Infrastructure --sync-now"
 }

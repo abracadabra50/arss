@@ -2,7 +2,7 @@
   "type": "https://arss.dev/feed-registry/v0.1",
   "title": "ARSS Feed Registry",
   "description": "A starter directory of agent-readable feeds and feed-like sources.",
-  "generated_at": "2026-05-19T14:56:29.259Z",
+  "generated_at": "2026-05-20T10:50:54.705Z",
   "payment_posture": "free-first: listed feeds are free/public unless a publisher explicitly declares paid ARSS resources",
   "feeds": [
     {
@@ -19,8 +19,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/simon-willison.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed simon-willison --sync-now",
-      "direct_command": "npx arss diet-add https://simonwillison.net/atom/everything/ --id simon-willison --topics \"AI agents,llms.txt,web,developer tooling\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed simon-willison --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://simonwillison.net/atom/everything/ --id simon-willison --topics \"AI agents,llms.txt,web,developer tooling\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -36,8 +36,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/github-changelog.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed github-changelog --sync-now",
-      "direct_command": "npx arss diet-add https://github.blog/changelog/feed/ --id github-changelog --topics \"developer tooling,AI agents,agent workflows\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed github-changelog --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://github.blog/changelog/feed/ --id github-changelog --topics \"developer tooling,AI agents,agent workflows\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -52,8 +52,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/mcp-spec-commits.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed mcp-spec-commits --sync-now",
-      "direct_command": "npx arss diet-add https://github.com/modelcontextprotocol/modelcontextprotocol/commits/main.atom --id mcp-spec-commits --topics \"MCP,agent protocols\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed mcp-spec-commits --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://github.com/modelcontextprotocol/modelcontextprotocol/commits/main.atom --id mcp-spec-commits --topics \"MCP,agent protocols\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -69,8 +69,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/x402-commits.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed x402-commits --sync-now",
-      "direct_command": "npx arss diet-add https://github.com/coinbase/x402/commits/main.atom --id x402-commits --topics \"x402,HTTP 402,agent payments\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed x402-commits --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://github.com/coinbase/x402/commits/main.atom --id x402-commits --topics \"x402,HTTP 402,agent payments\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -86,8 +86,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/erc8004-contracts.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed erc8004-contracts --sync-now",
-      "direct_command": "npx arss diet-add https://github.com/erc-8004/erc-8004-contracts/commits/master.atom --id erc8004-contracts --topics \"ERC-8004,agent identity,agent reputation\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed erc8004-contracts --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://github.com/erc-8004/erc-8004-contracts/commits/master.atom --id erc8004-contracts --topics \"ERC-8004,agent identity,agent reputation\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -103,8 +103,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/json-feed.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed json-feed --sync-now",
-      "direct_command": "npx arss diet-add https://github.com/brentsimmons/JSONFeed/commits/master.atom --id json-feed --topics \"feeds,JSON Feed,syndication\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed json-feed --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://github.com/brentsimmons/JSONFeed/commits/master.atom --id json-feed --topics \"feeds,JSON Feed,syndication\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -120,8 +120,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/w3c-websub.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed w3c-websub --sync-now",
-      "direct_command": "npx arss diet-add https://github.com/w3c/websub/commits/master.atom --id w3c-websub --topics \"push subscription,WebSub,syndication\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed w3c-websub --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://github.com/w3c/websub/commits/master.atom --id w3c-websub --topics \"push subscription,WebSub,syndication\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -138,8 +138,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/cloudflare-blog.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed cloudflare-blog --sync-now",
-      "direct_command": "npx arss diet-add https://blog.cloudflare.com/rss/ --id cloudflare-blog --topics \"AI agents,publisher infrastructure,web,internet payments\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed cloudflare-blog --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://blog.cloudflare.com/rss/ --id cloudflare-blog --topics \"AI agents,publisher infrastructure,web,internet payments\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -157,8 +157,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/platformer.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed platformer --sync-now",
-      "direct_command": "npx arss diet-add https://www.platformer.news/rss/ --id platformer --topics \"substack,newsletter,platforms,ai,tech-policy\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed platformer --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://www.platformer.news/rss/ --id platformer --topics \"substack,newsletter,platforms,ai,tech-policy\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -175,8 +175,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/fireship.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed fireship --sync-now",
-      "direct_command": "npx arss diet-add https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA --id fireship --topics \"youtube,developer-tools,ai,software\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed fireship --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA --id fireship --topics \"youtube,developer-tools,ai,software\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -193,8 +193,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/lex-fridman-podcast.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed lex-fridman-podcast --sync-now",
-      "direct_command": "npx arss diet-add https://lexfridman.com/feed/podcast/ --id lex-fridman-podcast --topics \"podcast,ai,research,founders\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed lex-fridman-podcast --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://lexfridman.com/feed/podcast/ --id lex-fridman-podcast --topics \"podcast,ai,research,founders\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -211,8 +211,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/daring-fireball.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed daring-fireball --sync-now",
-      "direct_command": "npx arss diet-add https://daringfireball.net/feeds/json --id daring-fireball --topics \"json-feed,apple,web,technology\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed daring-fireball --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://daringfireball.net/feeds/json --id daring-fireball --topics \"json-feed,apple,web,technology\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -230,8 +230,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/openclaw.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed openclaw --sync-now",
-      "direct_command": "npx arss diet-add https://docs.openclaw.ai/llms.txt --id openclaw --topics \"llms.txt,docs,openclaw,agents,heartbeat\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed openclaw --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://docs.openclaw.ai/llms.txt --id openclaw --topics \"llms.txt,docs,openclaw,agents,heartbeat\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -249,8 +249,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/release-notes-from-servers.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed release-notes-from-servers --sync-now",
-      "direct_command": "npx arss diet-add https://github.com/modelcontextprotocol/servers/releases.atom --id release-notes-from-servers --topics \"github,releases,mcp,servers,agents\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed release-notes-from-servers --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://github.com/modelcontextprotocol/servers/releases.atom --id release-notes-from-servers --topics \"github,releases,mcp,servers,agents\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -268,8 +268,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/hacker-news-front-page.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed hacker-news-front-page --sync-now",
-      "direct_command": "npx arss diet-add https://hnrss.org/frontpage --id hacker-news-front-page --topics \"hacker-news,community,startups,ai,software\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed hacker-news-front-page --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://hnrss.org/frontpage --id hacker-news-front-page --topics \"hacker-news,community,startups,ai,software\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -287,8 +287,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/cs-ai-updates-on-arxiv-org.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed cs-ai-updates-on-arxiv-org --sync-now",
-      "direct_command": "npx arss diet-add https://export.arxiv.org/rss/cs.AI --id cs-ai-updates-on-arxiv-org --topics \"arxiv,papers,ai,research,agents\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed cs-ai-updates-on-arxiv-org --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://export.arxiv.org/rss/cs.AI --id cs-ai-updates-on-arxiv-org --topics \"arxiv,papers,ai,research,agents\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -305,8 +305,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/openai-news.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed openai-news --sync-now",
-      "direct_command": "npx arss diet-add https://openai.com/news/rss.xml --id openai-news --topics \"frontier-labs,ai,agents,models\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed openai-news --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://openai.com/news/rss.xml --id openai-news --topics \"frontier-labs,ai,agents,models\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -322,8 +322,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/google-deepmind-blog.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed google-deepmind-blog --sync-now",
-      "direct_command": "npx arss diet-add https://deepmind.google/blog/rss.xml --id google-deepmind-blog --topics \"frontier-labs,ai,research\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed google-deepmind-blog --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://deepmind.google/blog/rss.xml --id google-deepmind-blog --topics \"frontier-labs,ai,research\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -339,8 +339,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/hugging-face-blog.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed hugging-face-blog --sync-now",
-      "direct_command": "npx arss diet-add https://huggingface.co/blog/feed.xml --id hugging-face-blog --topics \"open-source-ai,models,developer-tools\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed hugging-face-blog --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://huggingface.co/blog/feed.xml --id hugging-face-blog --topics \"open-source-ai,models,developer-tools\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -356,8 +356,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/latent-space.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed latent-space --sync-now",
-      "direct_command": "npx arss diet-add https://www.latent.space/feed --id latent-space --topics \"newsletter,ai-engineering,agents\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed latent-space --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://www.latent.space/feed --id latent-space --topics \"newsletter,ai-engineering,agents\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -373,8 +373,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/interconnects.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed interconnects --sync-now",
-      "direct_command": "npx arss diet-add https://www.interconnects.ai/feed --id interconnects --topics \"newsletter,ai-research,policy\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed interconnects --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://www.interconnects.ai/feed --id interconnects --topics \"newsletter,ai-research,policy\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -390,8 +390,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/the-gradient.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed the-gradient --sync-now",
-      "direct_command": "npx arss diet-add https://thegradient.pub/rss/ --id the-gradient --topics \"ai-research,essays,society\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed the-gradient --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://thegradient.pub/rss/ --id the-gradient --topics \"ai-research,essays,society\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -407,8 +407,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/langchain-changelog.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed langchain-changelog --sync-now",
-      "direct_command": "npx arss diet-add https://changelog.langchain.com/feed.xml --id langchain-changelog --topics \"agents,developer-tools,changelog\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed langchain-changelog --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://changelog.langchain.com/feed.xml --id langchain-changelog --topics \"agents,developer-tools,changelog\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -424,8 +424,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/github-copilot-changelog.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed github-copilot-changelog --sync-now",
-      "direct_command": "npx arss diet-add https://github.blog/changelog/label/copilot/feed/ --id github-copilot-changelog --topics \"developer-tools,ai-coding,copilot\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed github-copilot-changelog --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://github.blog/changelog/label/copilot/feed/ --id github-copilot-changelog --topics \"developer-tools,ai-coding,copilot\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -441,8 +441,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/ethereum-magicians.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed ethereum-magicians --sync-now",
-      "direct_command": "npx arss diet-add https://ethereum-magicians.org/latest.rss --id ethereum-magicians --topics \"ethereum,standards,agents\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed ethereum-magicians --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://ethereum-magicians.org/latest.rss --id ethereum-magicians --topics \"ethereum,standards,agents\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -458,8 +458,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/lilian-weng.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed lilian-weng --sync-now",
-      "direct_command": "npx arss diet-add https://lilianweng.github.io/index.xml --id lilian-weng --topics \"ai-research,agents,rag\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed lilian-weng --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://lilianweng.github.io/index.xml --id lilian-weng --topics \"ai-research,agents,rag\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -475,8 +475,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/techcrunch-ai.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed techcrunch-ai --sync-now",
-      "direct_command": "npx arss diet-add https://techcrunch.com/category/artificial-intelligence/feed/ --id techcrunch-ai --topics \"ai-news,startups,industry\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed techcrunch-ai --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://techcrunch.com/category/artificial-intelligence/feed/ --id techcrunch-ai --topics \"ai-news,startups,industry\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -492,8 +492,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/mit-tech-review-ai.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed mit-tech-review-ai --sync-now",
-      "direct_command": "npx arss diet-add https://www.technologyreview.com/topic/artificial-intelligence/feed --id mit-tech-review-ai --topics \"ai-news,research,society\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed mit-tech-review-ai --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://www.technologyreview.com/topic/artificial-intelligence/feed --id mit-tech-review-ai --topics \"ai-news,research,society\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -509,8 +509,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/google-research-blog.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed google-research-blog --sync-now",
-      "direct_command": "npx arss diet-add https://research.google/blog/rss/ --id google-research-blog --topics \"research,ai,frontier-labs\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed google-research-blog --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://research.google/blog/rss/ --id google-research-blog --topics \"research,ai,frontier-labs\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -526,8 +526,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/microsoft-research-blog.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed microsoft-research-blog --sync-now",
-      "direct_command": "npx arss diet-add https://www.microsoft.com/en-us/research/feed/ --id microsoft-research-blog --topics \"research,ai,frontier-labs\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed microsoft-research-blog --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://www.microsoft.com/en-us/research/feed/ --id microsoft-research-blog --topics \"research,ai,frontier-labs\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -543,8 +543,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/aws-machine-learning-blog.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed aws-machine-learning-blog --sync-now",
-      "direct_command": "npx arss diet-add https://aws.amazon.com/blogs/machine-learning/feed/ --id aws-machine-learning-blog --topics \"ai-infrastructure,cloud,ml\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed aws-machine-learning-blog --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://aws.amazon.com/blogs/machine-learning/feed/ --id aws-machine-learning-blog --topics \"ai-infrastructure,cloud,ml\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -560,8 +560,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/stripe-blog.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed stripe-blog --sync-now",
-      "direct_command": "npx arss diet-add https://stripe.com/blog/feed.rss --id stripe-blog --topics \"payments,internet-business,x402-adjacent\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed stripe-blog --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://stripe.com/blog/feed.rss --id stripe-blog --topics \"payments,internet-business,x402-adjacent\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -577,8 +577,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/openai-cookbook-commits.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed openai-cookbook-commits --sync-now",
-      "direct_command": "npx arss diet-add https://github.com/openai/openai-cookbook/commits/main.atom --id openai-cookbook-commits --topics \"openai,developer-tools,agents\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed openai-cookbook-commits --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://github.com/openai/openai-cookbook/commits/main.atom --id openai-cookbook-commits --topics \"openai,developer-tools,agents\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -594,8 +594,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/anthropic-cookbook-commits.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed anthropic-cookbook-commits --sync-now",
-      "direct_command": "npx arss diet-add https://github.com/anthropics/anthropic-cookbook/commits/main.atom --id anthropic-cookbook-commits --topics \"anthropic,developer-tools,agents\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed anthropic-cookbook-commits --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://github.com/anthropics/anthropic-cookbook/commits/main.atom --id anthropic-cookbook-commits --topics \"anthropic,developer-tools,agents\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -611,8 +611,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/vercel-ai-sdk-commits.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed vercel-ai-sdk-commits --sync-now",
-      "direct_command": "npx arss diet-add https://github.com/vercel/ai/commits/main.atom --id vercel-ai-sdk-commits --topics \"ai-sdk,developer-tools,agents\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed vercel-ai-sdk-commits --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://github.com/vercel/ai/commits/main.atom --id vercel-ai-sdk-commits --topics \"ai-sdk,developer-tools,agents\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -628,8 +628,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/openai-agents-python-commits.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed openai-agents-python-commits --sync-now",
-      "direct_command": "npx arss diet-add https://github.com/openai/openai-agents-python/commits/main.atom --id openai-agents-python-commits --topics \"agents,openai,developer-tools\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed openai-agents-python-commits --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://github.com/openai/openai-agents-python/commits/main.atom --id openai-agents-python-commits --topics \"agents,openai,developer-tools\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -645,8 +645,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/langchain-releases.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed langchain-releases --sync-now",
-      "direct_command": "npx arss diet-add https://github.com/langchain-ai/langchain/releases.atom --id langchain-releases --topics \"agents,langchain,developer-tools\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed langchain-releases --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://github.com/langchain-ai/langchain/releases.atom --id langchain-releases --topics \"agents,langchain,developer-tools\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -662,8 +662,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/browser-use-commits.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed browser-use-commits --sync-now",
-      "direct_command": "npx arss diet-add https://github.com/browser-use/browser-use/commits/main.atom --id browser-use-commits --topics \"browser-agents,automation,agents\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed browser-use-commits --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://github.com/browser-use/browser-use/commits/main.atom --id browser-use-commits --topics \"browser-agents,automation,agents\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -680,8 +680,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/arxiv-cs-cl.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed arxiv-cs-cl --sync-now",
-      "direct_command": "npx arss diet-add https://export.arxiv.org/rss/cs.CL --id arxiv-cs-cl --topics \"arxiv,nlp,llms,research\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed arxiv-cs-cl --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://export.arxiv.org/rss/cs.CL --id arxiv-cs-cl --topics \"arxiv,nlp,llms,research\" --sync-now",
       "added_via": "context-diet"
     },
     {
@@ -697,8 +697,8 @@
       ],
       "arss_url": null,
       "subscription_url": "subscriptions/arxiv-cs-lg.subscription.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --feed arxiv-cs-lg --sync-now",
-      "direct_command": "npx arss diet-add https://export.arxiv.org/rss/cs.LG --id arxiv-cs-lg --topics \"arxiv,machine-learning,research\" --sync-now",
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --feed arxiv-cs-lg --sync-now",
+      "direct_command": "npx --yes github:abracadabra50/arss diet-add https://export.arxiv.org/rss/cs.LG --id arxiv-cs-lg --topics \"arxiv,machine-learning,research\" --sync-now",
       "added_via": "context-diet"
     }
   ],
@@ -719,7 +719,7 @@
         "ethereum-magicians"
       ],
       "path": "categories/agent-protocols.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --category \"Agent protocols\" --sync-now"
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --category \"Agent protocols\" --sync-now"
     },
     {
       "type": "https://arss.dev/feed-category/v0.1",
@@ -736,7 +736,7 @@
         "browser-use-commits"
       ],
       "path": "categories/developer-tooling.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --category \"Developer tooling\" --sync-now"
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --category \"Developer tooling\" --sync-now"
     },
     {
       "type": "https://arss.dev/feed-category/v0.1",
@@ -753,7 +753,7 @@
         "openai-agents-python-commits"
       ],
       "path": "categories/frontier-labs.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --category \"Frontier labs\" --sync-now"
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --category \"Frontier labs\" --sync-now"
     },
     {
       "type": "https://arss.dev/feed-category/v0.1",
@@ -766,7 +766,7 @@
         "techcrunch-ai"
       ],
       "path": "categories/industry.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --category Industry --sync-now"
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --category Industry --sync-now"
     },
     {
       "type": "https://arss.dev/feed-category/v0.1",
@@ -778,7 +778,7 @@
         "aws-machine-learning-blog"
       ],
       "path": "categories/infrastructure.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --category Infrastructure --sync-now"
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --category Infrastructure --sync-now"
     },
     {
       "type": "https://arss.dev/feed-category/v0.1",
@@ -791,7 +791,7 @@
         "latent-space"
       ],
       "path": "categories/media.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --category Media --sync-now"
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --category Media --sync-now"
     },
     {
       "type": "https://arss.dev/feed-category/v0.1",
@@ -803,7 +803,7 @@
         "stripe-blog"
       ],
       "path": "categories/payments.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --category Payments --sync-now"
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --category Payments --sync-now"
     },
     {
       "type": "https://arss.dev/feed-category/v0.1",
@@ -821,7 +821,7 @@
         "arxiv-cs-lg"
       ],
       "path": "categories/research.json",
-      "subscribe_command": "npx arss feed-registry-import registry/feeds.json --category Research --sync-now"
+      "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --category Research --sync-now"
     }
   ]
 }

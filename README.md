@@ -291,47 +291,42 @@ test/arss*.test.js                protocol/store/registry/daemon tests
 
 ## Quick start
 
-Install dependencies:
+Agent install path:
+
+```bash
+npx --yes github:abracadabra50/arss init
+npx --yes github:abracadabra50/arss subscribe --category "Frontier labs" --sync-now
+npx --yes github:abracadabra50/arss inbox
+npx --yes github:abracadabra50/arss ask "what changed in AI labs?"
+```
+
+Once the npm package is published, this shortens to `npx arss ...`.
+
+Local repo path:
 
 ```bash
 npm install
+npm run arss -- init
+npm run arss -- subscribe --category "Frontier labs" --sync-now
+npm run arss -- inbox
+npm run arss -- ask "what changed in AI labs?"
 ```
 
-Run tests:
+The first command creates `.arss/`. Category subscription imports a whole registry bundle into `.arss/context-diet.json`. Heartbeat writes warm memory and a tiny current inbox:
 
-```bash
-npm test
+```text
+.arss/context-diet.json
+.arss/context-memory.jsonl
+.arss/agent-inbox.json
 ```
 
-Start a demo publisher:
+Publisher demo path, if you want to test paid resources and local stores:
 
 ```bash
 npm run arss:demo-server
-```
-
-In another terminal, discover it:
-
-```bash
 npm run arss -- discover http://127.0.0.1:8797
-```
-
-Create a subscription:
-
-```bash
-npm run arss -- subscribe http://127.0.0.1:8797/.well-known/arss.json \
-  --out subscriptions/demo.json \
-  --max-day 0.10
-```
-
-Sync it into a local store:
-
-```bash
+npm run arss -- subscribe http://127.0.0.1:8797/.well-known/arss.json --out subscriptions/demo.json
 npm run arss -- pull subscriptions/demo.json --store artefacts/arss/store
-```
-
-Search subscribed context:
-
-```bash
 npm run arss -- search "agent subscription payments" --store artefacts/arss/store
 ```
 

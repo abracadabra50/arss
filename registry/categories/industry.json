@@ -9,5 +9,5 @@
     "techcrunch-ai"
   ],
   "path": "categories/industry.json",
-  "subscribe_command": "npx arss feed-registry-import registry/feeds.json --category Industry --sync-now"
+  "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --category Industry --sync-now"
 }

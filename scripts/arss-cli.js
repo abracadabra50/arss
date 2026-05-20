@@ -2,7 +2,8 @@
 import { createRequire } from "module";
 import { spawnSync } from "child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "fs";
-import { dirname, resolve } from "path";
+import { dirname, resolve, join } from "path";
+import { fileURLToPath } from "url";
 import { Command } from "commander";
 import { privateKeyToAccount } from "viem/accounts";
 import { wrapFetchWithPayment } from "@x402/fetch";
@@ -13,10 +14,19 @@ import { DEFAULT_ARSS_STORE, installSubscription, searchStore, syncSubscription 
 import { DEFAULT_ARSS_REGISTRY, addClaimToRegistry, applyFeedClaim, createFeedClaim, listRegistryClaims, signFeedClaim, verifyFeedClaim } from "../src/arss/registry.js";
 
 const require = createRequire(import.meta.url);
+const SCRIPT_DIR = dirname(fileURLToPath(import.meta.url));
+const REPO_ROOT = resolve(SCRIPT_DIR, "..");
+const DEFAULT_PUBLIC_REGISTRY = "https://raw.githubusercontent.com/abracadabra50/arss/main/registry/feeds.json";
+const DEFAULT_AGENT_DIR = ".arss";
+const DEFAULT_AGENT_DIET = `${DEFAULT_AGENT_DIR}/context-diet.json`;
+const DEFAULT_AGENT_INBOX = `${DEFAULT_AGENT_DIR}/agent-inbox.json`;
+const DEFAULT_AGENT_MEMORY = `${DEFAULT_AGENT_DIR}/context-memory.jsonl`;
+const DEFAULT_AGENT_SUMMARY = `${DEFAULT_AGENT_DIR}/context-diet-summary.json`;
+const DEFAULT_AGENT_STATE = `${DEFAULT_AGENT_DIR}/context-diet-state.json`;
 try { require("dotenv").config({ path: resolve(".env.local") }); require("dotenv").config(); } catch {}
 
 const program = new Command();
-program.name("arss").description("ARSS-Pay publisher CLI").version("0.2.0");
+program.name("arss").description("ARSS: agent-readable syndication for subscribed context").version("0.3.0");
 
 program.command("validate")
     .argument("<file>", "ARSS JSON feed file")
@@ -78,15 +88,54 @@ program.command("price")
     });
 
 program.command("init")
-    .requiredOption("--title <title>", "feed title")
-    .requiredOption("--out <file>", "output feed file")
+    .description("initialise an agent context workspace, or create a publisher feed when --title and --out are supplied")
+    .option("--dir <dir>", "agent workspace directory", DEFAULT_AGENT_DIR)
+    .option("--registry <url>", "default feed registry", DEFAULT_PUBLIC_REGISTRY)
+    .option("--title <title>", "publisher feed title")
+    .option("--out <file>", "publisher feed output file")
     .option("--home <url>", "publisher home page URL")
     .option("--feed-url <url>", "public feed URL")
     .option("--recipient <address>", "x402 recipient wallet")
     .action(opts => {
-        const feed = createArssFeed({ title: opts.title, home_page_url: opts.home, feed_url: opts.feedUrl, payment: opts, items: [] });
-        writeJson(opts.out, feed);
-        console.log(`Wrote ${opts.out}`);
+        if (opts.title || opts.out) {
+            if (!opts.title || !opts.out) throw new Error("Publisher feed init requires both --title and --out. For agent init, run `arss init` with no title/out.");
+            const feed = createArssFeed({ title: opts.title, home_page_url: opts.home, feed_url: opts.feedUrl, payment: opts, items: [] });
+            writeJson(opts.out, feed);
+            console.log(`Wrote ${opts.out}`);
+            return;
+        }
+        const dir = resolve(opts.dir);
+        mkdirSync(dir, { recursive: true });
+        const dietFile = join(dir, "context-diet.json");
+        if (!existsFile(dietFile)) writeJson(dietFile, {
+            type: "https://arss.dev/context-diet/v0.1",
+            name: "local-agent",
+            title: "Local agent context diet",
+            description: "Sources this agent keeps warm via ARSS.",
+            registry: opts.registry,
+            default_policy: {
+                poll: "PT6H",
+                relevance_threshold: 0,
+                high_signal_threshold: 0,
+                permissions: { summarise: true, quote: "limited", embed: true, store_user_memory: true, train_model: false },
+            },
+            interests: ["AI", "agents", "models", "research", "developer tooling"],
+            sources: [],
+        });
+        writeJson(join(dir, "config.json"), {
+            type: "https://arss.dev/local-config/v0.1",
+            registry: opts.registry,
+            diet: dietFile,
+            inbox: join(dir, "agent-inbox.json"),
+            memory: join(dir, "context-memory.jsonl"),
+            created_at: new Date().toISOString(),
+        });
+        console.log(JSON.stringify({ initialised: dir, diet: dietFile, registry: opts.registry, next: [
+            `arss subscribe --category "Frontier labs"`,
+            `arss heartbeat`,
+            `arss inbox`,
+            `arss ask "what changed in AI labs?"`,
+        ] }, null, 2));
     });
 
 program.command("discover")
@@ -104,8 +153,13 @@ program.command("discover")
     });
 
 program.command("subscribe")
-    .argument("<feed-url>", "ARSS feed URL")
-    .requiredOption("--out <file>", "subscription manifest file")
+    .argument("[feed-url]", "feed URL to add to local diet, or subscription manifest feed URL when --out is supplied")
+    .option("--category <name-or-id>", "subscribe to every feed in a registry category")
+    .option("--all", "subscribe to every feed in the registry")
+    .option("--registry <url-or-file>", "feed registry", DEFAULT_PUBLIC_REGISTRY)
+    .option("--diet <file>", "context diet JSON file", DEFAULT_AGENT_DIET)
+    .option("--sync-now", "run heartbeat after subscribing")
+    .option("--out <file>", "legacy: write a subscription manifest instead of adding to local diet")
     .option("--subscriber <did>", "subscriber DID/wallet DID")
     .option("--agent-id <id>", "agent identifier", "did:web:local.agent")
     .option("--agent-name <name>", "agent name", "Local Agent")
@@ -113,16 +167,34 @@ program.command("subscribe")
     .option("--max-day <amount>", "max USDC per day", "0.10")
     .option("--max-month <amount>", "max USDC per month", "2.00")
     .option("--poll <duration>", "poll interval", "PT15M")
-    .action((feedUrl, opts) => {
-        const sub = createSubscriptionManifest({
-            feed_url: feedUrl,
-            subscriber: opts.subscriber,
-            agent: { id: opts.agentId, name: opts.agentName },
-            budget: { max_per_item_usdc: opts.maxItem, max_per_day_usdc: opts.maxDay, max_per_month_usdc: opts.maxMonth },
-            sync: { poll: opts.poll, push: "none" },
-        });
-        writeJson(opts.out, sub);
-        console.log(`Wrote ${opts.out}`);
+    .action(async (feedUrl, opts) => {
+        if (opts.out) {
+            if (!feedUrl) throw new Error("Writing a subscription manifest requires a feed URL.");
+            const sub = createSubscriptionManifest({
+                feed_url: feedUrl,
+                subscriber: opts.subscriber,
+                agent: { id: opts.agentId, name: opts.agentName },
+                budget: { max_per_item_usdc: opts.maxItem, max_per_day_usdc: opts.maxDay, max_per_month_usdc: opts.maxMonth },
+                sync: { poll: opts.poll, push: "none" },
+            });
+            writeJson(opts.out, sub);
+            console.log(`Wrote ${opts.out}`);
+            return;
+        }
+        ensureAgentDiet(opts.diet, opts.registry);
+        if (opts.category || opts.all) {
+            const registry = await readJsonSource(opts.registry);
+            const selected = selectRegistryFeeds(registry, { category: opts.category, all: opts.all });
+            if (!selected.length) throw new Error(`No feeds matched ${opts.category || "--all"}`);
+            const result = importSourcesIntoDiet({ dietPath: opts.diet, feeds: selected, update: true });
+            if (opts.syncNow) result.sync = runHeartbeatNow(opts.diet);
+            console.log(JSON.stringify({ ...result, mode: opts.all ? "all" : "category", registry: opts.registry }, null, 2));
+            return;
+        }
+        if (!feedUrl) throw new Error("Provide a feed URL, --category <name>, or --all.");
+        const result = await addUrlToDiet({ url: feedUrl, dietPath: opts.diet, update: true });
+        if (opts.syncNow) result.sync = runHeartbeatNow(opts.diet);
+        console.log(JSON.stringify(result, null, 2));
     });
 
 program.command("sync")
@@ -208,6 +280,54 @@ program.command("search")
             rights: result.chunk.rights,
             text: String(result.chunk.text || "").slice(0, 500),
         })), null, 2));
+    });
+
+program.command("heartbeat")
+    .description("sync the local context diet into memory/inbox")
+    .option("--diet <file>", "context diet JSON file", DEFAULT_AGENT_DIET)
+    .option("--state <file>", "sync state file", DEFAULT_AGENT_STATE)
+    .option("--memory <file>", "memory JSONL file", DEFAULT_AGENT_MEMORY)
+    .option("--summary <file>", "summary JSON file", DEFAULT_AGENT_SUMMARY)
+    .option("--inbox <file>", "inbox JSON file", DEFAULT_AGENT_INBOX)
+    .option("--force", "sync even if recently run")
+    .option("--format <format>", "json or text", "text")
+    .action(opts => {
+        ensureAgentDiet(opts.diet);
+        const args = [join(SCRIPT_DIR, "arss-heartbeat.js"), "--diet", resolve(opts.diet), "--state", resolve(opts.state), "--memory", resolve(opts.memory), "--summary", resolve(opts.summary), "--inbox", resolve(opts.inbox), "--format", opts.format];
+        if (opts.force) args.push("--force");
+        const result = spawnSync(process.execPath, args, { cwd: REPO_ROOT, encoding: "utf8", stdio: "inherit" });
+        process.exit(result.status || 0);
+    });
+
+program.command("inbox")
+    .description("show the current high-signal ARSS inbox")
+    .option("--inbox <file>", "inbox JSON file", DEFAULT_AGENT_INBOX)
+    .option("--format <format>", "text or json", "text")
+    .action(opts => {
+        const payload = readJsonMaybe(opts.inbox, { injections: [] });
+        if (opts.format === "json") { console.log(JSON.stringify(payload, null, 2)); return; }
+        if (!payload.injections?.length) { console.log("ARSS inbox is empty. Run `arss heartbeat --force` after subscribing."); return; }
+        console.log(payload.injections.map((item, idx) => `${idx + 1}. ${item.title}\n   ${item.source || item.source_id}\n   ${item.url}\n   ${String(item.summary || "").replace(/\s+/g, " ").slice(0, 360)}`).join("\n\n"));
+    });
+
+program.command("ask")
+    .argument("<query>", "question to answer from local subscribed context")
+    .option("--memory <file>", "memory JSONL file", DEFAULT_AGENT_MEMORY)
+    .option("--inbox <file>", "inbox JSON file", DEFAULT_AGENT_INBOX)
+    .option("--limit <n>", "max cited items", "5")
+    .action((query, opts) => {
+        const rows = readJsonl(opts.memory).concat(readJsonMaybe(opts.inbox, { injections: [] }).injections || []);
+        const terms = tokenise(query);
+        const hits = rows.map(row => ({ row, score: scoreText(`${row.title || ""} ${row.summary || ""} ${row.content_text || ""} ${row.source || ""} ${row.source_title || ""}`, terms) }))
+            .filter(hit => hit.score > 0)
+            .sort((a, b) => b.score - a.score || new Date(b.row.ingested_at || 0).valueOf() - new Date(a.row.ingested_at || 0).valueOf())
+            .slice(0, Number(opts.limit));
+        if (!hits.length) { console.log("No local subscribed-context hit. Run `arss heartbeat --force`, subscribe to more sources, or use live search for unknown sources."); return; }
+        console.log(`From local subscribed context, the relevant changes are:\n`);
+        for (const [idx, hit] of hits.entries()) {
+            const r = hit.row;
+            console.log(`${idx + 1}. ${r.title}\n   Source: ${r.source_title || r.source || r.source_id || "unknown"}\n   URL: ${r.url}\n   ${String(r.summary || r.content_text || "").replace(/\s+/g, " ").slice(0, 520)}\n`);
+        }
     });
 
 program.command("chunks")
@@ -525,8 +645,86 @@ function csv(value) {
     return String(value || "").split(",").map(v => v.trim()).filter(Boolean);
 }
 
+function tokenise(value) {
+    return String(value || "").toLowerCase().match(/[a-z0-9]{2,}/g) || [];
+}
+
+function scoreText(text, terms) {
+    const haystack = String(text || "").toLowerCase();
+    return terms.reduce((score, term) => score + (haystack.includes(term) ? 1 : 0), 0);
+}
+
 function normaliseUrl(value) {
     try { return new URL(value).toString(); } catch { return value; }
+}
+
+async function addUrlToDiet({ url, dietPath, update = true }) {
+    const diet = JSON.parse(readFileSync(resolve(dietPath), "utf8"));
+    const discovered = await discoverDietSource(url);
+    const source = {
+        id: slugify(discovered.feed.title || new URL(discovered.url).hostname),
+        title: discovered.feed.title || discovered.url,
+        url: discovered.url,
+        kind: kindForDiet(discovered.kind, discovered.url),
+        topics: [],
+    };
+    const result = importSourcesIntoDiet({ dietPath, feeds: [source], update });
+    return { ...result, discovered: { kind: discovered.kind, feed_title: discovered.feed.title, items: discovered.feed.items?.length || 0 } };
+}
+
+function importSourcesIntoDiet({ dietPath, feeds, update = true }) {
+    const path = resolve(dietPath);
+    const diet = JSON.parse(readFileSync(path, "utf8"));
+    diet.sources = diet.sources || [];
+    const imported = [];
+    const skipped = [];
+    for (const feed of feeds) {
+        const source = { id: feed.id || slugify(feed.title || feed.url), title: feed.title || feed.url, url: feed.url, kind: feed.kind || "feed", topics: feed.topics || [] };
+        const existingIndex = diet.sources.findIndex(s => s.id === source.id || normaliseUrl(s.url) === normaliseUrl(source.url));
+        if (existingIndex >= 0 && !update) { skipped.push({ id: source.id, reason: "already_exists" }); continue; }
+        if (existingIndex >= 0) diet.sources[existingIndex] = { ...diet.sources[existingIndex], ...source };
+        else diet.sources.push(source);
+        imported.push(source);
+    }
+    writeJson(path, diet);
+    return { imported, skipped, count: imported.length, diet: path };
+}
+
+function ensureAgentDiet(dietPath = DEFAULT_AGENT_DIET, registry = DEFAULT_PUBLIC_REGISTRY) {
+    const path = resolve(dietPath);
+    if (existsFile(path)) return path;
+    mkdirSync(dirname(path), { recursive: true });
+    writeJson(path, {
+        type: "https://arss.dev/context-diet/v0.1",
+        name: "local-agent",
+        title: "Local agent context diet",
+        description: "Sources this agent keeps warm via ARSS.",
+        registry,
+        default_policy: {
+            poll: "PT6H",
+            relevance_threshold: 0,
+            high_signal_threshold: 0,
+            permissions: { summarise: true, quote: "limited", embed: true, store_user_memory: true, train_model: false },
+        },
+        interests: ["AI", "agents", "models", "research", "developer tooling"],
+        sources: [],
+    });
+    return path;
+}
+
+function readJsonMaybe(file, fallback) {
+    try { return JSON.parse(readFileSync(resolve(file), "utf8")); } catch { return fallback; }
+}
+
+function readJsonl(file) {
+    try {
+        const text = readFileSync(resolve(file), "utf8").trim();
+        return text ? text.split(/\r?\n/).filter(Boolean).map(line => JSON.parse(line)) : [];
+    } catch { return []; }
+}
+
+function existsFile(file) {
+    try { readFileSync(resolve(file)); return true; } catch { return false; }
 }
 
 function selectRegistryFeeds(registry, opts) {
@@ -546,8 +744,14 @@ function selectRegistryFeeds(registry, opts) {
 }
 
 function runHeartbeatNow(dietPath) {
-    const result = spawnSync("npm", ["run", "--silent", "arss:heartbeat", "--", "--diet", dietPath, "--format", "json", "--force", "--limit", "8"], { cwd: resolve("."), encoding: "utf8" });
-    return { status: result.status, stdout: result.stdout ? JSON.parse(result.stdout) : null, stderr: result.stderr || undefined };
+    const state = dietPath === DEFAULT_AGENT_DIET ? DEFAULT_AGENT_STATE : "artefacts/arss/context-diet-state.json";
+    const memory = dietPath === DEFAULT_AGENT_DIET ? DEFAULT_AGENT_MEMORY : "artefacts/arss/context-memory.jsonl";
+    const summary = dietPath === DEFAULT_AGENT_DIET ? DEFAULT_AGENT_SUMMARY : "artefacts/arss/context-diet-summary.json";
+    const inbox = dietPath === DEFAULT_AGENT_DIET ? DEFAULT_AGENT_INBOX : "artefacts/arss/agent-inbox.json";
+    const result = spawnSync(process.execPath, [join(SCRIPT_DIR, "arss-heartbeat.js"), "--diet", resolve(dietPath), "--state", resolve(state), "--memory", resolve(memory), "--summary", resolve(summary), "--inbox", resolve(inbox), "--format", "json", "--force", "--limit", "8"], { cwd: REPO_ROOT, encoding: "utf8" });
+    let stdout = null;
+    try { stdout = result.stdout ? JSON.parse(result.stdout) : null; } catch { stdout = result.stdout; }
+    return { status: result.status, stdout, stderr: result.stderr || undefined };
 }
 
 async function fetchResource(url, { privateKey, paid } = {}) {

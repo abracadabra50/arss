@@ -1,10 +1,10 @@
 {
   "name": "arss",
-  "version": "0.2.0",
-  "description": "Agent-readable RSS: subscribed context, rights metadata, delivery hooks and x402 payment rails for autonomous agents.",
+  "version": "0.3.0",
+  "description": "Agent-readable syndication: subscribed context, feed registries, rights metadata and optional x402 payment rails for autonomous agents.",
   "type": "module",
-  "private": true,
-  "license": "UNLICENSED",
+  "private": false,
+  "license": "MIT",
   "author": "It's Not Magic Ltd",
   "bin": {
     "arss": "./scripts/arss-cli.js",
@@ -21,7 +21,9 @@
     "test": "node test/arss.test.js && node test/arss-store.test.js && node test/arss-registry.test.js && node test/arss-daemon.test.js",
     "eval": "node scripts/arss-eval.js",
     "eval:live": "node scripts/arss-live-eval.js",
-    "registry:build": "node scripts/arss-registry-site.js"
+    "registry:build": "node scripts/arss-registry-site.js",
+    "prepublishOnly": "npm test",
+    "registry:health": "node scripts/arss-registry-health.js"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
@@ -37,5 +39,34 @@
   },
   "engines": {
     "node": ">=22"
-  }
+  },
+  "homepage": "https://github.com/abracadabra50/arss#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abracadabra50/arss.git"
+  },
+  "bugs": {
+    "url": "https://github.com/abracadabra50/arss/issues"
+  },
+  "keywords": [
+    "arss",
+    "rss",
+    "agents",
+    "agent-context",
+    "syndication",
+    "mcp",
+    "x402",
+    "rag",
+    "feeds"
+  ],
+  "files": [
+    "src/",
+    "scripts/",
+    "registry/",
+    "docs/arss/schemas/",
+    "docs/arss/examples/",
+    "docs/arss/context-diets/agent-web.json",
+    "README.md",
+    "LICENSE"
+  ]
 }

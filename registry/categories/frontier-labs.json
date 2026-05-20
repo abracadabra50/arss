@@ -13,5 +13,5 @@
     "openai-agents-python-commits"
   ],
   "path": "categories/frontier-labs.json",
-  "subscribe_command": "npx arss feed-registry-import registry/feeds.json --category \"Frontier labs\" --sync-now"
+  "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --category \"Frontier labs\" --sync-now"
 }

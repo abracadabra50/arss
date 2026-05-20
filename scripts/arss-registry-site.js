@@ -8,6 +8,7 @@ const outDir = resolve(args.outDir || "registry");
 const baseUrl = args.baseUrl || "";
 const diet = JSON.parse(readFileSync(dietPath, "utf8"));
 const registryUrl = baseUrl ? `${baseUrl.replace(/\/$/, "")}/feeds.json` : "registry/feeds.json";
+const cliCommand = args.cliCommand || "npx arss";
 
 const feeds = (diet.sources || []).map(source => {
     const id = source.id;
@@ -23,13 +24,13 @@ const feeds = (diet.sources || []).map(source => {
         topics,
         arss_url: source.kind === "arss" ? source.url : null,
         subscription_url: subscriptionPath,
-        subscribe_command: `npx arss feed-registry-import ${registryUrl} --feed ${id} --sync-now`,
-        direct_command: `npx arss diet-add ${source.url} --id ${id}${topics.length ? ` --topics "${topics.join(",")}"` : ""} --sync-now`,
+        subscribe_command: `${cliCommand} feed-registry-import ${registryUrl} --feed ${id} --sync-now`,
+        direct_command: `${cliCommand} diet-add ${source.url} --id ${id}${topics.length ? ` --topics "${topics.join(",")}"` : ""} --sync-now`,
         added_via: "context-diet",
     };
 });
 
-const categories = buildCategories(feeds, registryUrl);
+const categories = buildCategories(feeds, registryUrl, cliCommand);
 const registry = {
     type: "https://arss.dev/feed-registry/v0.1",
     title: args.title || "ARSS Feed Registry",
@@ -112,6 +113,8 @@ input, select { width:100%; padding:14px 15px; border:1px solid var(--line); bor
 .card-top { display:flex; align-items:center; justify-content:space-between; gap:10px; }
 .kind { display:inline-flex; padding:7px 10px; border-radius:999px; background:#eef2ff; color:var(--navy2); font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.08em; }
 .category { color:var(--soft); font-size:12px; font-weight:850; }
+.health { display:inline-flex; align-self:flex-start; margin-top:10px; padding:6px 9px; border-radius:999px; background:#f3f4f6; color:#647084; font-size:12px; font-weight:850; }
+.health.ok { background:#ecfdf5; color:#166534; } .health.fail { background:#fef2f2; color:#991b1b; }
 .card h3 { margin:15px 0 8px; font-size:22px; line-height:1.05; letter-spacing:-.045em; color:var(--navy); }
 .url { display:block; min-height:38px; word-break:break-all; color:var(--orange); text-decoration:none; font-size:13px; line-height:1.4; }
 .tags { margin:14px 0; min-height:58px; } .tags span { display:inline-flex; margin:0 6px 6px 0; padding:5px 8px; border-radius:999px; background:#f2f4f7; color:#536174; font-size:12px; font-weight:700; }
@@ -164,14 +167,15 @@ const q=document.querySelector('#q'), kind=document.querySelector('#kind'), cate
 function apply(){const needle=q.value.toLowerCase(), k=kind.value, cat=category.value; for(const c of cards){const text=c.innerText.toLowerCase(); c.style.display=(!k||c.dataset.kind===k)&&(!cat||c.dataset.category===cat)&&(!needle||text.includes(needle))?'':'none';}}
 q.addEventListener('input',apply); kind.addEventListener('change',apply); category.addEventListener('change',apply);
 document.addEventListener('click', async e=>{const b=e.target.closest('button[data-copy]'); if(!b) return; const old=b.textContent; await navigator.clipboard.writeText(b.dataset.copy); b.textContent='Copied'; setTimeout(()=>b.textContent=old,1200);});
+fetch('health.json').then(r=>r.ok?r.json():null).then(h=>{ if(!h) return; const byId=new Map((h.feeds||[]).map(x=>[x.id,x])); for(const c of cards){ const x=byId.get(c.dataset.id); const el=c.querySelector('[data-health]'); if(!x||!el) continue; el.classList.remove('ok','fail'); el.classList.add(x.ok?'ok':'fail'); const date=x.last_item_at?new Date(x.last_item_at).toLocaleDateString():''; el.textContent=x.ok?('OK · '+x.items+' items'+(date?' · '+date:'')):'Fetch failed'; el.title=x.error||('Checked '+x.checked_at); }}).catch(()=>{});
 </script>
 </body>
 </html>`;
 }
 
 function renderCard(feed) {
-    return `<article class="card" data-kind="${escapeHtml(feed.kind)}" data-category="${escapeHtml(feed.category)}" data-topics="${escapeHtml(feed.topics.join(" "))}">
-  <div class="card-top"><span class="kind">${escapeHtml(feed.kind)}</span><span class="category">${escapeHtml(feed.category)}</span></div>
+    return `<article class="card" data-id="${escapeHtml(feed.id)}" data-kind="${escapeHtml(feed.kind)}" data-category="${escapeHtml(feed.category)}" data-topics="${escapeHtml(feed.topics.join(" "))}">
+  <div class="card-top"><span class="kind">${escapeHtml(feed.kind)}</span><span class="category">${escapeHtml(feed.category)}</span></div><div class="health" data-health>Health pending</div>
   <h3>${escapeHtml(feed.title)}</h3>
   <a class="url" href="${escapeHtml(feed.url)}">${escapeHtml(feed.url)}</a>
   <div class="tags">${feed.topics.slice(0, 7).map(t => `<span>${escapeHtml(t)}</span>`).join(" ")}</div>
@@ -198,7 +202,7 @@ function createFreeSubscriptionManifest(feed) {
     };
 }
 
-function buildCategories(feeds, registryUrl) {
+function buildCategories(feeds, registryUrl, cliCommand) {
     const descriptions = {
         "Agent protocols": "MCP, ARSS-adjacent standards, WebSub, JSON Feed, Ethereum agent identity and protocol signals.",
         "Frontier labs": "Official lab and cookbook feeds from OpenAI, Anthropic, Google DeepMind, Google Research and Microsoft Research.",
@@ -219,7 +223,7 @@ function buildCategories(feeds, registryUrl) {
             description: descriptions[title] || `${title} feeds`,
             feed_ids,
             path: `categories/${id}.json`,
-            subscribe_command: `npx arss feed-registry-import ${registryUrl} --category ${quoteArg(title)} --sync-now`,
+            subscribe_command: `${cliCommand} feed-registry-import ${registryUrl} --category ${quoteArg(title)} --sync-now`,
         };
     });
 }

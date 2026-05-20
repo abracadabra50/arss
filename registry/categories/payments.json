@@ -8,5 +8,5 @@
     "stripe-blog"
   ],
   "path": "categories/payments.json",
-  "subscribe_command": "npx arss feed-registry-import registry/feeds.json --category Payments --sync-now"
+  "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import registry/feeds.json --category Payments --sync-now"
 }

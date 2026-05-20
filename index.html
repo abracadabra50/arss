@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ARSS Feed Registry</title>
+<link rel="alternate" type="application/json" title="ARSS feed registry" href="https://abracadabra50.github.io/arss/feeds.json">
+<style>
+:root {
+  color-scheme: light;
+  --ink:#101525; --muted:#647084; --soft:#8d99aa; --line:#e6e8ee; --bg:#f7f4ef; --card:#fffaf4;
+  --navy:#17223d; --navy2:#253351; --orange:#f0523d; --yellow:#ffcf6d; --green:#1f6b5b; --blue:#4b67c8;
+  --shadow:0 24px 70px rgba(23,34,61,.12); --radius:28px;
+}
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { margin:0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; color:var(--ink); background:radial-gradient(circle at 10% 0%, rgba(240,82,61,.16), transparent 28%), radial-gradient(circle at 90% 8%, rgba(37,51,81,.18), transparent 32%), linear-gradient(180deg,#fffdf8,var(--bg)); }
+a { color:inherit; }
+header { max-width:1180px; margin:0 auto; padding:44px 22px 24px; }
+.nav { display:flex; align-items:center; justify-content:space-between; gap:16px; margin-bottom:48px; }
+.logo { display:flex; align-items:center; gap:10px; font-weight:900; letter-spacing:-.04em; }
+.mark { width:38px; height:38px; border-radius:14px; background:linear-gradient(135deg,var(--navy),var(--orange)); box-shadow:0 12px 30px rgba(240,82,61,.25); }
+.navlinks { display:flex; gap:10px; flex-wrap:wrap; }
+.navlinks a { text-decoration:none; color:var(--muted); font-size:14px; font-weight:750; padding:9px 12px; border:1px solid rgba(230,232,238,.7); border-radius:999px; background:rgba(255,255,255,.6); backdrop-filter: blur(12px); }
+.hero { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(320px,.85fr); gap:28px; align-items:stretch; }
+.eyebrow { display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; color:var(--navy2); background:#fff; border:1px solid var(--line); font-weight:850; font-size:13px; box-shadow:0 8px 30px rgba(23,34,61,.06); }
+.dot { width:8px; height:8px; border-radius:50%; background:var(--green); box-shadow:0 0 0 5px rgba(31,107,91,.12); }
+h1 { margin:22px 0 0; max-width:820px; font-size:clamp(48px,9vw,112px); line-height:.86; letter-spacing:-.075em; color:var(--navy); }
+.lede { margin:26px 0 0; max-width:690px; font-size:21px; line-height:1.5; color:var(--muted); }
+.hero-actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:30px; }
+.btn, button, .mini { border:0; background:var(--navy); color:white; padding:12px 16px; border-radius:16px; text-decoration:none; cursor:pointer; font-weight:850; box-shadow:0 12px 28px rgba(23,34,61,.16); }
+.btn.secondary, .mini { background:white; color:var(--navy); border:1px solid var(--line); box-shadow:none; }
+.panel { background:rgba(255,250,244,.86); border:1px solid rgba(230,232,238,.78); border-radius:var(--radius); box-shadow:var(--shadow); padding:20px; backdrop-filter: blur(18px); }
+.terminal { background:#09111f; color:#d6f3ff; border-radius:22px; padding:18px; min-height:100%; display:flex; flex-direction:column; gap:14px; }
+.terminal-top { display:flex; gap:7px; }
+.terminal-top i { width:11px; height:11px; border-radius:50%; background:#ff5f57; } .terminal-top i:nth-child(2){background:#ffbd2e;} .terminal-top i:nth-child(3){background:#28c840;}
+.terminal pre { margin:0; white-space:pre-wrap; font-size:13px; line-height:1.55; color:#dbeafe; }
+.stats { max-width:1180px; margin:18px auto 0; padding:0 22px; display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+.stat { background:rgba(255,255,255,.76); border:1px solid var(--line); border-radius:22px; padding:18px; }
+.stat strong { display:block; font-size:30px; letter-spacing:-.05em; color:var(--navy); } .stat span { color:var(--muted); font-weight:700; font-size:13px; }
+main { max-width:1180px; margin:0 auto; padding:24px 22px 76px; }
+.section-head { display:flex; align-items:flex-end; justify-content:space-between; gap:16px; margin:34px 0 16px; }
+.section-head h2 { margin:0; font-size:34px; letter-spacing:-.055em; color:var(--navy); }
+.section-head p { margin:0; color:var(--muted); max-width:560px; line-height:1.5; }
+.featured { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:22px; }
+.bundles { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:0 0 24px; }
+.bundle { background:rgba(255,255,255,.9); border:1px solid var(--line); border-radius:24px; padding:18px; box-shadow:0 16px 42px rgba(23,34,61,.07); }
+.bundle b { color:var(--orange); font-size:12px; text-transform:uppercase; letter-spacing:.08em; } .bundle h3 { margin:10px 0 6px; color:var(--navy); letter-spacing:-.04em; } .bundle p { color:var(--muted); min-height:42px; line-height:1.45; } .bundle pre { white-space:pre-wrap; word-break:break-word; background:#0b1020; color:#e5e7eb; border-radius:16px; padding:12px; font-size:12px; line-height:1.45; }
+.feature { border-radius:24px; padding:18px; background:linear-gradient(135deg,#17223d,#253351); color:white; min-height:150px; position:relative; overflow:hidden; }
+.feature:after { content:""; position:absolute; inset:auto -40px -60px auto; width:140px; height:140px; background:rgba(240,82,61,.35); border-radius:50%; }
+.feature b { display:block; font-size:12px; color:#ffcf6d; text-transform:uppercase; letter-spacing:.08em; } .feature h3 { margin:12px 0 8px; font-size:22px; letter-spacing:-.04em; } .feature p { margin:0; color:#cbd5e1; font-size:13px; }
+.toolbar { position:sticky; top:10px; z-index:5; display:grid; grid-template-columns:1fr 180px 180px; gap:10px; margin:18px 0; padding:10px; border:1px solid rgba(230,232,238,.8); background:rgba(255,255,255,.82); backdrop-filter: blur(18px); border-radius:24px; box-shadow:0 16px 42px rgba(23,34,61,.08); }
+input, select { width:100%; padding:14px 15px; border:1px solid var(--line); border-radius:16px; font:inherit; background:white; color:var(--ink); }
+.grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.card { background:rgba(255,255,255,.88); border:1px solid var(--line); border-radius:26px; padding:18px; box-shadow:0 16px 42px rgba(23,34,61,.07); display:flex; flex-direction:column; min-height:348px; transition:transform .18s ease, box-shadow .18s ease; }
+.card:hover { transform:translateY(-3px); box-shadow:0 22px 60px rgba(23,34,61,.12); }
+.card-top { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.kind { display:inline-flex; padding:7px 10px; border-radius:999px; background:#eef2ff; color:var(--navy2); font-size:11px; font-weight:900; text-transform:uppercase; letter-spacing:.08em; }
+.category { color:var(--soft); font-size:12px; font-weight:850; }
+.health { display:inline-flex; align-self:flex-start; margin-top:10px; padding:6px 9px; border-radius:999px; background:#f3f4f6; color:#647084; font-size:12px; font-weight:850; }
+.health.ok { background:#ecfdf5; color:#166534; } .health.fail { background:#fef2f2; color:#991b1b; }
+.card h3 { margin:15px 0 8px; font-size:22px; line-height:1.05; letter-spacing:-.045em; color:var(--navy); }
+.url { display:block; min-height:38px; word-break:break-all; color:var(--orange); text-decoration:none; font-size:13px; line-height:1.4; }
+.tags { margin:14px 0; min-height:58px; } .tags span { display:inline-flex; margin:0 6px 6px 0; padding:5px 8px; border-radius:999px; background:#f2f4f7; color:#536174; font-size:12px; font-weight:700; }
+.card pre { margin:auto 0 12px; white-space:pre-wrap; word-break:break-word; background:#0b1020; color:#e5e7eb; border-radius:16px; padding:12px; font-size:12px; line-height:1.45; }
+.card code { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+.button-row { display:grid; grid-template-columns:1fr auto auto; gap:9px; align-items:center; }
+.button-row button { border-radius:14px; padding:11px 12px; }
+.button-row .mini { display:flex; align-items:center; justify-content:center; margin:0; padding:11px 12px; border-radius:14px; font-size:13px; }
+.how { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:18px; }
+.step { background:#fff; border:1px solid var(--line); border-radius:24px; padding:18px; } .step b { color:var(--orange); } .step h3 { margin:12px 0 6px; color:var(--navy); letter-spacing:-.035em; } .step p { margin:0; color:var(--muted); line-height:1.45; }
+footer { max-width:1180px; margin:0 auto 58px; padding:0 22px; color:var(--muted); text-align:center; }
+@media (max-width: 900px) { .hero,.featured,.bundles,.grid,.how { grid-template-columns:1fr; } .stats { grid-template-columns:repeat(2,1fr); } .toolbar { grid-template-columns:1fr; position:static; } }
+</style>
+</head>
+<body>
+<header>
+  <nav class="nav"><div class="logo"><div class="mark"></div><span>ARSS Registry</span></div><div class="navlinks"><a href="feeds.json">feeds.json</a><a href="README.md">README</a><a href="#feeds">Browse feeds</a></div></nav>
+  <section class="hero">
+    <div>
+      <span class="eyebrow"><span class="dot"></span> Feed discovery for agents</span>
+      <h1>Feeds agents can subscribe to.</h1>
+      <p class="lede">A curated registry of agent-relevant feeds: frontier labs, protocol repos, changelogs, research, podcasts, newsletters and developer signals. Humans browse it. Agents ingest the JSON.</p>
+      <div class="hero-actions"><a class="btn" href="#feeds">Browse 40 feeds</a><a class="btn secondary" href="feeds.json">Open machine registry</a></div>
+    </div>
+    <aside class="panel"><div class="terminal"><div class="terminal-top"><i></i><i></i><i></i></div><pre>$ npx arss feed-registry-list https://abracadabra50.github.io/arss/feeds.json
+40 feeds discovered
+
+$ npx arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed simon-willison --sync-now
+subscribed → heartbeat → memory/inbox</pre></div></aside>
+  </section>
+</header>
+<section class="stats"><div class="stat"><strong>40</strong><span>feeds</span></div><div class="stat"><strong>8</strong><span>categories</span></div><div class="stat"><strong>6</strong><span>feed kinds</span></div><div class="stat"><strong>78</strong><span>topics</span></div></section>
+<main>
+  <div class="section-head"><div><h2>Featured signals</h2><p>High-leverage feeds for agents that care about protocols, tools, AI systems and the publisher-agent web.</p></div></div>
+  <section class="featured"><article class="feature"><b>Agent protocols</b><h3>Simon Willison — everything feed</h3><p>AI agents · llms.txt · web · developer tooling</p></article><article class="feature"><b>Developer tooling</b><h3>GitHub Changelog</h3><p>developer tooling · AI agents · agent workflows</p></article><article class="feature"><b>Agent protocols</b><h3>Model Context Protocol specification commits</h3><p>MCP · agent protocols</p></article><article class="feature"><b>Agent protocols</b><h3>ERC-8004 contracts commits</h3><p>ERC-8004 · agent identity · agent reputation</p></article><article class="feature"><b>Agent protocols</b><h3>JSON Feed spec updates</h3><p>feeds · JSON Feed · syndication</p></article><article class="feature"><b>Agent protocols</b><h3>W3C WebSub commits</h3><p>push subscription · WebSub · syndication</p></article></section>
+
+  <div class="section-head" id="bundles"><div><h2>Starter bundles</h2><p>Subscribe an agent to a whole lane at once. This is the useful bit: “all frontier labs”, “all agent protocols”, “all research”.</p></div></div>
+  <section class="bundles"><article class="bundle"><b>8 feeds</b><h3>Agent protocols</h3><p>MCP, ARSS-adjacent standards, WebSub, JSON Feed, Ethereum agent identity and protocol signals.</p><pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --category &quot;Agent protocols&quot; --sync-now</code></pre><div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --category &quot;Agent protocols&quot; --sync-now">Copy bundle command</button><a class="mini" href="categories/agent-protocols.json">JSON</a></div></article><article class="bundle"><b>7 feeds</b><h3>Developer tooling</h3><p>Changelogs and repositories that affect agent builders and AI engineers.</p><pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --category &quot;Developer tooling&quot; --sync-now</code></pre><div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --category &quot;Developer tooling&quot; --sync-now">Copy bundle command</button><a class="mini" href="categories/developer-tooling.json">JSON</a></div></article><article class="bundle"><b>7 feeds</b><h3>Frontier labs</h3><p>Official lab and cookbook feeds from OpenAI, Anthropic, Google DeepMind, Google Research and Microsoft Research.</p><pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --category &quot;Frontier labs&quot; --sync-now</code></pre><div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --category &quot;Frontier labs&quot; --sync-now">Copy bundle command</button><a class="mini" href="categories/frontier-labs.json">JSON</a></div></article><article class="bundle"><b>3 feeds</b><h3>Industry</h3><p>Market, startup, policy and industry signals. Higher noise, useful for context.</p><pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --category Industry --sync-now</code></pre><div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --category Industry --sync-now">Copy bundle command</button><a class="mini" href="categories/industry.json">JSON</a></div></article><article class="bundle"><b>2 feeds</b><h3>Infrastructure</h3><p>Cloud, compute and publisher infrastructure feeds relevant to agent systems.</p><pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --category Infrastructure --sync-now</code></pre><div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --category Infrastructure --sync-now">Copy bundle command</button><a class="mini" href="categories/infrastructure.json">JSON</a></div></article><article class="bundle"><b>3 feeds</b><h3>Media</h3><p>Podcasts, newsletters and video feeds with useful agent/web context.</p><pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --category Media --sync-now</code></pre><div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --category Media --sync-now">Copy bundle command</button><a class="mini" href="categories/media.json">JSON</a></div></article><article class="bundle"><b>2 feeds</b><h3>Payments</h3><p>Payment rails, x402-adjacent sources and internet money plumbing.</p><pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --category Payments --sync-now</code></pre><div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --category Payments --sync-now">Copy bundle command</button><a class="mini" href="categories/payments.json">JSON</a></div></article><article class="bundle"><b>8 feeds</b><h3>Research</h3><p>arXiv, research blogs and long-form technical essays.</p><pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --category Research --sync-now</code></pre><div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --category Research --sync-now">Copy bundle command</button><a class="mini" href="categories/research.json">JSON</a></div></article></section>
+
+  <div class="section-head" id="feeds"><div><h2>Browse registry</h2><p>Copy a subscribe command, open the original feed, or hand an agent the machine-readable registry.</p></div></div>
+  <div class="toolbar"><input id="q" placeholder="Search feeds, topics, URLs…"><select id="category"><option value="">All categories</option><option>Agent protocols</option><option>Developer tooling</option><option>Frontier labs</option><option>Industry</option><option>Infrastructure</option><option>Media</option><option>Payments</option><option>Research</option></select><select id="kind"><option value="">All kinds</option><option>atom</option><option>json-feed</option><option>llms.txt</option><option>rss</option><option>substack</option><option>youtube</option></select></div>
+  <section class="grid" id="grid"><article class="card" data-id="simon-willison" data-kind="atom" data-category="Agent protocols" data-topics="AI agents llms.txt web developer tooling">
+  <div class="card-top"><span class="kind">atom</span><span class="category">Agent protocols</span></div><div class="health" data-health>Health pending</div>
+  <h3>Simon Willison — everything feed</h3>
+  <a class="url" href="https://simonwillison.net/atom/everything/">https://simonwillison.net/atom/everything/</a>
+  <div class="tags"><span>AI agents</span> <span>llms.txt</span> <span>web</span> <span>developer tooling</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed simon-willison --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed simon-willison --sync-now">Copy subscribe</button><a class="mini" href="https://simonwillison.net/atom/everything/">Feed</a><a class="mini" href="subscriptions/simon-willison.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="github-changelog" data-kind="rss" data-category="Developer tooling" data-topics="developer tooling AI agents agent workflows">
+  <div class="card-top"><span class="kind">rss</span><span class="category">Developer tooling</span></div><div class="health" data-health>Health pending</div>
+  <h3>GitHub Changelog</h3>
+  <a class="url" href="https://github.blog/changelog/feed/">https://github.blog/changelog/feed/</a>
+  <div class="tags"><span>developer tooling</span> <span>AI agents</span> <span>agent workflows</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed github-changelog --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed github-changelog --sync-now">Copy subscribe</button><a class="mini" href="https://github.blog/changelog/feed/">Feed</a><a class="mini" href="subscriptions/github-changelog.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="mcp-spec-commits" data-kind="atom" data-category="Agent protocols" data-topics="MCP agent protocols">
+  <div class="card-top"><span class="kind">atom</span><span class="category">Agent protocols</span></div><div class="health" data-health>Health pending</div>
+  <h3>Model Context Protocol specification commits</h3>
+  <a class="url" href="https://github.com/modelcontextprotocol/modelcontextprotocol/commits/main.atom">https://github.com/modelcontextprotocol/modelcontextprotocol/commits/main.atom</a>
+  <div class="tags"><span>MCP</span> <span>agent protocols</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed mcp-spec-commits --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed mcp-spec-commits --sync-now">Copy subscribe</button><a class="mini" href="https://github.com/modelcontextprotocol/modelcontextprotocol/commits/main.atom">Feed</a><a class="mini" href="subscriptions/mcp-spec-commits.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="x402-commits" data-kind="atom" data-category="Payments" data-topics="x402 HTTP 402 agent payments">
+  <div class="card-top"><span class="kind">atom</span><span class="category">Payments</span></div><div class="health" data-health>Health pending</div>
+  <h3>x402 repository commits</h3>
+  <a class="url" href="https://github.com/coinbase/x402/commits/main.atom">https://github.com/coinbase/x402/commits/main.atom</a>
+  <div class="tags"><span>x402</span> <span>HTTP 402</span> <span>agent payments</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed x402-commits --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed x402-commits --sync-now">Copy subscribe</button><a class="mini" href="https://github.com/coinbase/x402/commits/main.atom">Feed</a><a class="mini" href="subscriptions/x402-commits.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="erc8004-contracts" data-kind="atom" data-category="Agent protocols" data-topics="ERC-8004 agent identity agent reputation">
+  <div class="card-top"><span class="kind">atom</span><span class="category">Agent protocols</span></div><div class="health" data-health>Health pending</div>
+  <h3>ERC-8004 contracts commits</h3>
+  <a class="url" href="https://github.com/erc-8004/erc-8004-contracts/commits/master.atom">https://github.com/erc-8004/erc-8004-contracts/commits/master.atom</a>
+  <div class="tags"><span>ERC-8004</span> <span>agent identity</span> <span>agent reputation</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed erc8004-contracts --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed erc8004-contracts --sync-now">Copy subscribe</button><a class="mini" href="https://github.com/erc-8004/erc-8004-contracts/commits/master.atom">Feed</a><a class="mini" href="subscriptions/erc8004-contracts.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="json-feed" data-kind="atom" data-category="Agent protocols" data-topics="feeds JSON Feed syndication">
+  <div class="card-top"><span class="kind">atom</span><span class="category">Agent protocols</span></div><div class="health" data-health>Health pending</div>
+  <h3>JSON Feed spec updates</h3>
+  <a class="url" href="https://github.com/brentsimmons/JSONFeed/commits/master.atom">https://github.com/brentsimmons/JSONFeed/commits/master.atom</a>
+  <div class="tags"><span>feeds</span> <span>JSON Feed</span> <span>syndication</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed json-feed --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed json-feed --sync-now">Copy subscribe</button><a class="mini" href="https://github.com/brentsimmons/JSONFeed/commits/master.atom">Feed</a><a class="mini" href="subscriptions/json-feed.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="w3c-websub" data-kind="atom" data-category="Agent protocols" data-topics="push subscription WebSub syndication">
+  <div class="card-top"><span class="kind">atom</span><span class="category">Agent protocols</span></div><div class="health" data-health>Health pending</div>
+  <h3>W3C WebSub commits</h3>
+  <a class="url" href="https://github.com/w3c/websub/commits/master.atom">https://github.com/w3c/websub/commits/master.atom</a>
+  <div class="tags"><span>push subscription</span> <span>WebSub</span> <span>syndication</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed w3c-websub --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed w3c-websub --sync-now">Copy subscribe</button><a class="mini" href="https://github.com/w3c/websub/commits/master.atom">Feed</a><a class="mini" href="subscriptions/w3c-websub.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="cloudflare-blog" data-kind="rss" data-category="Infrastructure" data-topics="AI agents publisher infrastructure web internet payments">
+  <div class="card-top"><span class="kind">rss</span><span class="category">Infrastructure</span></div><div class="health" data-health>Health pending</div>
+  <h3>Cloudflare Blog</h3>
+  <a class="url" href="https://blog.cloudflare.com/rss/">https://blog.cloudflare.com/rss/</a>
+  <div class="tags"><span>AI agents</span> <span>publisher infrastructure</span> <span>web</span> <span>internet payments</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed cloudflare-blog --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed cloudflare-blog --sync-now">Copy subscribe</button><a class="mini" href="https://blog.cloudflare.com/rss/">Feed</a><a class="mini" href="subscriptions/cloudflare-blog.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="platformer" data-kind="substack" data-category="Media" data-topics="substack newsletter platforms ai tech-policy">
+  <div class="card-top"><span class="kind">substack</span><span class="category">Media</span></div><div class="health" data-health>Health pending</div>
+  <h3>Platformer</h3>
+  <a class="url" href="https://www.platformer.news/rss/">https://www.platformer.news/rss/</a>
+  <div class="tags"><span>substack</span> <span>newsletter</span> <span>platforms</span> <span>ai</span> <span>tech-policy</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed platformer --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed platformer --sync-now">Copy subscribe</button><a class="mini" href="https://www.platformer.news/rss/">Feed</a><a class="mini" href="subscriptions/platformer.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="fireship" data-kind="youtube" data-category="Media" data-topics="youtube developer-tools ai software">
+  <div class="card-top"><span class="kind">youtube</span><span class="category">Media</span></div><div class="health" data-health>Health pending</div>
+  <h3>Fireship</h3>
+  <a class="url" href="https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA">https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA</a>
+  <div class="tags"><span>youtube</span> <span>developer-tools</span> <span>ai</span> <span>software</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed fireship --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed fireship --sync-now">Copy subscribe</button><a class="mini" href="https://www.youtube.com/feeds/videos.xml?channel_id=UCsBjURrPoezykLs9EqgamOA">Feed</a><a class="mini" href="subscriptions/fireship.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="lex-fridman-podcast" data-kind="rss" data-category="Research" data-topics="podcast ai research founders">
+  <div class="card-top"><span class="kind">rss</span><span class="category">Research</span></div><div class="health" data-health>Health pending</div>
+  <h3>Lex Fridman Podcast</h3>
+  <a class="url" href="https://lexfridman.com/feed/podcast/">https://lexfridman.com/feed/podcast/</a>
+  <div class="tags"><span>podcast</span> <span>ai</span> <span>research</span> <span>founders</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed lex-fridman-podcast --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed lex-fridman-podcast --sync-now">Copy subscribe</button><a class="mini" href="https://lexfridman.com/feed/podcast/">Feed</a><a class="mini" href="subscriptions/lex-fridman-podcast.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="daring-fireball" data-kind="json-feed" data-category="Industry" data-topics="json-feed apple web technology">
+  <div class="card-top"><span class="kind">json-feed</span><span class="category">Industry</span></div><div class="health" data-health>Health pending</div>
+  <h3>Daring Fireball</h3>
+  <a class="url" href="https://daringfireball.net/feeds/json">https://daringfireball.net/feeds/json</a>
+  <div class="tags"><span>json-feed</span> <span>apple</span> <span>web</span> <span>technology</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed daring-fireball --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed daring-fireball --sync-now">Copy subscribe</button><a class="mini" href="https://daringfireball.net/feeds/json">Feed</a><a class="mini" href="subscriptions/daring-fireball.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="openclaw" data-kind="llms.txt" data-category="Agent protocols" data-topics="llms.txt docs openclaw agents heartbeat">
+  <div class="card-top"><span class="kind">llms.txt</span><span class="category">Agent protocols</span></div><div class="health" data-health>Health pending</div>
+  <h3>OpenClaw</h3>
+  <a class="url" href="https://docs.openclaw.ai/llms.txt">https://docs.openclaw.ai/llms.txt</a>
+  <div class="tags"><span>llms.txt</span> <span>docs</span> <span>openclaw</span> <span>agents</span> <span>heartbeat</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed openclaw --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed openclaw --sync-now">Copy subscribe</button><a class="mini" href="https://docs.openclaw.ai/llms.txt">Feed</a><a class="mini" href="subscriptions/openclaw.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="release-notes-from-servers" data-kind="atom" data-category="Agent protocols" data-topics="github releases mcp servers agents">
+  <div class="card-top"><span class="kind">atom</span><span class="category">Agent protocols</span></div><div class="health" data-health>Health pending</div>
+  <h3>Release notes from servers</h3>
+  <a class="url" href="https://github.com/modelcontextprotocol/servers/releases.atom">https://github.com/modelcontextprotocol/servers/releases.atom</a>
+  <div class="tags"><span>github</span> <span>releases</span> <span>mcp</span> <span>servers</span> <span>agents</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed release-notes-from-servers --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed release-notes-from-servers --sync-now">Copy subscribe</button><a class="mini" href="https://github.com/modelcontextprotocol/servers/releases.atom">Feed</a><a class="mini" href="subscriptions/release-notes-from-servers.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="hacker-news-front-page" data-kind="rss" data-category="Industry" data-topics="hacker-news community startups ai software">
+  <div class="card-top"><span class="kind">rss</span><span class="category">Industry</span></div><div class="health" data-health>Health pending</div>
+  <h3>Hacker News: Front Page</h3>
+  <a class="url" href="https://hnrss.org/frontpage">https://hnrss.org/frontpage</a>
+  <div class="tags"><span>hacker-news</span> <span>community</span> <span>startups</span> <span>ai</span> <span>software</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed hacker-news-front-page --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed hacker-news-front-page --sync-now">Copy subscribe</button><a class="mini" href="https://hnrss.org/frontpage">Feed</a><a class="mini" href="subscriptions/hacker-news-front-page.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="cs-ai-updates-on-arxiv-org" data-kind="rss" data-category="Research" data-topics="arxiv papers ai research agents">
+  <div class="card-top"><span class="kind">rss</span><span class="category">Research</span></div><div class="health" data-health>Health pending</div>
+  <h3>cs.AI updates on arXiv.org</h3>
+  <a class="url" href="https://export.arxiv.org/rss/cs.AI">https://export.arxiv.org/rss/cs.AI</a>
+  <div class="tags"><span>arxiv</span> <span>papers</span> <span>ai</span> <span>research</span> <span>agents</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed cs-ai-updates-on-arxiv-org --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed cs-ai-updates-on-arxiv-org --sync-now">Copy subscribe</button><a class="mini" href="https://export.arxiv.org/rss/cs.AI">Feed</a><a class="mini" href="subscriptions/cs-ai-updates-on-arxiv-org.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="openai-news" data-kind="rss" data-category="Frontier labs" data-topics="frontier-labs ai agents models">
+  <div class="card-top"><span class="kind">rss</span><span class="category">Frontier labs</span></div><div class="health" data-health>Health pending</div>
+  <h3>OpenAI News</h3>
+  <a class="url" href="https://openai.com/news/rss.xml">https://openai.com/news/rss.xml</a>
+  <div class="tags"><span>frontier-labs</span> <span>ai</span> <span>agents</span> <span>models</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed openai-news --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed openai-news --sync-now">Copy subscribe</button><a class="mini" href="https://openai.com/news/rss.xml">Feed</a><a class="mini" href="subscriptions/openai-news.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="google-deepmind-blog" data-kind="rss" data-category="Frontier labs" data-topics="frontier-labs ai research">
+  <div class="card-top"><span class="kind">rss</span><span class="category">Frontier labs</span></div><div class="health" data-health>Health pending</div>
+  <h3>Google DeepMind Blog</h3>
+  <a class="url" href="https://deepmind.google/blog/rss.xml">https://deepmind.google/blog/rss.xml</a>
+  <div class="tags"><span>frontier-labs</span> <span>ai</span> <span>research</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed google-deepmind-blog --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed google-deepmind-blog --sync-now">Copy subscribe</button><a class="mini" href="https://deepmind.google/blog/rss.xml">Feed</a><a class="mini" href="subscriptions/google-deepmind-blog.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="hugging-face-blog" data-kind="rss" data-category="Developer tooling" data-topics="open-source-ai models developer-tools">
+  <div class="card-top"><span class="kind">rss</span><span class="category">Developer tooling</span></div><div class="health" data-health>Health pending</div>
+  <h3>Hugging Face Blog</h3>
+  <a class="url" href="https://huggingface.co/blog/feed.xml">https://huggingface.co/blog/feed.xml</a>
+  <div class="tags"><span>open-source-ai</span> <span>models</span> <span>developer-tools</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed hugging-face-blog --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed hugging-face-blog --sync-now">Copy subscribe</button><a class="mini" href="https://huggingface.co/blog/feed.xml">Feed</a><a class="mini" href="subscriptions/hugging-face-blog.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="latent-space" data-kind="substack" data-category="Media" data-topics="newsletter ai-engineering agents">
+  <div class="card-top"><span class="kind">substack</span><span class="category">Media</span></div><div class="health" data-health>Health pending</div>
+  <h3>Latent Space</h3>
+  <a class="url" href="https://www.latent.space/feed">https://www.latent.space/feed</a>
+  <div class="tags"><span>newsletter</span> <span>ai-engineering</span> <span>agents</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed latent-space --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed latent-space --sync-now">Copy subscribe</button><a class="mini" href="https://www.latent.space/feed">Feed</a><a class="mini" href="subscriptions/latent-space.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="interconnects" data-kind="substack" data-category="Research" data-topics="newsletter ai-research policy">
+  <div class="card-top"><span class="kind">substack</span><span class="category">Research</span></div><div class="health" data-health>Health pending</div>
+  <h3>Interconnects</h3>
+  <a class="url" href="https://www.interconnects.ai/feed">https://www.interconnects.ai/feed</a>
+  <div class="tags"><span>newsletter</span> <span>ai-research</span> <span>policy</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed interconnects --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed interconnects --sync-now">Copy subscribe</button><a class="mini" href="https://www.interconnects.ai/feed">Feed</a><a class="mini" href="subscriptions/interconnects.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="the-gradient" data-kind="rss" data-category="Research" data-topics="ai-research essays society">
+  <div class="card-top"><span class="kind">rss</span><span class="category">Research</span></div><div class="health" data-health>Health pending</div>
+  <h3>The Gradient</h3>
+  <a class="url" href="https://thegradient.pub/rss/">https://thegradient.pub/rss/</a>
+  <div class="tags"><span>ai-research</span> <span>essays</span> <span>society</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed the-gradient --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed the-gradient --sync-now">Copy subscribe</button><a class="mini" href="https://thegradient.pub/rss/">Feed</a><a class="mini" href="subscriptions/the-gradient.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="langchain-changelog" data-kind="rss" data-category="Developer tooling" data-topics="agents developer-tools changelog">
+  <div class="card-top"><span class="kind">rss</span><span class="category">Developer tooling</span></div><div class="health" data-health>Health pending</div>
+  <h3>LangChain Changelog</h3>
+  <a class="url" href="https://changelog.langchain.com/feed.xml">https://changelog.langchain.com/feed.xml</a>
+  <div class="tags"><span>agents</span> <span>developer-tools</span> <span>changelog</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed langchain-changelog --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed langchain-changelog --sync-now">Copy subscribe</button><a class="mini" href="https://changelog.langchain.com/feed.xml">Feed</a><a class="mini" href="subscriptions/langchain-changelog.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="github-copilot-changelog" data-kind="rss" data-category="Developer tooling" data-topics="developer-tools ai-coding copilot">
+  <div class="card-top"><span class="kind">rss</span><span class="category">Developer tooling</span></div><div class="health" data-health>Health pending</div>
+  <h3>GitHub Copilot Changelog</h3>
+  <a class="url" href="https://github.blog/changelog/label/copilot/feed/">https://github.blog/changelog/label/copilot/feed/</a>
+  <div class="tags"><span>developer-tools</span> <span>ai-coding</span> <span>copilot</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed github-copilot-changelog --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed github-copilot-changelog --sync-now">Copy subscribe</button><a class="mini" href="https://github.blog/changelog/label/copilot/feed/">Feed</a><a class="mini" href="subscriptions/github-copilot-changelog.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="ethereum-magicians" data-kind="rss" data-category="Agent protocols" data-topics="ethereum standards agents">
+  <div class="card-top"><span class="kind">rss</span><span class="category">Agent protocols</span></div><div class="health" data-health>Health pending</div>
+  <h3>Ethereum Magicians</h3>
+  <a class="url" href="https://ethereum-magicians.org/latest.rss">https://ethereum-magicians.org/latest.rss</a>
+  <div class="tags"><span>ethereum</span> <span>standards</span> <span>agents</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed ethereum-magicians --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed ethereum-magicians --sync-now">Copy subscribe</button><a class="mini" href="https://ethereum-magicians.org/latest.rss">Feed</a><a class="mini" href="subscriptions/ethereum-magicians.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="lilian-weng" data-kind="rss" data-category="Research" data-topics="ai-research agents rag">
+  <div class="card-top"><span class="kind">rss</span><span class="category">Research</span></div><div class="health" data-health>Health pending</div>
+  <h3>Lil'Log — Lilian Weng</h3>
+  <a class="url" href="https://lilianweng.github.io/index.xml">https://lilianweng.github.io/index.xml</a>
+  <div class="tags"><span>ai-research</span> <span>agents</span> <span>rag</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed lilian-weng --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed lilian-weng --sync-now">Copy subscribe</button><a class="mini" href="https://lilianweng.github.io/index.xml">Feed</a><a class="mini" href="subscriptions/lilian-weng.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="techcrunch-ai" data-kind="rss" data-category="Industry" data-topics="ai-news startups industry">
+  <div class="card-top"><span class="kind">rss</span><span class="category">Industry</span></div><div class="health" data-health>Health pending</div>
+  <h3>TechCrunch AI</h3>
+  <a class="url" href="https://techcrunch.com/category/artificial-intelligence/feed/">https://techcrunch.com/category/artificial-intelligence/feed/</a>
+  <div class="tags"><span>ai-news</span> <span>startups</span> <span>industry</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed techcrunch-ai --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed techcrunch-ai --sync-now">Copy subscribe</button><a class="mini" href="https://techcrunch.com/category/artificial-intelligence/feed/">Feed</a><a class="mini" href="subscriptions/techcrunch-ai.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="mit-tech-review-ai" data-kind="rss" data-category="Research" data-topics="ai-news research society">
+  <div class="card-top"><span class="kind">rss</span><span class="category">Research</span></div><div class="health" data-health>Health pending</div>
+  <h3>MIT Technology Review AI</h3>
+  <a class="url" href="https://www.technologyreview.com/topic/artificial-intelligence/feed">https://www.technologyreview.com/topic/artificial-intelligence/feed</a>
+  <div class="tags"><span>ai-news</span> <span>research</span> <span>society</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed mit-tech-review-ai --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed mit-tech-review-ai --sync-now">Copy subscribe</button><a class="mini" href="https://www.technologyreview.com/topic/artificial-intelligence/feed">Feed</a><a class="mini" href="subscriptions/mit-tech-review-ai.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="google-research-blog" data-kind="rss" data-category="Frontier labs" data-topics="research ai frontier-labs">
+  <div class="card-top"><span class="kind">rss</span><span class="category">Frontier labs</span></div><div class="health" data-health>Health pending</div>
+  <h3>Google Research Blog</h3>
+  <a class="url" href="https://research.google/blog/rss/">https://research.google/blog/rss/</a>
+  <div class="tags"><span>research</span> <span>ai</span> <span>frontier-labs</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed google-research-blog --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed google-research-blog --sync-now">Copy subscribe</button><a class="mini" href="https://research.google/blog/rss/">Feed</a><a class="mini" href="subscriptions/google-research-blog.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="microsoft-research-blog" data-kind="rss" data-category="Frontier labs" data-topics="research ai frontier-labs">
+  <div class="card-top"><span class="kind">rss</span><span class="category">Frontier labs</span></div><div class="health" data-health>Health pending</div>
+  <h3>Microsoft Research Blog</h3>
+  <a class="url" href="https://www.microsoft.com/en-us/research/feed/">https://www.microsoft.com/en-us/research/feed/</a>
+  <div class="tags"><span>research</span> <span>ai</span> <span>frontier-labs</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed microsoft-research-blog --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed microsoft-research-blog --sync-now">Copy subscribe</button><a class="mini" href="https://www.microsoft.com/en-us/research/feed/">Feed</a><a class="mini" href="subscriptions/microsoft-research-blog.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="aws-machine-learning-blog" data-kind="rss" data-category="Infrastructure" data-topics="ai-infrastructure cloud ml">
+  <div class="card-top"><span class="kind">rss</span><span class="category">Infrastructure</span></div><div class="health" data-health>Health pending</div>
+  <h3>AWS Machine Learning Blog</h3>
+  <a class="url" href="https://aws.amazon.com/blogs/machine-learning/feed/">https://aws.amazon.com/blogs/machine-learning/feed/</a>
+  <div class="tags"><span>ai-infrastructure</span> <span>cloud</span> <span>ml</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed aws-machine-learning-blog --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed aws-machine-learning-blog --sync-now">Copy subscribe</button><a class="mini" href="https://aws.amazon.com/blogs/machine-learning/feed/">Feed</a><a class="mini" href="subscriptions/aws-machine-learning-blog.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="stripe-blog" data-kind="rss" data-category="Payments" data-topics="payments internet-business x402-adjacent">
+  <div class="card-top"><span class="kind">rss</span><span class="category">Payments</span></div><div class="health" data-health>Health pending</div>
+  <h3>Stripe Blog</h3>
+  <a class="url" href="https://stripe.com/blog/feed.rss">https://stripe.com/blog/feed.rss</a>
+  <div class="tags"><span>payments</span> <span>internet-business</span> <span>x402-adjacent</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed stripe-blog --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed stripe-blog --sync-now">Copy subscribe</button><a class="mini" href="https://stripe.com/blog/feed.rss">Feed</a><a class="mini" href="subscriptions/stripe-blog.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="openai-cookbook-commits" data-kind="atom" data-category="Frontier labs" data-topics="openai developer-tools agents">
+  <div class="card-top"><span class="kind">atom</span><span class="category">Frontier labs</span></div><div class="health" data-health>Health pending</div>
+  <h3>OpenAI Cookbook commits</h3>
+  <a class="url" href="https://github.com/openai/openai-cookbook/commits/main.atom">https://github.com/openai/openai-cookbook/commits/main.atom</a>
+  <div class="tags"><span>openai</span> <span>developer-tools</span> <span>agents</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed openai-cookbook-commits --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed openai-cookbook-commits --sync-now">Copy subscribe</button><a class="mini" href="https://github.com/openai/openai-cookbook/commits/main.atom">Feed</a><a class="mini" href="subscriptions/openai-cookbook-commits.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="anthropic-cookbook-commits" data-kind="atom" data-category="Frontier labs" data-topics="anthropic developer-tools agents">
+  <div class="card-top"><span class="kind">atom</span><span class="category">Frontier labs</span></div><div class="health" data-health>Health pending</div>
+  <h3>Anthropic Cookbook commits</h3>
+  <a class="url" href="https://github.com/anthropics/anthropic-cookbook/commits/main.atom">https://github.com/anthropics/anthropic-cookbook/commits/main.atom</a>
+  <div class="tags"><span>anthropic</span> <span>developer-tools</span> <span>agents</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed anthropic-cookbook-commits --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed anthropic-cookbook-commits --sync-now">Copy subscribe</button><a class="mini" href="https://github.com/anthropics/anthropic-cookbook/commits/main.atom">Feed</a><a class="mini" href="subscriptions/anthropic-cookbook-commits.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="vercel-ai-sdk-commits" data-kind="atom" data-category="Developer tooling" data-topics="ai-sdk developer-tools agents">
+  <div class="card-top"><span class="kind">atom</span><span class="category">Developer tooling</span></div><div class="health" data-health>Health pending</div>
+  <h3>Vercel AI SDK commits</h3>
+  <a class="url" href="https://github.com/vercel/ai/commits/main.atom">https://github.com/vercel/ai/commits/main.atom</a>
+  <div class="tags"><span>ai-sdk</span> <span>developer-tools</span> <span>agents</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed vercel-ai-sdk-commits --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed vercel-ai-sdk-commits --sync-now">Copy subscribe</button><a class="mini" href="https://github.com/vercel/ai/commits/main.atom">Feed</a><a class="mini" href="subscriptions/vercel-ai-sdk-commits.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="openai-agents-python-commits" data-kind="atom" data-category="Frontier labs" data-topics="agents openai developer-tools">
+  <div class="card-top"><span class="kind">atom</span><span class="category">Frontier labs</span></div><div class="health" data-health>Health pending</div>
+  <h3>OpenAI Agents Python commits</h3>
+  <a class="url" href="https://github.com/openai/openai-agents-python/commits/main.atom">https://github.com/openai/openai-agents-python/commits/main.atom</a>
+  <div class="tags"><span>agents</span> <span>openai</span> <span>developer-tools</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed openai-agents-python-commits --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed openai-agents-python-commits --sync-now">Copy subscribe</button><a class="mini" href="https://github.com/openai/openai-agents-python/commits/main.atom">Feed</a><a class="mini" href="subscriptions/openai-agents-python-commits.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="langchain-releases" data-kind="atom" data-category="Developer tooling" data-topics="agents langchain developer-tools">
+  <div class="card-top"><span class="kind">atom</span><span class="category">Developer tooling</span></div><div class="health" data-health>Health pending</div>
+  <h3>LangChain releases</h3>
+  <a class="url" href="https://github.com/langchain-ai/langchain/releases.atom">https://github.com/langchain-ai/langchain/releases.atom</a>
+  <div class="tags"><span>agents</span> <span>langchain</span> <span>developer-tools</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed langchain-releases --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed langchain-releases --sync-now">Copy subscribe</button><a class="mini" href="https://github.com/langchain-ai/langchain/releases.atom">Feed</a><a class="mini" href="subscriptions/langchain-releases.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="browser-use-commits" data-kind="atom" data-category="Developer tooling" data-topics="browser-agents automation agents">
+  <div class="card-top"><span class="kind">atom</span><span class="category">Developer tooling</span></div><div class="health" data-health>Health pending</div>
+  <h3>browser-use commits</h3>
+  <a class="url" href="https://github.com/browser-use/browser-use/commits/main.atom">https://github.com/browser-use/browser-use/commits/main.atom</a>
+  <div class="tags"><span>browser-agents</span> <span>automation</span> <span>agents</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed browser-use-commits --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed browser-use-commits --sync-now">Copy subscribe</button><a class="mini" href="https://github.com/browser-use/browser-use/commits/main.atom">Feed</a><a class="mini" href="subscriptions/browser-use-commits.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="arxiv-cs-cl" data-kind="rss" data-category="Research" data-topics="arxiv nlp llms research">
+  <div class="card-top"><span class="kind">rss</span><span class="category">Research</span></div><div class="health" data-health>Health pending</div>
+  <h3>cs.CL updates on arXiv.org</h3>
+  <a class="url" href="https://export.arxiv.org/rss/cs.CL">https://export.arxiv.org/rss/cs.CL</a>
+  <div class="tags"><span>arxiv</span> <span>nlp</span> <span>llms</span> <span>research</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed arxiv-cs-cl --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed arxiv-cs-cl --sync-now">Copy subscribe</button><a class="mini" href="https://export.arxiv.org/rss/cs.CL">Feed</a><a class="mini" href="subscriptions/arxiv-cs-cl.subscription.json">Manifest</a></div>
+</article>
+<article class="card" data-id="arxiv-cs-lg" data-kind="rss" data-category="Research" data-topics="arxiv machine-learning research">
+  <div class="card-top"><span class="kind">rss</span><span class="category">Research</span></div><div class="health" data-health>Health pending</div>
+  <h3>cs.LG updates on arXiv.org</h3>
+  <a class="url" href="https://export.arxiv.org/rss/cs.LG">https://export.arxiv.org/rss/cs.LG</a>
+  <div class="tags"><span>arxiv</span> <span>machine-learning</span> <span>research</span></div>
+  <pre><code>npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed arxiv-cs-lg --sync-now</code></pre>
+  <div class="button-row"><button data-copy="npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --feed arxiv-cs-lg --sync-now">Copy subscribe</button><a class="mini" href="https://export.arxiv.org/rss/cs.LG">Feed</a><a class="mini" href="subscriptions/arxiv-cs-lg.subscription.json">Manifest</a></div>
+</article></section>
+
+  <div class="section-head"><div><h2>How agents use it</h2><p>The registry is only useful if it ends in subscription. Discovery is the start, not the product.</p></div></div>
+  <section class="how"><article class="step"><b>01</b><h3>Discover</h3><p>Human or agent browses known feeds by topic, kind or category.</p></article><article class="step"><b>02</b><h3>Subscribe</h3><p>Copy the command or consume a subscription manifest.</p></article><article class="step"><b>03</b><h3>Heartbeat</h3><p>Background sync keeps memory and inbox warm without chat spam.</p></article><article class="step"><b>04</b><h3>Answer</h3><p>The agent cites source URLs, respects rights and fetches live only on miss.</p></article></section>
+</main>
+<footer>Search discovers. ARSS subscribes. Memory remembers. MCP acts. x402 pays.</footer>
+<script>
+const q=document.querySelector('#q'), kind=document.querySelector('#kind'), category=document.querySelector('#category'), cards=[...document.querySelectorAll('.card')];
+function apply(){const needle=q.value.toLowerCase(), k=kind.value, cat=category.value; for(const c of cards){const text=c.innerText.toLowerCase(); c.style.display=(!k||c.dataset.kind===k)&&(!cat||c.dataset.category===cat)&&(!needle||text.includes(needle))?'':'none';}}
+q.addEventListener('input',apply); kind.addEventListener('change',apply); category.addEventListener('change',apply);
+document.addEventListener('click', async e=>{const b=e.target.closest('button[data-copy]'); if(!b) return; const old=b.textContent; await navigator.clipboard.writeText(b.dataset.copy); b.textContent='Copied'; setTimeout(()=>b.textContent=old,1200);});
+fetch('health.json').then(r=>r.ok?r.json():null).then(h=>{ if(!h) return; const byId=new Map((h.feeds||[]).map(x=>[x.id,x])); for(const c of cards){ const x=byId.get(c.dataset.id); const el=c.querySelector('[data-health]'); if(!x||!el) continue; el.classList.remove('ok','fail'); el.classList.add(x.ok?'ok':'fail'); const date=x.last_item_at?new Date(x.last_item_at).toLocaleDateString():''; el.textContent=x.ok?('OK · '+x.items+' items'+(date?' · '+date:'')):'Fetch failed'; el.title=x.error||('Checked '+x.checked_at); }}).catch(()=>{});
+</script>
+</body>
+</html>

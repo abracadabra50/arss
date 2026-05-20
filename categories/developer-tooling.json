@@ -1,0 +1,17 @@
+{
+  "type": "https://arss.dev/feed-category/v0.1",
+  "id": "developer-tooling",
+  "title": "Developer tooling",
+  "description": "Changelogs and repositories that affect agent builders and AI engineers.",
+  "feed_ids": [
+    "github-changelog",
+    "hugging-face-blog",
+    "langchain-changelog",
+    "github-copilot-changelog",
+    "vercel-ai-sdk-commits",
+    "langchain-releases",
+    "browser-use-commits"
+  ],
+  "path": "categories/developer-tooling.json",
+  "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --category \"Developer tooling\" --sync-now"
+}

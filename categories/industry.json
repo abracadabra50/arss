@@ -1,0 +1,13 @@
+{
+  "type": "https://arss.dev/feed-category/v0.1",
+  "id": "industry",
+  "title": "Industry",
+  "description": "Market, startup, policy and industry signals. Higher noise, useful for context.",
+  "feed_ids": [
+    "daring-fireball",
+    "hacker-news-front-page",
+    "techcrunch-ai"
+  ],
+  "path": "categories/industry.json",
+  "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --category Industry --sync-now"
+}

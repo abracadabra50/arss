@@ -1,0 +1,25 @@
+{
+  "type": "https://arss.dev/subscription/v0.2",
+  "feed_url": "https://github.com/openai/openai-agents-python/commits/main.atom",
+  "agent": {
+    "id": "did:web:local.agent",
+    "name": "Local Agent"
+  },
+  "permissions": {
+    "summarise": true,
+    "quote": "limited",
+    "embed": true,
+    "store_user_memory": true,
+    "train_model": false
+  },
+  "payment_policy": {
+    "mode": "free_only",
+    "note": "No payment budget is granted by this starter manifest. Paid resources require an explicit local budget."
+  },
+  "sync": {
+    "poll": "PT1H",
+    "push": "none"
+  },
+  "created_at": "2026-05-20T10:52:08.688Z",
+  "updated_at": "2026-05-20T10:52:08.688Z"
+}

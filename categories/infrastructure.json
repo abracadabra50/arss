@@ -1,0 +1,12 @@
+{
+  "type": "https://arss.dev/feed-category/v0.1",
+  "id": "infrastructure",
+  "title": "Infrastructure",
+  "description": "Cloud, compute and publisher infrastructure feeds relevant to agent systems.",
+  "feed_ids": [
+    "cloudflare-blog",
+    "aws-machine-learning-blog"
+  ],
+  "path": "categories/infrastructure.json",
+  "subscribe_command": "npx --yes github:abracadabra50/arss feed-registry-import https://abracadabra50.github.io/arss/feeds.json --category Infrastructure --sync-now"
+}

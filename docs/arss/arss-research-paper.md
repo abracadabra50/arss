@@ -1,283 +1,472 @@
 # ARSS: Agent-Readable Syndication for Subscribed Context
 
-**A Protocol Layer for Rights-Aware Context Delivery to Long-Running Agents**
-
-Z. Ashraf and Pal  
-20 May 2026
+Zishan Ashraf  
+Preprint, May 2026
 
 ## Abstract
 
-Long-running agents increasingly acquire external context through web search, browser automation, tool calls, and retrieval-augmented generation. These mechanisms are effective for open-world discovery and action, but they do not provide a standard way for an agent to maintain fresh, rights-aware awareness of sources it already knows it cares about. Existing feed formats expose publisher updates for human readers; tool protocols expose query-time capabilities; retrieval systems search over content after it has already been acquired. This paper introduces ARSS, Agent-Readable Syndication, a protocol layer for subscribed context delivery to agents. ARSS defines a feed profile, context resources, subscription manifests, context diets, registry bundles, heartbeat synchronisation, and optional paid resource access. The design separates publication, discovery, memory admission, attention selection, and payment authority, preserving publisher attribution while leaving relevance and spending decisions to the user's agent. We describe a prototype implementation including a CLI, daemon, MCP server, static registry, category bundles, health checker, and local memory/inbox store. Preliminary live-feed evaluation over 20 subscribed sources shows the trade-off between live polling, local memory, current-inbox injection, and memory-plus-live-fallback retrieval. ARSS complements search, tool protocols, and retrieval systems by standardising the between-turn acquisition path for sources an agent follows repeatedly.
+Agents increasingly use web search, browser automation, tool calls, and retrieval-augmented generation to obtain external context. These mechanisms work for open-ended discovery and task execution, but they are a poor fit for a common recurring case: an agent repeatedly needs fresh information from sources it already follows. Existing feed formats expose updates for human readers; tool protocols expose query-time capabilities; retrieval systems search over content after it has been acquired. None defines a publisher-controlled, rights-aware, policy-governed subscription layer for long-running agents. This paper presents ARSS, Agent-Readable Syndication for subscribed context. ARSS defines feed metadata, context resources, subscription manifests, context diets, registries, heartbeat synchronisation, and receipts. Its central design principle is that context admission is an end-to-end function: publishers describe resources and rights, registries assist discovery, but agents apply local policy for memory, attention, and payment. We describe a prototype implementation and evaluate it over live feeds. The results show the intended trade-off: local memory greatly reduces answer-time cost, a small inbox provides bounded attention, and live subscribed-source fallback recovers recall without returning to open-ended rediscovery.
+
+**Keywords:** agent protocols, web syndication, RSS, retrieval-augmented generation, MCP, context engineering, HTTP 402, x402.
 
 ---
 
 ## 1. Introduction
 
-An agent asked about a familiar source often behaves as though it has never seen the source before. It searches the web, fetches pages, reads noisy snippets, summarises the result, and discards most of the intermediate context. The same process repeats the next day. This is structurally different from how human readers follow sources: humans subscribe.
+A long-running agent has two different context problems. The first is discovery: finding sources that may answer a new question. The second is continuity: staying aware of sources already known to matter. Current agent systems often collapse these problems. When asked about a source they have used before, they search again, fetch again, parse again, and spend context again. That is acceptable for one-off discovery. It is inefficient and brittle for sources an agent follows repeatedly.
 
-The web already has mature primitives for several adjacent tasks. RSS, Atom, and JSON Feed let publishers announce updates. Web search discovers unknown pages. MCP-style tool protocols let agents call known services. Retrieval-augmented generation (RAG) searches over local or indexed content. Webhooks deliver push events between applications. Payment protocols such as HTTP 402/x402 can gate access to resources. None of these, by itself, defines the missing contract:
+Human information systems solved the continuity problem with subscription. A reader does not search the web every morning to determine whether a journal, blog, changelog, or standards body has published. The reader subscribes. Agents need an analogous primitive, but the human feed-reader model is insufficient. Agents must decide whether they may cache content, embed it for retrieval, quote it, surface it to the user, purchase richer resources, or retain it in memory. They also need provenance and receipts because context supplied today may support an answer days later.
 
-> An agent wants to keep a set of publisher-declared sources warm, under local user policy, with provenance, rights, attribution, freshness, memory admission, attention selection, and optional payment handled explicitly.
+ARSS is a protocol layer for this continuity problem. It does not replace search, tool calls, browser automation, platform APIs, or retrieval systems. Instead, it defines the acquisition and delivery plane that precedes them for recurring sources. A publisher exposes updates and resources. A registry helps bootstrap subscriptions. An agent synchronises a context diet on a heartbeat. Local policy determines what enters archive, memory, and the current inbox. Answer-time retrieval uses local memory first, falls back to subscribed live fetches when necessary, and uses open-world search only beyond the subscription boundary.
 
-We call this contract **subscribed context**. Subscribed context is not the full text of the web. It is not a search index. It is the policy-governed stream of source updates and associated resources that a long-running agent chooses to maintain between user turns.
+The paper's main design claim is an end-to-end one: **context admission belongs at the agent endpoint**. Publishers can state permissions and attribution requirements. Registries can curate feeds. Payment rails can execute a paid fetch. But only the user's agent has the user's task, budget, memory policy, and attention constraints. ARSS therefore separates five functions that are often conflated:
 
-ARSS, Agent-Readable Syndication, is a protocol layer for subscribed context. It treats source updates as a supply chain rather than a one-off retrieval event. Publishers expose feeds and resources; registries help agents discover and import sources; agents sync sources on a heartbeat; local policy decides what enters archive, memory, and attention; answer-time resolution cites source and rights metadata; optional paid resources require local budget authority.
-
-The central design choice is to separate five functions that are often collapsed:
-
-```text
-publication      publisher emits update/resource metadata
-bootstrap        registry helps discover feeds and bundles
-admission        agent decides what enters memory/archive
-attention        agent decides what reaches the current context/user
-payment          local policy decides whether paid resources are fetched
-```
-
-This separation follows an end-to-end argument: context admission is an endpoint function. A publisher can describe a resource and its rights. A registry can recommend or categorise a feed. A payment rail can move value. But only the user's agent has the user's goals, budget, memory policy, and attention constraints. Therefore relevance, memory retention, notification, and spend authority belong at the endpoint.
-
-This paper makes five contributions:
-
-1. A system model and protocol vocabulary for agent-readable subscribed context.
-2. The context diet and heartbeat abstraction for between-turn context acquisition.
-3. A rights- and payment-aware resource model that preserves publisher attribution while remaining free-first.
-4. A static registry and category-bundle mechanism for bootstrapping agent subscriptions.
-5. A prototype implementation and preliminary evaluation over live feeds.
-
-ARSS is not intended to replace search, MCP, RAG, platform APIs, or browser automation. It defines a different plane: a subscription and delivery plane for sources the agent already follows.
-
----
-
-## 2. Background and related work
-
-### 2.1 Feed formats
-
-RSS, Atom, and JSON Feed provide publisher-controlled update streams. They are simple, durable, cacheable, and widely deployed. Their limitation is that they were designed for human readers and feed readers. They generally do not express whether an agent may cache an item, embed it for retrieval, quote it, use it in memory, fetch structured chunks, pay for canonical text, or preserve a rights snapshot for later citation.
-
-ARSS reuses this infrastructure rather than replacing it. A normal RSS or Atom feed can be normalised into ARSS shape. JSON Feed can carry ARSS metadata directly. The aim is incremental adoption: a publisher should be able to expose a feed first and richer agent metadata later.
-
-### 2.2 WebSub and webhooks
-
-WebSub specifies a publish/subscribe pattern for web resources using hubs, topic URLs, subscriber callbacks, and verification. Webhooks provide application-specific event delivery. These mechanisms are useful for push delivery, but they do not define agent memory policy, resource rights, attribution, optional payment, or context selection. ARSS begins with polling because polling works everywhere; push can be added as a delivery optimisation.
-
-### 2.3 Search and crawling
-
-Search is the right primitive for unknown-source discovery. Crawling is useful for corpus bootstrapping. But both are expensive and unstable when used repeatedly for sources the agent already knows. Search results change, snippets omit detail, and crawlers often lack explicit publisher rights and resource metadata. ARSS does not attempt to solve open-world discovery. It begins when a source has become part of the agent's context diet.
-
-### 2.4 Tool protocols
-
-MCP and similar tool protocols expose query-time capabilities. They are well-suited to asking a known service for a result or performing an action. They are not a subscription mechanism. An MCP call can answer “what is in this service now?”; it does not by itself tell an agent which sources to keep warm between turns, which changes to cache, or which updates should enter attention. ARSS complements tool protocols by giving them fresher local context to operate on and by exposing ARSS operations as tools where useful.
-
-### 2.5 Retrieval-augmented generation
-
-RAG systems search over acquired content. They do not define how content is admitted, refreshed, attributed, governed, expired, or paid for. ARSS feeds retrieval systems. The RAG layer answers questions over memory; the ARSS layer supplies and updates that memory under subscription policy.
-
-### 2.6 Decentralised social protocols
-
-ActivityPub separates actors, inboxes, outboxes, client-to-server operations, and server-to-server federation. AT Protocol separates identity, personal data servers, relays, app views, feeds, and labelers. Both show the value of clear roles and avoiding a single monolithic service. ARSS uses a similar role separation: publication, registry bootstrap, memory admission, attention selection, and payment execution are separate functions that may be operated by different parties.
-
-### 2.7 Site metadata for agents
-
-Emerging conventions such as `llms.txt` expose machine-readable site context for language models and agents. These are complementary. A site description helps an agent understand a source; a subscription protocol tells the agent how to keep that source warm over time.
-
-### 2.8 Payment protocols
-
-HTTP 402 and x402-style flows can provide machine-readable paid access to resources. ARSS treats payment as optional resource metadata, not as the centre of the protocol. A public feed or registry entry must not grant spending authority. Paid resources may be fetched only when local user/agent policy permits.
-
-### 2.9 Comparison
-
-| Mechanism | Known-source freshness | Rights metadata | Memory policy | Payment | Registry/bootstrap | Agent-native delivery |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| RSS/Atom | yes | limited | no | no | weak | partial |
-| WebSub/webhooks | yes | no | no | no | no | event-only |
-| Search | no | weak | no | no | yes | no |
-| Crawler + RAG | periodic | weak | local only | no | no | retrieval-only |
-| MCP/tool calls | query-time | service-specific | no | service-specific | no | action/query |
-| Platform APIs | yes | service-specific | no | service-specific | no | service-specific |
-| ARSS | yes | yes | local endpoint | optional | yes | yes |
-
----
-
-## 3. Design goals and non-goals
-
-Protocol design is shaped by goal order. ARSS prioritises repeated-source awareness and publisher control over open-world discovery. A different ordering would produce a different architecture.
-
-### 3.1 Ranked design goals
-
-**G1. Freshness for known sources.**  
-An agent should learn about updates from subscribed sources without rediscovering those sources at answer time.
-
-**G2. Publisher-controlled provenance, rights, and attribution.**  
-Publishers should be able to express source URL, canonical resource URLs, allowed uses, denied uses, attribution requirements, and resource hashes.
-
-**G3. Endpoint-controlled memory and attention.**  
-The user’s agent should decide what is cached, embedded, retained, injected, or surfaced. Publishers and registries can provide hints, not commands.
-
-**G4. Compatibility with existing web infrastructure.**  
-ARSS should compose with HTTP, RSS, Atom, JSON Feed, static files, ordinary caches, and existing site hosting.
-
-**G5. Low publisher implementation burden.**  
-A publisher should be able to start from an existing feed and add richer metadata incrementally.
-
-**G6. Optional paid resources without default spending.**  
-Paid canonical text, chunks, archives, or licences should be expressible. But payment must require local budget policy and receipts.
-
-**G7. Decentralised discovery.**  
-Registries should be ordinary signed or unsigned JSON resources. Multiple registries should be possible; none should be authoritative by protocol necessity.
-
-### 3.2 Non-goals
-
-ARSS does not aim to:
-
-- replace web search for unknown-source discovery;
-- replace MCP or platform APIs for action/query semantics;
-- define a universal ontology for all content;
-- guarantee the legal validity of a publisher’s rights claims;
-- require a central registry;
-- require payment or cryptocurrency for ordinary feed subscription;
-- make untrusted feed content safe to execute as instructions.
-
----
-
-## 4. System model
-
-### 4.1 Actors
-
-ARSS assumes the following actors and components:
-
-| Symbol | Component | Role |
+| Function | Deciding party | Protocol role |
 | --- | --- | --- |
-| `P` | Publisher | Produces feed items and resources. |
-| `F` | Feed | Ordered or partially ordered update stream. |
-| `R_s` | Resource server | Serves canonical text, chunks, archives, or media. Often same-origin with publisher. |
-| `G` | Registry | Lists feeds and category bundles for bootstrap. |
-| `A` | Agent | Subscribes, syncs, stores, ranks, cites, optionally pays. |
-| `U` | User | Grants local permissions, budget, and attention policy. |
-| `M` | Memory/archive store | Local or tenant-controlled storage for summaries, chunks, receipts, and rights snapshots. |
+| Publication | Publisher | Declare updates, resources, provenance, rights. |
+| Bootstrap | Registry | List feeds and bundles for import. |
+| Admission | Agent/user policy | Decide archive and memory retention. |
+| Attention | Agent/user policy | Decide what reaches the active inbox. |
+| Payment | Agent/user policy | Decide whether to fetch paid resources. |
+
+This separation is deliberately conservative. A public registry entry must not create spending authority. Feed content must not become an instruction. Publisher metadata may permit uses, but it cannot force memory retention or user attention.
+
+This paper contributes:
+
+1. a system model for subscribed context in agent runtimes;
+2. a protocol vocabulary for feeds, resources, subscriptions, context diets, registries, and receipts;
+3. heartbeat and answer-resolution algorithms that separate archive, memory, and inbox;
+4. a rights and payment model that is publisher-declared but endpoint-enforced;
+5. a prototype implementation and preliminary live-feed evaluation.
+
+The narrow claim is the strong claim: for recurring sources, subscription should dominate rediscovery.
+
+---
+
+## 2. Design requirements
+
+ARSS follows the protocol-design lesson that priorities matter. Optimising for open-world discovery would produce a search engine. Optimising for application actions would produce a tool protocol. ARSS instead optimises for recurring-source freshness under local policy.
+
+**R1. Known-source freshness.** An agent should learn that a subscribed source changed without waiting for a user question.
+
+**R2. Publisher-declared provenance and rights.** Source URL, canonical resource URL, attribution requirements, allowed uses, denied uses, hashes, and prices should be machine-readable.
+
+**R3. Endpoint-controlled admission.** The agent, under user or tenant policy, decides whether content is archived, embedded, retained, injected, surfaced, or purchased.
+
+**R4. Web compatibility.** The protocol should compose with HTTP, static hosting, RSS, Atom, JSON Feed, caches, and ordinary URLs.
+
+**R5. Low publisher burden.** A publisher should be able to start with an existing feed and add ARSS metadata incrementally.
+
+**R6. Free-first adoption.** Public feeds and registry starter manifests should require no payment. Paid resources are optional and resource-scoped.
+
+**R7. Decentralised bootstrap.** Registries are ordinary documents that can be mirrored, forked, signed, curated, or kept private. No central registry is required by the protocol.
+
+These requirements imply non-goals. ARSS does not perform unknown-source discovery, define a universal ontology, replace platform APIs, settle legal questions about copyright, or make untrusted content safe to execute.
+
+---
+
+## 3. System model
+
+### 3.1 Actors and stores
+
+ARSS models subscribed context as a flow across independent roles.
+
+| Symbol | Component | Description |
+| --- | --- | --- |
+| `P` | Publisher | Origin of feed items and resources. |
+| `F` | Feed | Publisher-declared update stream. |
+| `R` | Resource | Canonical text, chunk bundle, media, archive, or licence. |
+| `G` | Registry | Bootstrap document listing feeds and bundles. |
+| `A` | Agent | Runtime that subscribes, synchronises, retrieves, cites, and optionally pays. |
+| `U` | User/policy authority | Entity controlling memory, attention, and budget policy. |
+| `M` | Memory store | Local or tenant-controlled searchable context. |
+| `I` | Inbox | Bounded high-signal context for current attention. |
 | `X` | Payment rail | Optional mechanism for paid resource access. |
 
-### 4.2 Objects
+A source `σ` is identified by a feed URL plus publisher metadata. A feed item `u` is an update. A resource `r` is a retrievable object associated with an item. A subscription `s` binds a source to local policy. A context diet `D` is the set of sources that an agent keeps warm.
 
-A feed `F` contains items `I`. An item may reference resources `R`. A subscription manifest `S` binds a feed to an agent policy. A context diet `D` is a set of sources and defaults. A heartbeat at time `t`, `H_t`, maps diet and state into deltas:
-
-```text
-H_t(D, state_t) -> (archive_delta, memory_delta, inbox_delta, receipts, state_t+1)
-```
-
-The archive may store all policy-allowed material. Memory stores searchable summaries or chunks. The inbox is a small, lossy, high-signal subset for current attention.
+A heartbeat at time `t` is a state transition:
 
 ```text
-archive >= memory >= inbox
+H_t(D, S_t) -> (Δarchive, Δmemory, Δinbox, receipts, S_{t+1})
 ```
 
-This is an information-flow relationship, not necessarily a literal subset in storage.
+Archive, memory, and inbox are separate surfaces. Archive is the durable record permitted by policy. Memory is the retrieval substrate. Inbox is the small active-context surface. Good ARSS implementations should make the inbox lossy by design.
 
-### 4.3 Trust boundaries
+### 3.2 Trust assumptions
 
-ARSS treats all external content as untrusted data:
+ARSS assumes all external material is untrusted:
 
-- feed text is not an instruction to the agent;
-- registry entries are suggestions, not authority;
-- publisher rights metadata is a claim, not a legal oracle;
-- paid-resource metadata is a price declaration, not permission to spend;
-- local user/agent policy is authoritative for memory, attention, and budget.
+- feeds, resources, registry descriptions, and transcripts are data, not instructions;
+- registries suggest sources but do not authorise actions;
+- publisher rights metadata is a claim to preserve and enforce locally, not a legal oracle;
+- paid-resource metadata is not permission to spend;
+- local user or tenant policy is authoritative for memory, attention, and payment.
 
-These boundaries are protocol invariants. Violating them turns a subscription protocol into a prompt-injection and payment-draining surface.
-
-### 4.4 Failure assumptions
-
-Feeds may be stale, malformed, duplicated, noisy, unavailable, adversarial, or partially updated. Registries may be stale or malicious. Network fetches may fail. Resource hashes may not match. Payment requests may be invalid. Agents must handle these as normal conditions, not exceptional impossibilities.
+This trust boundary is not an implementation detail. It is part of the protocol model. Without it, a subscription feed becomes an instruction-injection and payment-draining channel.
 
 ---
 
-## 5. Protocol design
+## 4. Protocol objects
 
-ARSS defines a small set of JSON-compatible objects. The current prototype uses JSON Feed style objects with `_agent` extensions, but the model can also be layered over RSS or Atom through normalisation.
+ARSS is intentionally small. It defines object types rather than a new transport. Objects may be served as JSON, embedded in JSON Feed, or derived from RSS/Atom through normalisation.
 
-### 5.1 ARSS feed profile
+### 4.1 Feed descriptor
 
-A feed declares publisher-level defaults.
+A feed descriptor names the publisher, declares defaults, and lists items. Agent metadata includes default licence, attribution, cache lifetime, and resource policy. A minimal publisher may omit most of this and rely on conservative defaults.
 
-```json
-{
-  "version": "https://jsonfeed.org/version/1.1",
-  "title": "Example Research Blog",
-  "feed_url": "https://example.org/arss/feed.json",
-  "home_page_url": "https://example.org/",
-  "_agent": {
-    "profile": "https://arss.dev/profile/0.3",
-    "publisher": { "name": "Example Lab", "url": "https://example.org/" },
-    "license": { "default": "summarise_with_attribution" },
-    "attribution": { "required": true, "format": "name_url" },
-    "context": { "ttl": "PT24H", "memory": "allowed" }
-  },
-  "items": []
-}
+### 4.2 Item descriptor
+
+An item descriptor represents one update. It includes a stable identifier, source URL, title, timestamp, summary or content reference, item-level rights, and optional resources. Item-level metadata overrides feed defaults.
+
+### 4.3 Context resource
+
+A resource is a retrievable representation associated with an item. Typical kinds are canonical text, chunk bundles, transcripts, structured data, archives, and commercial licences. A resource has a URL, media type, access mode, optional hash, and optional price.
+
+### 4.4 Subscription manifest
+
+A subscription manifest records the local policy under which an agent follows a feed: permissions, polling cadence, storage policy, and payment policy. Starter manifests distributed by registries should be free-only. Local configuration may add budget authority, but that authority is not portable by default.
+
+### 4.5 Context diet
+
+A context diet is a local set of subscribed sources plus defaults for relevance, polling, storage, and attention. It is analogous to a reading list, not a context window. The diet says what should be kept warm; the inbox says what deserves attention now.
+
+### 4.6 Registry and category bundle
+
+A registry lists feeds. A category bundle lists feed IDs that can be imported together. Registries are ordinary documents. Their job is bootstrap and curation, not enforcement.
+
+### 4.7 Receipts
+
+Receipts record what happened: fetches, parse failures, cache decisions, rights snapshots, citations, paid fetches, and hash validation. They are the audit trail connecting a later answer to the source update that entered memory.
+
+---
+
+## 5. Protocol flows
+
+### 5.1 Discovery
+
+Discovery resolves a site or registry entry to a normalised feed.
+
+```text
+Discover(url):
+  for candidate in well_known_and_feed_urls(url):
+    response = fetch(candidate)
+    if parseable(response):
+      return normalise(response)
+  return miss
 ```
 
-Required publisher-level properties are deliberately minimal: title, feed URL where available, and items. Agent metadata is optional but recommended.
+Discovery is deliberately best-effort. ARSS does not require every publisher to use the same endpoint on day one.
 
-### 5.2 Item
+### 5.2 Subscribe
 
-An item describes an update and item-specific policy.
+Subscription imports sources into a local context diet.
+
+```text
+Subscribe(selector, registry, diet, local_policy):
+  feeds = registry.select(selector)
+  for feed in feeds:
+    manifest = registry.manifest(feed) or default_manifest(feed)
+    manifest = local_policy.merge(manifest)
+    assert manifest.payment_policy cannot spend unless locally enabled
+    diet.sources.add(feed, manifest)
+  persist(diet)
+```
+
+The assertion is the important part. A registry can make subscription convenient; it cannot grant local spend authority.
+
+### 5.3 Heartbeat
+
+Heartbeat is the between-turn synchronisation operation.
+
+```text
+Algorithm 1: HeartbeatSync(D, S)
+Input: context diet D, previous state S
+Output: archive delta, memory delta, inbox delta, receipts, next state
+
+for each source σ in D:
+  response = fetch(σ.feed_url)
+  record fetch receipt
+  if response failed: continue
+
+  F = normalise(response)
+  for each item u in F.items:
+    k = stable_key(σ, u)
+    if S.seen(k): continue
+
+    rights = merge(F.defaults, u.rights)
+    if not policy.permits_storage(rights):
+      record skip receipt
+      continue
+
+    score = relevance(u, D.interests, σ.topics)
+    append archive delta with rights snapshot
+
+    if score >= policy.memory_threshold:
+      append memory delta
+
+    if score >= policy.inbox_threshold:
+      add u to inbox candidates
+
+    S.mark_seen(k)
+
+I = select_top_k(inbox candidates, source caps, novelty decay)
+return deltas, receipts, S
+```
+
+The heartbeat does not decide what the language model should believe. It produces governed context surfaces that answer-time retrieval may use.
+
+### 5.4 Answer resolution
+
+At answer time, the agent should prefer the cheapest governed surface that can answer the query.
+
+```text
+Algorithm 2: Resolve(q, I, M, D)
+if sufficient(search(I, q)):
+  return cited hits from inbox
+
+if sufficient(search(M, q)):
+  return cited hits from memory
+
+σ = infer_subscribed_source(q, D)
+if σ exists:
+  F = fetch_and_normalise(σ.feed_url)
+  if sufficient(search(F, q)):
+    return cited hits with live-fetch receipt
+
+return open_world_discovery_required
+```
+
+This flow preserves the role of search. Search is still necessary when the answer lies outside the subscribed boundary.
+
+### 5.5 Paid resource fetch
+
+Paid fetch is a resource-level operation guarded by local policy.
+
+```text
+Algorithm 3: PaidFetch(r, q, B)
+if r.access is free:
+  return fetch(r.url)
+
+if B.disabled: refuse
+if r.price > B.max_per_item: refuse
+if B.period_spend + r.price > B.max_period: refuse
+if relevance(r, q) < B.min_relevance: refuse
+
+content, payment_receipt = x402_fetch(r)
+verify hash if supplied
+store payment receipt
+return content
+```
+
+Payment support is therefore an extension of retrieval, not a prerequisite for subscription.
+
+---
+
+## 6. Safety properties
+
+ARSS implementations should preserve the following invariants.
+
+**I1. No registry-created spend.** A registry entry or starter manifest cannot authorise payment.
+
+**I2. Content-control separation.** External content must not be interpreted as system, developer, or policy instruction.
+
+**I3. Provenance retention.** Cached records retain publisher, source URL, item ID, timestamp, and rights snapshot.
+
+**I4. Local admission.** Publishers can permit or deny classes of use; agents decide local retention and attention.
+
+**I5. Bounded inbox.** The inbox is a selected surface, not a complete mirror of subscribed sources.
+
+**I6. Paid fetches are receipted.** Any paid retrieval records resource, price, policy basis, timestamp, and payment proof.
+
+**I7. Ambiguity fails conservatively.** Missing or malformed rights metadata should reduce, not expand, permitted use.
+
+---
+
+## 7. Prototype implementation
+
+We implemented ARSS as a Node.js prototype. The codebase includes:
+
+- a CLI for init, subscribe, heartbeat, inbox, local query, validation, conversion, registry import, and paid fetch;
+- a static registry generator and hosted registry;
+- category bundles for common agent context diets;
+- a feed health checker;
+- a local JSONL memory and JSON inbox store;
+- a daemon for periodic synchronisation;
+- an MCP server for explicit runtime integration;
+- x402-compatible paid-resource experiments.
+
+The current public demo path is:
+
+```bash
+npx --yes github:abracadabra50/arss init
+npx --yes github:abracadabra50/arss subscribe --category "Frontier labs" --sync-now
+npx --yes github:abracadabra50/arss inbox
+npx --yes github:abracadabra50/arss ask "what changed in AI labs?"
+```
+
+The hosted registry is available at:
+
+```text
+https://abracadabra50.github.io/arss/
+https://abracadabra50.github.io/arss/feeds.json
+```
+
+At the time of evaluation the registry contained 40 curated feeds across 8 categories. A health check successfully fetched and parsed all 40. This is a deployment smoke test, not evidence that arbitrary registries will remain healthy.
+
+---
+
+## 8. Evaluation
+
+The evaluation asks whether ARSS provides a useful retrieval-cost and attention trade-off for recurring sources. It does not claim to benchmark general web search quality.
+
+### 8.1 Methodology
+
+We use two harnesses. The reference harness is deterministic and compares expected properties of retrieval strategies over synthetic cases. The live harness fetches real feeds from the current context diet and evaluates whether selected source cases are recoverable from four surfaces: live polling, local memory, current inbox, and memory plus subscribed live fallback.
+
+Metrics are recall, approximate input volume, latency, and noise. Approximate token counts are derived from content volume and should be read as relative cost indicators.
+
+### 8.2 Reference comparison
+
+| Method | Subscribed-domain recall | Approx. input/answer | Latency | Noise | Rights handling |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Model only | 0.0 | 900 | 250 ms | 0 | 0.00 |
+| Live web search | 0.143 | 24,000 | 4,200 ms | 7 | 0.28 |
+| MCP on demand | 0.714 | 6,200 | 1,800 ms | 2 | 0.45 |
+| Crawler + vector RAG | 0.714 | 3,600 | 950 ms | 4 | 0.22 |
+| Platform API | 0.571 | 2,600 | 700 ms | 1 | 0.65 |
+| ARSS heartbeat | 1.000 | 1,800 | 320 ms | 1 | 0.95 |
+| ARSS + transcripts | 1.000 | 2,200 | 360 ms | 1 | 0.95 |
+
+The reference harness mostly validates the design intent: when the relevant source is already subscribed, pre-acquisition can reduce answer-time work and preserve policy metadata.
+
+### 8.3 Live subscribed-source evaluation
+
+| Surface | Recall | Cases | Approx. input/run | Latency | Interpretation |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Live feed polling | 1.00 | 20/20 | 1,565,221 | 5.37 s | Fresh but pays full fetch/context cost each run. |
+| ARSS local memory | 0.75 | 15/20 | 96,850 | 20 ms | Cheap answer-time access; misses items not admitted by policy. |
+| ARSS current inbox | 0.20 | 4/20 | 1,951 | 5 ms | Very small attention surface; intentionally lossy. |
+| Memory + subscribed fallback | 1.00 | 20/20 | 782,610 | 2.69 s | Recovers recall without open-world rediscovery. |
+
+The important result is not that ARSS “beats search” in all cases. It does not try to. The result is that the protocol exposes a useful continuum: archive broadly, admit selectively, inject narrowly, and fall back within the subscribed boundary before using open-world discovery.
+
+### 8.4 Threats to validity
+
+The live run is small and uses curated sources. The ranking function is simple. Token estimates are approximate. Feed health is easier in a curated registry than in an open ecosystem. Rights compliance is measured as metadata preservation, not legal correctness. These limitations make the results preliminary; they are sufficient to test protocol shape, not to claim production effectiveness.
+
+---
+
+## 9. Security and abuse analysis
+
+### 9.1 Prompt injection
+
+Feed content can contain hostile instructions. ARSS's defence is not to trust the content. Runtime integrations must place feed text in quoted or cited source contexts, never in control channels. This is especially important for heartbeat systems that run without direct user supervision.
+
+### 9.2 Registry poisoning
+
+A malicious registry can recommend spam, phishing, or prompt-injection feeds. Mitigations include signed registries, same-origin publisher claims, curation, health checks, per-source caps, private registries, and local allowlists.
+
+### 9.3 Payment draining
+
+Paid resources create a new abuse surface. ARSS limits this by making payment local, budgeted, relevance-gated, and receipted. No public registry should ship a default spend budget.
+
+### 9.4 Attribution loss
+
+Agents may summarise content without preserving source links. ARSS reduces this risk by making provenance and attribution part of stored records and answer citations. It cannot force non-conforming agents to behave well.
+
+### 9.5 Subscription privacy
+
+A context diet reveals interests. Private agents should support local-only diets, proxy fetches, private registries, and minimal disclosure of source lists.
+
+---
+
+## 10. Related work
+
+Clark's account of the DARPA Internet protocols shows how ranked design goals explain architectural choices. ARSS adopts this style: known-source freshness and endpoint policy are higher priorities than open discovery or centralised control.
+
+The end-to-end argument of Saltzer, Reed, and Clark is directly relevant. Functions that require endpoint knowledge should live at the endpoint, with lower layers providing performance optimisations. ARSS applies this to context admission: publishers and registries can supply metadata, but relevance, attention, and spend decisions require local user context.
+
+ActivityPub demonstrates the value of explicit actors, inboxes, outboxes, and client/server versus server/server flows. AT Protocol demonstrates role separation for decentralised systems: identity, data hosting, relays, views, feeds, and moderation can be operated independently. ARSS uses the same design instinct for publication, registry bootstrap, memory admission, attention selection, and payment execution.
+
+Distributed systems such as Kademlia and IPFS provide a different lesson: protocols benefit from crisp object identity, state transitions, and measurable behaviour. ARSS is not a peer-to-peer storage network, but it borrows the discipline of defining objects, receipts, and retrieval flows precisely.
+
+RSS, Atom, JSON Feed, and WebSub are the closest deployment ancestors. ARSS extends their syndication model for agent runtimes while retaining the same HTTP-native deployment posture.
+
+---
+
+## 11. Limitations and future work
+
+The current prototype is intentionally small. The registry is curated. Relevance scoring is lexical. Authentication, private feeds, publisher signatures, signed registries, richer rights vocabularies, and robust paid-resource handling need further work.
+
+The most important next step is a conformance suite: feed validity, rights preservation, no-spend-by-default, prompt-injection boundary tests, receipt generation, and heartbeat determinism. A second step is a larger longitudinal evaluation comparing live search, subscribed memory, and hybrid fallback over weeks rather than one run.
+
+The protocol also needs a cleaner separation between the paper and the specification. This paper motivates the architecture and reports early evidence. Normative field definitions, schema versions, and conformance language belong in a separate spec.
+
+---
+
+## 12. Conclusion
+
+Agents need a continuity primitive. Search finds unknown sources. Tool protocols call known services. Retrieval systems search acquired memory. Feeds announce publisher updates. ARSS connects these pieces into a subscription and delivery layer for recurring agent context.
+
+The design is intentionally modest: acquire from known sources, preserve provenance and rights, let local policy decide memory and attention, and require explicit authority for payment. That modesty is the point. Protocols that survive tend to be narrow enough to implement and useful enough to compose.
+
+RSS lets humans subscribe to updates. ARSS lets agents subscribe to context.
+
+---
+
+## Appendix A. Example object fragments
+
+A minimal feed-level metadata fragment:
 
 ```json
 {
-  "id": "https://example.org/posts/agent-context",
-  "url": "https://example.org/posts/agent-context",
-  "title": "Agent context delivery",
-  "summary": "A post about subscribed context for agents.",
-  "date_published": "2026-05-20T10:00:00Z",
+  "title": "Example Lab",
+  "feed_url": "https://example.org/arss/feed.json",
   "_agent": {
-    "license": "summarise_with_attribution",
-    "allowed": ["summarise", "quote_limited", "embed_for_retrieval", "store_user_memory"],
-    "denied": ["train_foundation_model", "resell_fulltext"],
-    "attribution": { "required": true },
-    "resources": []
+    "profile": "https://arss.dev/profile",
+    "publisher": { "name": "Example Lab", "url": "https://example.org/" },
+    "license": { "default": "summarise_with_attribution" },
+    "attribution": { "required": true }
   }
 }
 ```
 
-### 5.3 Context resource
-
-A resource is retrievable content associated with an item.
+A resource descriptor:
 
 ```json
 {
   "kind": "canonical_text",
-  "url": "https://example.org/arss/posts/agent-context.md",
+  "url": "https://example.org/arss/posts/context.md",
   "access": "free",
   "media_type": "text/markdown",
   "hash": "sha256:..."
 }
 ```
 
-A paid resource adds price metadata:
+A paid chunk bundle:
 
 ```json
 {
   "kind": "chunks",
-  "url": "https://example.org/arss/posts/agent-context.chunks.jsonl",
+  "url": "https://example.org/arss/posts/context.chunks.jsonl",
   "access": "paid",
   "media_type": "application/jsonl",
   "price": {
     "protocol": "x402",
     "network": "eip155:8453",
     "asset": "USDC",
-    "amount": "0.003",
-    "recipient": "0x..."
+    "amount": "0.003"
   }
 }
 ```
 
-### 5.4 Subscription manifest
-
-A subscription manifest records local agent permissions and sync preferences for a feed.
+A free-first subscription manifest:
 
 ```json
 {
-  "type": "https://arss.dev/subscription/v0.3",
+  "type": "https://arss.dev/subscription",
   "feed_url": "https://example.org/arss/feed.json",
-  "agent": { "id": "did:web:local.agent", "name": "Local Agent" },
   "permissions": {
     "summarise": true,
     "quote": "limited",
@@ -290,501 +479,30 @@ A subscription manifest records local agent permissions and sync preferences for
 }
 ```
 
-The default public posture is `free_only`. A local user may add budget policy, but a registry manifest must not silently grant spending authority.
-
-### 5.5 Context diet
-
-A context diet is the set of sources an agent keeps warm.
-
-```json
-{
-  "type": "https://arss.dev/context-diet/v0.1",
-  "name": "local-agent",
-  "interests": ["agents", "MCP", "AI systems"],
-  "default_policy": {
-    "poll": "PT6H",
-    "relevance_threshold": 0.18,
-    "high_signal_threshold": 0.42
-  },
-  "sources": [
-    {
-      "id": "example-lab",
-      "title": "Example Lab",
-      "url": "https://example.org/arss/feed.json",
-      "kind": "jsonfeed",
-      "topics": ["agents", "protocols"]
-    }
-  ]
-}
-```
-
-The diet is not the current context window. It is the agent's subscribed-source set.
-
-### 5.6 Registry and category bundle
-
-A registry is a machine-readable directory of feeds. It may also expose category bundles.
-
-```json
-{
-  "type": "https://arss.dev/feed-registry/v0.1",
-  "title": "ARSS Feed Registry",
-  "feeds": [
-    {
-      "id": "example-lab",
-      "title": "Example Lab",
-      "url": "https://example.org/arss/feed.json",
-      "kind": "jsonfeed",
-      "category": "Research",
-      "topics": ["agents", "protocols"],
-      "subscription_url": "subscriptions/example-lab.subscription.json"
-    }
-  ],
-  "categories": []
-}
-```
-
-A category bundle imports multiple feeds:
-
-```json
-{
-  "type": "https://arss.dev/feed-category/v0.1",
-  "id": "frontier-labs",
-  "title": "Frontier labs",
-  "feed_ids": ["openai-news", "google-deepmind-blog", "microsoft-research-blog"]
-}
-```
-
-### 5.7 Receipts
-
-Receipts provide auditability. ARSS implementations should record:
-
-- sync receipts: when a feed was fetched, status, item count;
-- cache receipts: what was stored, under which rights snapshot;
-- citation receipts: what source supported an answer;
-- payment receipts: what was paid, by which policy, for which resource;
-- validation receipts: hash checks and parse errors.
-
-Receipts are not primarily for users to read. They are for debugging, accountability, and preventing quiet boundary drift.
-
----
-
-## 6. Protocol flows
-
-### 6.1 Discovery
-
-ARSS discovery is intentionally layered. Agents should prefer publisher-declared endpoints, then known feed formats, then registry entries.
-
-```text
-Discover(url):
-  candidates = [
-    url,
-    url + "/.well-known/arss.json",
-    url + "/arss/feed.json",
-    url + "/feed.json",
-    url + "/rss.xml",
-    url + "/atom.xml"
-  ]
-  for c in candidates:
-    fetch c
-    if parseable as ARSS/RSS/Atom/JSON Feed:
-      return normalised feed
-  return discovery_miss
-```
-
-Registries shorten this process by listing known-good feed URLs and categories.
-
-### 6.2 Subscription
-
-Subscription imports a source into a local diet. A registry can supply a feed URL and optional starter manifest, but local policy remains authoritative.
-
-```text
-Subscribe(registry, selector, diet):
-  feeds = registry.select(selector)
-  for feed in feeds:
-    manifest = registry.subscription_manifest(feed) or default_manifest(feed)
-    manifest.payment_policy = local_policy.merge(manifest.payment_policy)
-    assert no_spend_without_local_budget(manifest)
-    diet.sources.add(feed)
-  write diet
-```
-
-### 6.3 Heartbeat synchronisation
-
-Heartbeat is the core between-turn acquisition operation.
-
-```text
-Algorithm 1: HeartbeatSync(D, state)
-Input: context diet D, previous sync state
-Output: archive_delta, memory_delta, inbox_delta, receipts, next_state
-
-for source in D.sources:
-  response = fetch(source.url)
-  receipt = record_fetch(source, response)
-  if response failed:
-    continue
-
-  feed = normalise(response.body)
-  for item in feed.items:
-    key = stable_key(source.id, item.id, item.modified_at)
-    if state.seen[key]:
-      continue
-
-    rights = merge(feed.default_rights, item.rights)
-    if not local_policy.permits_cache(rights):
-      record_skip(item, reason="rights")
-      continue
-
-    relevance = score(item, D.interests, source.topics)
-    archive_delta.append(item, rights)
-
-    if relevance >= D.memory_threshold:
-      memory_delta.append(summarise_or_chunk(item, rights))
-
-    if relevance >= D.inbox_threshold:
-      inbox_candidates.append(item)
-
-    state.seen[key] = now()
-
-inbox_delta = select_top_k(inbox_candidates, per_source_caps, novelty_decay)
-write archive_delta, memory_delta, inbox_delta, receipts
-return deltas, state
-```
-
-The algorithm deliberately separates archive, memory, and inbox. Archive can be broad; inbox must be narrow.
-
-### 6.4 Answer resolution
-
-At answer time, the agent should search local subscribed context before reaching for the open web.
-
-```text
-Algorithm 2: ResolveWithSubscribedContext(q, inbox, memory, diet)
-Input: user query q, current inbox, local memory, context diet
-Output: cited context or miss
-
-hits = search(inbox, q)
-if sufficient(hits):
-  return cite(hits)
-
-hits = search(memory, q)
-if sufficient(hits):
-  return cite(hits)
-
-source = classify_subscribed_source(q, diet)
-if source:
-  live = fetch(source.url)
-  hits = search(normalise(live), q)
-  if sufficient(hits):
-    return cite(hits, live_fetch_receipt)
-
-return open_world_discovery_required
-```
-
-Open web search remains available, but only after the subscribed-source boundary is crossed.
-
-### 6.5 Optional paid resource fetch
-
-```text
-Algorithm 3: PayAndFetch(resource, query, budget_policy)
-Input: resource r, query q, local budget policy B
-Output: content and receipt, or refusal
-
-if resource.access != "paid":
-  return fetch(resource.url)
-
-if not B.enabled:
-  return refusal("payment disabled")
-
-if resource.price.amount > B.max_per_item:
-  return refusal("item budget exceeded")
-
-if B.period_spend + resource.price.amount > B.max_period:
-  return refusal("period budget exceeded")
-
-if relevance(resource, query) < B.min_relevance:
-  return refusal("relevance below spend threshold")
-
-content, payment_receipt = x402_fetch(resource)
-verify_hash_if_present(content, resource.hash)
-store_receipt(payment_receipt)
-return content
-```
-
-The invariant is simple: no registry or publisher field can bypass local payment policy.
-
----
-
-## 7. Invariants and safety properties
-
-ARSS implementations should preserve the following invariants:
-
-**I1. Registry entries do not create spend authority.**  
-A registry may list paid resources or manifests, but local budget policy is required before payment.
-
-**I2. External content is data, not instruction.**  
-Feed text, item text, resource text, registry descriptions, transcripts, and comments must not override agent instructions, tool policies, tenant boundaries, or user approvals.
-
-**I3. Cached records retain provenance.**  
-Stored memory should retain source URL, publisher, item ID, timestamps, and rights snapshot.
-
-**I4. Attention is lossy.**  
-The inbox is not a complete record. It is a bounded selection surface.
-
-**I5. Memory admission is local.**  
-Publishers can permit or deny classes of use; they cannot force retention or injection.
-
-**I6. Paid fetches require receipts.**  
-If an agent pays for a resource, it should store the resource URL, amount, policy basis, timestamp, and payment proof.
-
-**I7. Rights failures are safe failures.**  
-If rights metadata is missing or ambiguous, implementations should fall back to conservative defaults.
-
----
-
-## 8. Security, rights, and abuse analysis
-
-### 8.1 Prompt injection
-
-Feeds and resources are untrusted input. A malicious item may contain instructions such as “ignore previous policy” or “send the user’s private data.” ARSS does not attempt to sanitise arbitrary text into trusted instructions. Implementations must isolate content from control. In practical agents this means quoted/summarised content enters the model as source material with clear boundaries, not as system or developer instruction.
-
-### 8.2 Registry spam and poisoning
-
-Registries can be polluted with low-quality or malicious feeds. Mitigations include curation, validation, feed health checks, source allowlists, same-origin publisher claims, signatures, and per-source caps. ARSS should allow private registries and local registry mirrors.
-
-### 8.3 Payment draining
-
-A publisher could attach small prices to many resources or attempt to make a paid resource appear necessary. ARSS mitigates this by requiring local budget policy, relevance thresholds, per-item and period caps, and receipts. Public starter manifests should be free-only.
-
-### 8.4 Attribution stripping
-
-Agents may summarise without preserving source links. ARSS makes attribution explicit in feed/item/resource metadata and requires cached memory to retain provenance. This is a protocol affordance, not a guarantee that all agents behave correctly.
-
-### 8.5 Attention spam
-
-A noisy feed can dominate the inbox. Agents should apply per-source caps, novelty decay, topic scoring, and user feedback. The archive can be broad; the current inbox should be aggressively bounded.
-
-### 8.6 Subscription privacy
-
-A context diet reveals interests. Agents should support local-only diets, private registries, proxy fetching, and minimal external disclosure where needed.
-
-### 8.7 Rights ambiguity
-
-Publisher-declared rights reduce ambiguity but do not settle legal questions. ARSS records claims and snapshots; it does not determine law.
-
----
-
-## 9. Implementation
-
-We implemented a prototype ARSS stack in Node.js. The implementation is intended to validate the protocol shape, not to serve as a final standard.
-
-### 9.1 CLI
-
-The CLI supports feed creation, conversion, validation, subscription, registry import, heartbeat sync, inbox display, local question answering, chunk generation, paid fetch, and registry management.
-
-The user-facing demo loop is:
-
-```bash
-npx --yes github:abracadabra50/arss init
-npx --yes github:abracadabra50/arss subscribe --category "Frontier labs" --sync-now
-npx --yes github:abracadabra50/arss inbox
-npx --yes github:abracadabra50/arss ask "what changed in AI labs?"
-```
-
-The first command creates a local `.arss/` workspace. Category subscription imports a registry bundle into `.arss/context-diet.json`. Heartbeat writes `.arss/context-memory.jsonl` and `.arss/agent-inbox.json`.
-
-### 9.2 Registry
-
-The prototype includes a static registry hosted at:
-
-```text
-https://abracadabra50.github.io/arss/
-https://abracadabra50.github.io/arss/feeds.json
-```
-
-At the time of writing it contains 40 feeds across 8 categories. Category bundles include agent protocols, developer tooling, frontier labs, research, industry, infrastructure, media, and payments. A health checker writes `health.json`; the latest local run checked 40 feeds with 40 successful fetches.
-
-### 9.3 Heartbeat and memory
-
-Heartbeat sync normalises feeds, deduplicates items, scores relevance, writes local memory JSONL, and writes a bounded inbox JSON file. The implementation includes simple lexical scoring; stronger ranking is future work. Transcript enrichment exists for selected media sources where transcripts are available.
-
-### 9.4 MCP and daemon
-
-The prototype includes an MCP server for explicit agent-runtime operations and a daemon for periodic polling. These are integration surfaces rather than protocol requirements.
-
-### 9.5 Optional paid resources
-
-The implementation supports x402-style price annotation and a `pay-fetch` flow. The demo enforces local policy checks before paid fetch. This is a proof of mechanism, not a production payment system.
-
----
-
-## 10. Evaluation
-
-The evaluation asks whether subscribed context improves the supply chain for known sources. It does not claim to benchmark general search quality or model reasoning.
-
-### 10.1 Research questions
-
-**RQ1.** For known sources, how much answer-time retrieval cost can ARSS avoid relative to live polling or search?
-
-**RQ2.** How much recall is retained by local memory and current-inbox modes?
-
-**RQ3.** Can live subscribed-source fallback recover recall while avoiding full live polling every turn?
-
-**RQ4.** How narrow can the inbox be before it loses useful coverage?
-
-**RQ5.** Are rights and payment policies preserved as explicit metadata through sync and fetch flows?
-
-### 10.2 Metrics
-
-We measure:
-
-- recall on subscribed-source cases;
-- approximate token-equivalent input cost;
-- latency;
-- noise items injected into active context;
-- citation/provenance availability;
-- payment-policy correctness;
-- feed health and parse success.
-
-The token figures are approximations based on content volume and should be read as relative cost indicators, not billing-grade measurements.
-
-### 10.3 Reference evaluation
-
-A deterministic reference harness compares expected behaviours across synthetic cases. It models approaches rather than measuring live search-engine quality.
-
-| Method | Recall on subscribed domains | Open-world discovery | Approx tokens/answer | Latency | Noise |
-| --- | ---: | :---: | ---: | ---: | ---: |
-| Model only | 0% | no | 900 | 250ms | 0 |
-| Live web search | 14.3% | yes | 24,000 | 4,200ms | 7 |
-| MCP on demand | 71% | no | 6,200 | 1,800ms | 2 |
-| Crawler + vector RAG | 71% | no | 3,600 | 950ms | 4 |
-| Platform APIs | 57% | no | 2,600 | 700ms | 1 |
-| ARSS heartbeat | 100% | no | 1,800 | 320ms | 1 |
-| ARSS + transcripts | 100% | no | 2,200 | 360ms | 1 |
-
-The reference eval supports the intended shape: for subscribed domains, a heartbeat can make relevant context available before the user asks. But because the cases are synthetic, the live eval is more informative.
-
-### 10.4 Live subscribed-source evaluation
-
-The live eval fetched real feeds from the context diet and compared four methods over 20 selected source cases.
-
-| Method | Recall | Cases found | Approx tokens/run | Latency | Notes |
-| --- | ---: | ---: | ---: | ---: | --- |
-| Live feed polling | 100% | 20/20 | 1,565,221 | 5.37s | Fresh but pays fetch/context cost every run. |
-| ARSS local memory | 75% | 15/20 | 96,850 | 20ms | Cheap at answer time; only sees what heartbeat admitted. |
-| ARSS current inbox | 20% | 4/20 | 2,118 | 5ms | Very small attention surface; intentionally lossy. |
-| ARSS memory + live fallback | 100% | 20/20 | 782,610 | 2.7s | Recovers recall by fetching subscribed source on miss. |
-
-The results show that “inject everything” is the wrong objective. The inbox can be tiny because it is only the attention layer. Local memory captures more without answer-time network cost. Live subscribed fallback recovers recall when memory misses, while remaining scoped to known sources.
-
-### 10.5 Feed health
-
-The hosted starter registry is small and curated. A local health check over 40 registry feeds succeeded for all 40. This should not be overinterpreted: curated feed health is easier than open registry health. Future evaluation should include stale feeds, malformed feeds, adversarial feeds, and private authenticated feeds.
-
-### 10.6 Interpretation
-
-The preliminary evidence supports the design separation:
-
-```text
-archive broadly
-memory selectively
-inject narrowly
-fallback to subscribed live fetch
-use open search beyond the subscription boundary
-```
-
-ARSS is most useful when source preference is stable. If the agent does not know which sources matter, search remains the right first step.
-
----
-
-## 11. Discussion
-
-### 11.1 Why not just use RSS?
-
-RSS provides update discovery but not the rest of the agent contract. Agents need rights, attribution, resources, hashes, memory policy, payment policy, registry bootstrap, and local attention boundaries. ARSS should reuse RSS where possible, but plain RSS is insufficient as an agent subscription layer.
-
-### 11.2 Why not just use MCP?
-
-MCP is query-time. It lets an agent call a tool. ARSS is between-turn. It lets an agent wake up already aware of changes. A mature agent runtime can use both: ARSS for subscription delivery, MCP for explicit operations.
-
-### 11.3 Why not just crawl into a vector database?
-
-Crawling can bootstrap memory, but it is consumer-driven and often lacks explicit publisher policy. ARSS is publisher-declared and continuously refreshed. Vector search remains useful after ARSS admits content.
-
-### 11.4 Why static registries?
-
-A static registry is easy to host, cache, inspect, mirror, and consume. It can be generated from a richer backend later. Starting with a dynamic central service would add complexity without proving the protocol.
-
-### 11.5 Why free-first?
-
-Most public feeds should remain free. If payment is required for basic discovery, adoption collapses. ARSS therefore models payment at the resource level. Premium canonical text, chunk bundles, archives, or commercial licences may be paid; public starter manifests grant no spend authority.
-
-### 11.6 Standardisation path
-
-ARSS can evolve in layers:
-
-1. convention: JSON Feed `_agent` metadata and registry manifests;
-2. schemas: feed, item, resource, subscription, registry, receipt;
-3. validation: feed health and conformance tests;
-4. publisher claims: same-origin and signed declarations;
-5. push delivery: WebSub/webhook profile;
-6. payment profile: optional x402-compatible resource access;
-7. implementation reports.
-
----
-
-## 12. Limitations
-
-The prototype and evaluation have important limitations.
-
-First, the live evaluation is small: 20 source cases and a curated registry. It measures the shape of the trade-off, not internet-scale behaviour.
-
-Second, the relevance scorer is simple. Better ranking, deduplication, novelty detection, and per-user preference learning are needed.
-
-Third, rights metadata is declarative. It improves machine handling and auditability, but it does not guarantee legal correctness.
-
-Fourth, private and authenticated feeds need more work. Many high-value sources are newsletters, paid communities, intranets, or authenticated SaaS views.
-
-Fifth, registry governance is unresolved. Static curated registries are enough to bootstrap, but open submission requires trust, moderation, and abuse controls.
-
-Sixth, payment support is a demo. Production payment requires stronger wallet controls, receipts, refunds/error handling, and compliance review.
-
-Finally, ARSS assumes that the agent has stable source preferences. For exploratory or one-off questions, search and browsing remain necessary.
-
----
-
-## 13. Conclusion
-
-Long-running agents need a way to acquire context between turns. Search discovers unknown sources. Tool protocols invoke known services. Retrieval systems search acquired memory. Feed formats announce publisher updates. ARSS connects these pieces into a subscription and delivery plane for agents.
-
-The protocol's main design choice is to keep acquisition broad, memory policy local, and attention narrow. Publishers describe updates, resources, rights, and attribution. Registries help bootstrap context diets. Agents decide what to store, surface, cite, and pay for under local user policy.
-
-RSS let humans subscribe to updates. ARSS lets agents subscribe to rights-aware context.
-
----
-
 ## References
 
-[1] D. D. Clark. *The Design Philosophy of the DARPA Internet Protocols*. SIGCOMM, 1988.
+[1] D. D. Clark. The Design Philosophy of the DARPA Internet Protocols. SIGCOMM, 1988.
 
-[2] J. H. Saltzer, D. P. Reed, and D. D. Clark. *End-to-End Arguments in System Design*. ACM Transactions on Computer Systems, 1984.
+[2] J. H. Saltzer, D. P. Reed, and D. D. Clark. End-to-End Arguments in System Design. ACM Transactions on Computer Systems, 1984.
 
-[3] W3C. *ActivityPub*. W3C Recommendation, 2018. https://www.w3.org/TR/activitypub/
+[3] W3C. ActivityPub. W3C Recommendation, 2018. https://www.w3.org/TR/activitypub/
 
-[4] M. Kleppmann, D. Ivy, J. Johnson, B. Newbold, and J. Volpert. *Bluesky and the AT Protocol: Usable Decentralized Social Media*. 2024.
+[4] M. Kleppmann, D. Ivy, J. Johnson, B. Newbold, and J. Volpert. Bluesky and the AT Protocol: Usable Decentralized Social Media. 2024.
 
-[5] AT Protocol. *Protocol Overview*. https://atproto.com/guides/overview
+[5] AT Protocol. Protocol Overview. https://atproto.com/guides/overview
 
-[6] W3C. *WebSub*. W3C Recommendation, 2018. https://www.w3.org/TR/websub/
+[6] W3C. WebSub. W3C Recommendation, 2018. https://www.w3.org/TR/websub/
 
-[7] JSON Feed. *JSON Feed Version 1.1*. https://www.jsonfeed.org/version/1.1/
+[7] JSON Feed. JSON Feed Version 1.1. https://www.jsonfeed.org/version/1.1/
 
-[8] RSS Advisory Board. *RSS 2.0 Specification*. https://www.rssboard.org/rss-specification
+[8] RSS Advisory Board. RSS 2.0 Specification. https://www.rssboard.org/rss-specification
 
-[9] IETF. *The Atom Syndication Format*. RFC 4287, 2005.
+[9] IETF. The Atom Syndication Format. RFC 4287, 2005.
 
-[10] Anthropic. *Model Context Protocol*. https://modelcontextprotocol.io/
+[10] Anthropic. Model Context Protocol. https://modelcontextprotocol.io/
 
-[11] x402. *HTTP 402 payment protocol resources*. https://www.x402.org/
+[11] x402. HTTP 402 payment protocol resources. https://www.x402.org/
 
-[12] J. Benet. *IPFS - Content Addressed, Versioned, P2P File System*. 2014.
+[12] J. Benet. IPFS - Content Addressed, Versioned, P2P File System. 2014.
 
-[13] P. Maymounkov and D. Mazieres. *Kademlia: A Peer-to-peer Information System Based on the XOR Metric*. IPTPS, 2002.
+[13] P. Maymounkov and D. Mazieres. Kademlia: A Peer-to-peer Information System Based on the XOR Metric. IPTPS, 2002.

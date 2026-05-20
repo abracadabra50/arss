@@ -15,9 +15,10 @@ Free public feeds first.
 Paid resources only when a publisher declares them and the local agent/user grants budget.
 ```
 
-## Paper
+## Papers
 
-- `arss-subscribed-context-paper.md` — current paper: subscribed context, registry, evals, free-first payment posture.
+- `arss-research-paper.md` — formal research-paper draft: system model, protocol objects, flows, invariants, security analysis and evaluation.
+- `arss-subscribed-context-paper.md` — public explainer paper: subscribed context, registry, evals, free-first payment posture.
 
 ## Archive
 
